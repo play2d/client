@@ -194,7 +194,8 @@ function TCombofield:GetCursor()
 		return self.Cursor
 	end
 	local MouseX, MouseY = love.mouse.getPosition()
-	if MouseX - self:x() >= self:Width() - 20 or MouseY - self:y() > self.Size.Height then
+	local Theme = self:GetTheme()
+	if MouseX - self:x() >= self:Width() - Theme.DropImage:getWidth() or MouseY - self:y() > self.Size.Height then
 		return self:GetTheme().HandCursor
 	end
 	return self:GetTheme().TextCursor
@@ -208,7 +209,8 @@ function TCombofield:MouseClicked(mx, my)
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
 		
-		if self.Grabbed.x >= self:Width() - 20 or self.Grabbed.y > self.Size.Height then
+		local Theme = self:GetTheme()
+		if self.Grabbed.x >= self:Width() - Theme.DropImage:getWidth() or self.Grabbed.y > self.Size.Height then
 			self.Open = not self.Open
 			if not self.Open then
 				local HeightOffset = 0
@@ -429,6 +431,9 @@ function TCombofield:Render(dt)
 		end
 		
 		if self.Open then
+			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.draw(Theme.DropImage, x + Width, y + (Height + Theme.DropImage:getHeight())/2, math.pi)
+			
 			local FontHeight = Font:getHeight()
 			local BoxHeight = self.ItemCount * (FontHeight + 5)
 			love.graphics.setScissor(x, y + Height, Width, BoxHeight)
@@ -454,6 +459,9 @@ function TCombofield:Render(dt)
 				end
 				HeightOffset = HeightOffset + FontHeight + 5
 			end
+		else
+			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.draw(Theme.DropImage, x + Width - Theme.DropImage:getWidth(), y + (Height - Theme.DropImage:getHeight())/2)
 		end
 	end
 end

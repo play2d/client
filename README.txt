@@ -11,6 +11,9 @@ Using LÖVE
 Using LuaFileSystem
 * https://keplerproject.github.io/luafilesystem/license.html
 
+Using icons from Icons8
+* https://icons8.com/license/
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c) 2015, Play2D Development Team
 All rights reserved.

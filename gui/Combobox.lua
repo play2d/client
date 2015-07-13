@@ -91,6 +91,9 @@ function TCombobox:Render(dt)
 		end
 		
 		if self.Open then
+			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.draw(Theme.DropImage, x + Width, y + (Height + Theme.DropImage:getHeight())/2, math.pi)
+			
 			local FontHeight = Font:getHeight()
 			local BoxHeight = self.ItemCount * (FontHeight + 5)
 			love.graphics.setScissor(x, y + Height, Width, BoxHeight)
@@ -116,6 +119,9 @@ function TCombobox:Render(dt)
 				end
 				HeightOffset = HeightOffset + FontHeight + 5
 			end
+		else
+			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.draw(Theme.DropImage, x + Width - Theme.DropImage:getWidth(), y + (Height - Theme.DropImage:getHeight())/2)
 		end
 	end
 end

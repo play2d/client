@@ -123,6 +123,7 @@ Combobox = {
 	
 	Font = love.graphics.getFont(),
 	Cursor = love.mouse.getSystemCursor("hand"),
+	DropImage = love.graphics.newImage("gfx/gui/Default/down.png"),
 }
 
 Combofield = {
@@ -138,4 +139,5 @@ Combofield = {
 	Font = love.graphics.getFont(),
 	HandCursor = love.mouse.getSystemCursor("hand"),
 	TextCursor = love.mouse.getSystemCursor("ibeam"),
+	DropImage = love.graphics.newImage("gfx/gui/Default/down.png"),
 }
