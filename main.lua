@@ -60,8 +60,10 @@ for i = 1, 50 do
 	game.Listbox:AddItem("test item "..i)
 end
 game.Combobox = gui.CreateCombobox(10, 310, 200, 20, game.Window)
+game.Combofield = gui.CreateCombofield(10, 340, 200, 20, game.Window)
 for i = 1, 5 do
 	game.Combobox:AddItem("test item "..i)
+	game.Combofield:AddItem("test item "..i)
 end
 
 -- Desktop test

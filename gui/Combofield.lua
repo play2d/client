@@ -1,41 +1,44 @@
-local TTextfield = {}
-local TTextfieldMetatable = {__index = TTextfield}
-TTextfield.Type = "Textfield"
-TTextfield.Text = ""
-TTextfield.HintText = ""
-TTextfield.TextOffset = -2.5
-TTextfield.Start = 0
-TTextfield.Length = 0
-setmetatable(TTextfield, gui.TGadgetMetatable)
+local TCombofield = {}
+local TCombofieldMetatable = {__index = TCombofield}
+TCombofield.Type = "Combofield"
+TCombofield.Text = ""
+TCombofield.HintText = ""
+TCombofield.TextOffset = -2.5
+TCombofield.Start = 0
+TCombofield.Length = 0
+TCombofield.ItemCount = 0
+setmetatable(TCombofield, gui.TGadgetMetatable)
 
-function gui.CreateTextfield(x, y, Width, Height, Parent, HintText)
-	local Textfield = TTextfield.New()
-	if Parent:AddGadget(Textfield) then
-		Textfield:SetPosition(x, y)
-		Textfield:SetSize(Width, Height)
-		return Textfield:Init(HintText)
+function gui.CreateCombofield(x, y, Width, Height, Parent)
+	local Combofield = TCombofield.New()
+	if Parent:AddGadget(Combofield) then
+		Combofield:SetPosition(x, y)
+		Combofield:SetSize(Width, Height)
+		return Combofield:Init()
 	end
 end
 
-function TTextfield.New()
-	return setmetatable({}, TTextfieldMetatable)
+function TCombofield.New()
+	return setmetatable({}, TCombofieldMetatable)
 end
 
-function TTextfield:Init(Text)
+function TCombofield:OnSelect(Index)
+end
+
+function TCombofield:SetText(Text)
+	self.Text = Text
+	self.Start = #Text
+	self.Length = 0
+end
+
+function TCombofield:Init()
+	self.Items = {}
 	self.HintText = Text
 	self.Timer = love.timer.getTime()
 	return self
 end
 
-function TTextfield:SetText(Text)
-	self.Text = Text
-end
-
-function TTextfield:SetFont(Font)
-	self.Font = Font
-end
-
-function TTextfield:Write(Text)
+function TCombofield:Write(Text)
 	if not self.Hidden and not self.Disabled then
 		local Length = #Text
 		if self.Length == 0 then
@@ -66,7 +69,7 @@ function TTextfield:Write(Text)
 	end
 end
 
-function TTextfield:keypressed(key)
+function TCombofield:keypressed(key)
 	if self.Hidden or self.Disabled then
 		return nil
 	end
@@ -186,75 +189,106 @@ function TTextfield:keypressed(key)
 	end
 end
 
-function TTextfield:MouseClicked(x, y)
-	if not self.Hidden and not self.Disabled then
-		self.Dropped = mil
-		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
-		self:SetHoverAll()
-
-		local Text = self.Text
-		local Length = #self.Text
-		if self.Password then
-			Text = string.rep("*", Length)
-		end
-		local SelectPosition = self.Grabbed.x + self.TextOffset
-		local TextWidth = 0
-		local Font = self:GetFont()
-		for i = 1, #self.Text do
-			local Width = Font:getWidth(Text:sub(i, i))
-			if SelectPosition > TextWidth and SelectPosition <= TextWidth + Width then
-				self.Start = i
-				self.Length = 0
-				TextWidth = TextWidth + Width
-				break
-			end
-			TextWidth = TextWidth + Width
-		end
-		if SelectPosition > TextWidth then
-			self.Start = #self.Text
-			self.Length = 0
-		elseif SelectPosition <= 0 then
-			self.Start = 0
-			self.Length = 0
-		end
+function TCombofield:GetCursor()
+	if self.Cursor then
+		return self.Cursor
 	end
+	local MouseX, MouseY = love.mouse.getPosition()
+	if MouseX - self:x() >= self:Width() - 20 or MouseY - self:y() > self.Size.Height then
+		return self:GetTheme().HandCursor
+	end
+	return self:GetTheme().TextCursor
 end
 
-function TTextfield:MouseDropped(x, y)
-	if not self.Hidden then
-		if self.Grabbed then
-			self.Grabbed = nil
-			self.Dropped = {x = x - self:x(), y = y - self:y()}
-			self:OnDrop(self.Dropped.x, self.Dropped.y)
-
+function TCombofield:MouseClicked(mx, my)
+	if not self.Hidden and not self.Disabled then
+		local x, y = self:x(), self:y()
+		self.Dropped = mil
+		self.Grabbed = {x = mx - x, y = my - y}
+		self:OnClick(self.Grabbed.x, self.Grabbed.y)
+		self:SetHoverAll()
+		
+		if self.Grabbed.x >= self:Width() - 20 or self.Grabbed.y > self.Size.Height then
+			self.Open = not self.Open
+			if not self.Open then
+				local HeightOffset = 0
+				local Width, Height = self:Width(), self:Height()
+				local FontHeight = self:GetFont():getHeight()
+				for Index, Item in pairs(self.Items) do
+					if self.Selected ~= Index and self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) then
+						self:OnSelect(Index)
+						self.Selected = Index
+						self:SetText(Item)
+					end
+					HeightOffset = HeightOffset + FontHeight + 5
+				end
+			end
+		else
 			local Text = self.Text
 			local Length = #self.Text
 			if self.Password then
 				Text = string.rep("*", Length)
 			end
-			local SelectPosition = self.Dropped.x + self.TextOffset
+			local SelectPosition = self.Grabbed.x + self.TextOffset
 			local TextWidth = 0
 			local Font = self:GetFont()
 			for i = 1, #self.Text do
 				local Width = Font:getWidth(Text:sub(i, i))
 				if SelectPosition > TextWidth and SelectPosition <= TextWidth + Width then
-					self.Length = i - self.Start
+					self.Start = i
+					self.Length = 0
 					TextWidth = TextWidth + Width
 					break
 				end
 				TextWidth = TextWidth + Width
 			end
 			if SelectPosition > TextWidth then
-				self.Length = #self.Text - self.Start
+				self.Start = #self.Text
+				self.Length = 0
 			elseif SelectPosition <= 0 then
-				self.Length = -self.Start
+				self.Start = 0
+				self.Length = 0
 			end
 		end
 	end
 end
 
-function TTextfield:MouseMove(x, y, dx, dy)
+function TCombofield:MouseDropped(x, y)
+	if not self.Hidden then
+		if self.Grabbed then
+			self.Dropped = {x = x - self:x(), y = y - self:y()}
+			self:OnDrop(self.Dropped.x, self.Dropped.y)
+
+			if self.Grabbed.y <= self.Size.Height then
+				local Text = self.Text
+				local Length = #self.Text
+				if self.Password then
+					Text = string.rep("*", Length)
+				end
+				local SelectPosition = self.Dropped.x + self.TextOffset
+				local TextWidth = 0
+				local Font = self:GetFont()
+				for i = 1, #self.Text do
+					local Width = Font:getWidth(Text:sub(i, i))
+					if SelectPosition > TextWidth and SelectPosition <= TextWidth + Width then
+						self.Length = i - self.Start
+						TextWidth = TextWidth + Width
+						break
+					end
+					TextWidth = TextWidth + Width
+				end
+				if SelectPosition > TextWidth then
+					self.Length = #self.Text - self.Start
+				elseif SelectPosition <= 0 then
+					self.Length = -self.Start
+				end
+			end
+			self.Grabbed = nil
+		end
+	end
+end
+
+function TCombofield:MouseMove(x, y, dx, dy)
 	if not self.Hidden then
 		if self.Grabbed then
 			local Text = self.Text
@@ -283,7 +317,7 @@ function TTextfield:MouseMove(x, y, dx, dy)
 	end
 end
 
-function TTextfield:Copy()
+function TCombofield:Copy()
 	if not self.Hidden then
 		if not self.Password then
 			if self.Length > 0 then
@@ -295,7 +329,28 @@ function TTextfield:Copy()
 	end
 end
 
-function TTextfield:Update(dt)
+function TCombofield:Height()
+	if self.Open then
+		return self.Size.Height + self.ItemCount * (self:GetFont():getHeight() + 5)
+	end
+	return self.Size.Height
+end
+
+function TCombofield:SetItem(Index, Item)
+	if not self.Items[Index] then
+		self.ItemCount = self.ItemCount + 1
+	end
+	self.Items[Index] = Item
+end
+
+function TCombofield:RemoveItem(Index)
+	if self.Items[Index] then
+		self.Items[Index] = nil
+		self.ItemCount = self.ItemCount - 1
+	end
+end
+
+function TCombofield:Update(dt)
 	if not self.Hidden and not self.Disabled then
 		if self.Grabbed then
 			local x = love.mouse.getX() - self:x()
@@ -319,55 +374,85 @@ function TTextfield:Update(dt)
 	end
 end
 
-function TTextfield:Render()
+function TCombofield:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:Width(), self.Size.Height
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
-		local TextY = (Height - Font:getHeight())/2
-
-		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)
+		
+		love.graphics.setScissor(x, y, Width, Height)
 		love.graphics.setColor(unpack(Theme.Border))
 		love.graphics.rectangle("line", x, y, Width, Height)
-
+		
 		love.graphics.setColor(unpack(Theme.Background))
-		love.graphics.rectangle("fill", x, y, Width, Height)
-
-		local Text = self.Text
-		local Length = #self.Text
-		if self.Password then
-			Text = string.rep("*", Length)
-		end
-		love.graphics.setScissor(x, y, Width, Height)
-		love.graphics.setFont(Font)
-		if #self.Text > 0 then
-			love.graphics.setColor(unpack(Theme.Text))
-			love.graphics.print(Text, x - self.TextOffset, y + TextY)
-		else
-			love.graphics.setColor(unpack(Theme.HintText))
-			love.graphics.print(self.HintText, x, y + TextY)
-		end
-
-		if not self.Disabled and self:IsFirst() then
-			if love.timer.getTime() - self.Timer > 0.5 then
-				self.Tick = not self.Tick
-				self.Timer = love.timer.getTime()
+		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
+		
+		if self.Text then
+			local TextY = (Height - Font:getHeight())/2
+			local Text = self.Text
+			local Length = #self.Text
+			if self.Password then
+				Text = string.rep("*", Length)
 			end
-		elseif self.Tick then
-			self.Tick = nil
-		end
-
-		if self.Length == 0 then
-			if self.Tick then
-				love.graphics.print("|", x + Font:getWidth(Text:sub(1, self.Start)) - self.TextOffset - 2, y + TextY)
-			end
-		else
-			love.graphics.setColor(unpack(Theme.SelectedText))
-			if self.Length > 0 then
-				love.graphics.rectangle("fill", x + Font:getWidth(Text:sub(1, self.Start)) - self.TextOffset, y + TextY, Font:getWidth(Text:sub(self.Start + 1, self.Start + self.Length)), Font:getHeight())
+			love.graphics.setScissor(x, y, Width, Height)
+			love.graphics.setFont(Font)
+			if #self.Text > 0 then
+				love.graphics.setColor(unpack(Theme.Text))
+				love.graphics.print(Text, x - self.TextOffset, y + TextY)
 			else
-				love.graphics.rectangle("fill", x + Font:getWidth(Text:sub(1, self.Start + self.Length)) - self.TextOffset, y + TextY, Font:getWidth(Text:sub(self.Start + self.Length + 1, self.Start)), Font:getHeight())
+				love.graphics.setColor(unpack(Theme.HintText))
+				love.graphics.print(self.HintText, x, y + TextY)
+			end
+
+			if not self.Disabled and self:IsFirst() then
+				if love.timer.getTime() - self.Timer > 0.5 then
+					self.Tick = not self.Tick
+					self.Timer = love.timer.getTime()
+				end
+			elseif self.Tick then
+				self.Tick = nil
+			end
+
+			if self.Length == 0 then
+				if self.Tick then
+					love.graphics.print("|", x + Font:getWidth(Text:sub(1, self.Start)) - self.TextOffset - 2, y + TextY)
+				end
+			else
+				love.graphics.setColor(unpack(Theme.SelectedText))
+				if self.Length > 0 then
+					love.graphics.rectangle("fill", x + Font:getWidth(Text:sub(1, self.Start)) - self.TextOffset, y + TextY, Font:getWidth(Text:sub(self.Start + 1, self.Start + self.Length)), Font:getHeight())
+				else
+					love.graphics.rectangle("fill", x + Font:getWidth(Text:sub(1, self.Start + self.Length)) - self.TextOffset, y + TextY, Font:getWidth(Text:sub(self.Start + self.Length + 1, self.Start)), Font:getHeight())
+				end
+			end
+		end
+		
+		if self.Open then
+			local FontHeight = Font:getHeight()
+			local BoxHeight = self.ItemCount * (FontHeight + 5)
+			love.graphics.setScissor(x, y + Height, Width, BoxHeight)
+			
+			love.graphics.setColor(unpack(Theme.Border))
+			love.graphics.rectangle("line", x, y + Height, Width, BoxHeight)
+			
+			love.graphics.setColor(unpack(Theme.Background))
+			love.graphics.rectangle("fill", x + 1, y + Height + 1, Width - 2, BoxHeight - 2)
+			
+			love.graphics.setColor(unpack(Theme.Text))
+			local HeightOffset = 0
+			for Index, Item in pairs(self.Items) do
+				love.graphics.print(Item, x + 2.5, y + Height + HeightOffset + 2.5)
+				if self.Selected == Index then
+					love.graphics.setColor(unpack(Theme.Selected))
+					love.graphics.rectangle("fill", x + 1, y + Height + HeightOffset, Width, FontHeight + 5)
+					love.graphics.setColor(unpack(Theme.Text))
+				elseif self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) then
+					love.graphics.setColor(unpack(Theme.Hover))
+					love.graphics.rectangle("fill", x + 1, y + Height + HeightOffset, Width, FontHeight + 5)
+					love.graphics.setColor(unpack(Theme.Text))
+				end
+				HeightOffset = HeightOffset + FontHeight + 5
 			end
 		end
 	end

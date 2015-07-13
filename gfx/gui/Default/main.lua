@@ -124,3 +124,18 @@ Combobox = {
 	Font = love.graphics.getFont(),
 	Cursor = love.mouse.getSystemCursor("hand"),
 }
+
+Combofield = {
+	Border = {15, 15, 15, 255},
+	Background = {255, 255, 255, 255},
+	Text = {38, 38, 38, 255},
+	Selected = {0, 0, 0, 60},
+	Hover = {100, 100, 100, 60},
+	
+	SelectedText = {100, 100, 100, 100},
+	HintText = {100, 100, 100, 255},
+	
+	Font = love.graphics.getFont(),
+	HandCursor = love.mouse.getSystemCursor("hand"),
+	TextCursor = love.mouse.getSystemCursor("ibeam"),
+}
