@@ -1,8 +1,8 @@
 -- Modules
 if jit.arch == "x86" then
 	if jit.os == "Windows" then
-		package.cpath = ";.\\bin\\win\\?.dll"
-		package.path = ";.\\bin\\win\\?.lua"
+		package.cpath = ";./bin/win/?.dll"
+		package.path = ";./bin/win/?.lua"
 	elseif jit.os == "OSX" then
 		package.cpath = ";./bin/osx/?.so"
 		package.path = ";./bin/osx/?.lua"
@@ -12,8 +12,8 @@ if jit.arch == "x86" then
 	end
 elseif jit.arch == "x64" then
 	if jit.os == "Windows" then
-		package.cpath = ";.\\bin\\win64\\?.dll"
-		package.path = ";.\\bin\\win64\\?.lua"
+		package.cpath = ";./bin/win64/?.dll"
+		package.path = ";./bin/win64/?.lua"
 	elseif jit.os == "OSX" then
 		package.cpath = ";./bin/osx64/?.so"
 		package.path = ";./bin/osx64/?.lua"
@@ -60,6 +60,9 @@ for i = 1, 50 do
 	game.Listbox:AddItem("test item "..i)
 end
 game.Combobox = gui.CreateCombobox(10, 310, 200, 20, game.Window)
+for i = 1, 5 do
+	game.Combobox:AddItem("test item "..i)
+end
 
 function love.load()
 	commands.load()

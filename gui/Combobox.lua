@@ -42,6 +42,16 @@ function TCombobox:RemoveItem(Index)
 	end
 end
 
+function TCombobox:MouseClicked(x, y)
+	if not self.Disabled and not self.Hidden then
+		self.Dropped = mil
+		self.Grabbed = {x = x - self:x(), y = y - self:y()}
+		self:OnClick(self.Grabbed.x, self.Grabbed.y)
+		self:SetHoverAll()
+		self.Open = not self.Open
+	end
+end
+
 function TCombobox:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
@@ -57,6 +67,14 @@ function TCombobox:Render(dt)
 		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
 		
 		if self.Open then
+			local BoxHeight = self.ItemCount * (Font:getHeight() + 5)
+			love.graphics.setScissor(x, y + Height, Width, BoxHeight)
+			
+			love.graphics.setColor(unpack(Theme.Border))
+			love.graphics.rectangle("line", x, y + Height, Width, BoxHeight)
+			
+			love.graphics.setColor(unpack(Theme.Background))
+			love.graphics.rectangle("fill", x + 1, y + Height + 1, Width - 2, BoxHeight - 2)
 		end
 	end
 end
