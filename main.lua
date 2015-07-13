@@ -26,18 +26,9 @@ end
 ffi = require("ffi")
 require("modules.console")
 require("modules.string")
---require("lfs")
+require("lfs")
 require("enet")
 require("gui")
-
-function testf()
-	print("id: "..tostring(require("lfs")))
-	print(lfs)
-end
-env = {require = require, print = print}
-setfenv(testf, env)
-coroutine.resume(coroutine.create(testf))
-print(lfs)
 
 -- Game
 game = {}
