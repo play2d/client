@@ -31,7 +31,12 @@ require("enet")
 require("gui")
 
 -- Game
-game = {}
+game = {
+	VERSION = "0001a";			-- Version String
+	CODENAME = "Lua rox";		-- Version codename
+	DATE = "13/07/2015";		-- Last update
+}
+
 require("game.constants")
 require("game.commands")
 require("game.config")
