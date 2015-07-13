@@ -199,6 +199,13 @@ function gui.TGadget:SetItem(Index, Item, ...)
 	end
 end
 
+-- Returns: The gadget item at this index
+function gui.TGadget:GetItem(Index)
+	if self.Items then
+		return self.Items[Index]
+	end
+end
+
 -- Description: Removes a item
 function gui.TGadget:RemoveItem(Index)
 	if self.Items then

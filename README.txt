@@ -39,9 +39,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Special thanks to:
 
-Livia - Support, Programmer, Linux port
-Yank - Support
+Livia - Programmer, Linux port
+Yank - Programmer
 Magnus - Support
 Dark - Support, Graphics, Linux port
 Pagyra - Graphics
-RYX_Aria - Skins
+RYX_Aria - Graphics
+LuaPower - Dynamic libraries
