@@ -64,6 +64,20 @@ for i = 1, 5 do
 	game.Combobox:AddItem("test item "..i)
 end
 
+-- Desktop test
+game.StartButton = gui.CreateButton("Start", 10, 10, 100, 20, game.Desktop)
+function game.StartButton:OnClick()
+    local StartWindow = gui.CreateWindow("Start Game", 100, 100, 200, 100, game.Desktop, true)
+    local Label = gui.CreateLabel("Name:", 10, 30, StartWindow)
+    local Textfield = gui.CreateTextfield(60, 30, 100, 20, StartWindow)
+    local Button = gui.CreateButton("Go Play", 10, 60, 100, 20, StartWindow)
+
+    function Button:OnClick()
+        StartWindow:Hide()
+    end
+end
+
+
 function love.load()
 	commands.load()
 	language.load()
