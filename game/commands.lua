@@ -23,3 +23,5 @@ function commands.load()
 	end
 	commands.load = nil
 end
+
+hook.Add("load", commands.load)
