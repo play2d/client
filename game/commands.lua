@@ -8,16 +8,17 @@ function parse(command)
 end
 
 function commands.load()
-	local Files = love.filesystem.getDirectoryItems("sys/commands")
-	for _, File in pairs(Files) do
-		local Command = string.match(File, "(%a+)%p(%a+)")
-		local Path = "sys/commands/"..File
-		if love.filesystem.isFile(Path) then
-			local Okay, f = pcall(love.filesystem.load, Path)
-			if f then
-				commands.list[string.lower(Command)] = f
-			else
-				print("Lua Error [Command: "..Command.."]: "..f)
+	for File in lfs.dir("sys/commands") do -- CODE CRASHES HERE
+		if File ~= "." and File ~= ".." then
+			local Command = string.match(File, "(%a+)%p(%a+)")
+			local Path = "sys/commands/"..File
+			if lfs.attributes(Path, "mode") == "file" then
+				local Okay, f = loadfile(Path)
+				if f then
+					commands.list[string.lower(Command)] = f
+				else
+					print("Lua Error [Command: "..Command.."]: "..f)
+				end
 			end
 		end
 	end
