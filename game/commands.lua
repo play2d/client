@@ -14,7 +14,7 @@ function commands.load()
 			local Path = "sys/commands/"..File
 			if lfs.attributes(Path, "mode") == "file" then
 				local Okay, f = loadfile(Path)
-				if f then
+				if Okay then
 					commands.list[string.lower(Command)] = f
 				else
 					print("Lua Error [Command: "..Command.."]: "..f)
