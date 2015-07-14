@@ -113,7 +113,7 @@ function TCombobox:Render(dt)
 					love.graphics.setColor(unpack(Theme.Selected))
 					love.graphics.rectangle("fill", x + 1, y + Height + HeightOffset, Width, FontHeight + 5)
 					love.graphics.setColor(unpack(Theme.Text))
-				elseif self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) and self:IsFirst() then
+				elseif self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) and self:IsHover() then
 					love.graphics.setColor(unpack(Theme.Hover))
 					love.graphics.rectangle("fill", x + 1, y + Height + HeightOffset, Width, FontHeight + 5)
 					love.graphics.setColor(unpack(Theme.Text))

@@ -368,6 +368,11 @@ function gui.TGadget:IsFirst()
 	return self:GetFirstAll() == self
 end
 
+-- Returns: [true/false] Checks if it's the gadget that has the mouse in
+function gui.TGadget:IsHover()
+	return self:GetHoverAll() == self
+end
+
 -- Returns: [Gadget] The parent's gadget that goes after this one [Intended to switch gadgets with tab]
 function gui.TGadget:NextGadget()
 	if self.Parent then
