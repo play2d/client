@@ -79,12 +79,12 @@ game.Window3 = gui.CreateWindow("Another test window", 530, 50, 200, 300, game.D
 -- Desktop test
 game.StartButton = gui.CreateButton("Start", 10, 10, 100, 20, game.Desktop)
 function game.StartButton:OnClick()
-    local StartWindow = gui.CreateWindow("Start Game", 100, 100, 200, 100, game.Desktop, true)
-    local Label = gui.CreateLabel("Name:", 10, 30, StartWindow)
-    local Textfield = gui.CreateTextfield(60, 30, 100, 20, StartWindow)
-    local Button = gui.CreateButton("Go Play", 10, 60, 100, 20, StartWindow)
+	local StartWindow = gui.CreateWindow("Start Game", 100, 100, 200, 100, game.Desktop, true)
+	local Label = gui.CreateLabel("Name:", 10, 30, StartWindow)
+	local Textfield = gui.CreateTextfield(60, 30, 100, 20, StartWindow)
+	local Button = gui.CreateButton("Go Play", 10, 60, 100, 20, StartWindow)
 
-    function Button:OnClick()
-        StartWindow:Hide()
-    end
+	function Button:OnClick()
+		StartWindow:Hide()
+	end
 end
