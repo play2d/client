@@ -27,7 +27,7 @@ function TCheckbox:Render(dt)
 		love.graphics.setColor(unpack(Theme.Border))
 		love.graphics.rectangle("line", x, y, Width, Height)
 
-		if self:GetHoverAll() == self then
+		if self:IsHover() then
 			love.graphics.setColor(unpack(Theme.HoverBackground))
 		else
 			love.graphics.setColor(unpack(Theme.Background))

@@ -55,7 +55,7 @@ function TTabber:Render()
 
 				love.graphics.setColor(unpack(ItemTheme.Text))
 				love.graphics.print(Item.Text, x + 2.5, y + 1)
-			elseif self:GetHoverAll() == self and self:MouseHoverArea(Offset, 0, Width, Height) then
+			elseif self:IsHover() and self:MouseHoverArea(Offset, 0, Width, Height) then
 				love.graphics.setColor(unpack(ItemTheme.Border))
 				love.graphics.rectangle("line", x, y, Width, Height)
 
