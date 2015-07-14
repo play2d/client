@@ -35,7 +35,7 @@ Hook.Data.wheelmoved = {}
 for Callback, Functions in pairs(Hook.Data) do
 	_G.love[Callback] = function(...)
 		for Func, _ in pairs(Functions) do
-			Func(unpack({...}))
+			Func(...)
 		end
 	end
 end
@@ -78,7 +78,7 @@ function Hook.Call(Callback, ...)
 		return false, "Hook '" .. Callback .. "' does not exist"
 	end
 	for Function, _ in pairs(Hook.Data[Callback]) do
-		Function(unpack({...}))
+		Function(...)
 	end
 	return true
 end
