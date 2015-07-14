@@ -68,7 +68,7 @@ function TSlider:Render(dt)
 
 			if self.Grabbed then
 				love.graphics.setColor(unpack(Color.Bar.HoldBackground))
-			elseif self:IsHover() then
+			elseif self:IsHovered() then
 				love.graphics.setColor(unpack(Color.Bar.HoverBackground))
 			else
 				love.graphics.setColor(unpack(Color.Bar.Background))

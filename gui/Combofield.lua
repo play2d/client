@@ -452,7 +452,7 @@ function TCombofield:Render(dt)
 					love.graphics.setColor(unpack(Theme.Selected))
 					love.graphics.rectangle("fill", x + 1, y + Height + HeightOffset, Width, FontHeight + 5)
 					love.graphics.setColor(unpack(Theme.Text))
-				elseif self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) and self:IsHover() then
+				elseif self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) and self:IsHovered() then
 					love.graphics.setColor(unpack(Theme.Hover))
 					love.graphics.rectangle("fill", x + 1, y + Height + HeightOffset, Width, FontHeight + 5)
 					love.graphics.setColor(unpack(Theme.Text))

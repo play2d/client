@@ -35,7 +35,7 @@ function TButton:Render(dt)
 			love.graphics.rectangle("fill", x, y + Height/2, Width, Height/2)
 
 			love.graphics.setColor(unpack(Theme.HoldText))
-		elseif self:IsHover() then
+		elseif self:IsHovered() then
 			love.graphics.setColor(unpack(Theme.HoverTop))
 			love.graphics.rectangle("fill", x, y, Width, Height/2)
 

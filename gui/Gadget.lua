@@ -369,7 +369,7 @@ function gui.TGadget:IsFirst()
 end
 
 -- Returns: [true/false] Checks if it's the gadget that has the mouse in
-function gui.TGadget:IsHover()
+function gui.TGadget:IsHovered()
 	return self:GetHoverAll() == self
 end
 
