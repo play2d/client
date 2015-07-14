@@ -70,6 +70,10 @@ for i = 1, 5 do
 	game.Combobox:AddItem("test item "..i)
 	game.Combofield:AddItem("test item "..i)
 end
+game.Progress = gui.CreateProgressbar(10, 370, 200, 20, game.Window)
+game.Progress.Progress = 100
+game.Progress.Text = "Downloading"
+game.Window3 = gui.CreateWindow("Another test window", 530, 50, 200, 300, game.Desktop, true)
 
 -- Desktop test
 game.StartButton = gui.CreateButton("Start", 10, 10, 100, 20, game.Desktop)

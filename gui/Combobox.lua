@@ -85,6 +85,7 @@ function TCombobox:Render(dt)
 		love.graphics.setColor(unpack(Theme.Background))
 		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
 		
+		love.graphics.setFont(Font)
 		if self.Text then
 			love.graphics.setColor(unpack(Theme.Text))
 			love.graphics.print(self.Text, x + 2.5, y + (Height - Font:getHeight())/2)

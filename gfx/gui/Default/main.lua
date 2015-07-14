@@ -141,3 +141,14 @@ Combofield = {
 	TextCursor = love.mouse.getSystemCursor("ibeam"),
 	DropImage = love.graphics.newImage("gfx/gui/Default/down.png"),
 }
+
+Progressbar = {
+	Border = {15, 15, 15, 255},
+	Background = {120, 120, 120, 255},
+	Top = {50, 255, 50, 255},
+	Bottom = {25, 200, 25, 255},
+	
+	Text = {38, 38, 38, 255},
+	
+	Font = love.graphics.getFont()
+}

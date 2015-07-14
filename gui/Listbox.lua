@@ -65,6 +65,7 @@ function TListbox:Render(dt)
 		local x, y = self:x(), self:y()
 		local Width, Height = self:Width(), self:Height()
 		local Theme = self:GetTheme()
+		local Font = self:GetFont()
 
 		love.graphics.setScissor(x, y, Width, Height)
 		love.graphics.setColor(unpack(Theme.Border))
@@ -74,7 +75,8 @@ function TListbox:Render(dt)
 		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
 
 		love.graphics.setColor(unpack(Theme.Text))
-		local FontHeight = self:GetFont():getHeight()
+		love.graphics.setFont(Font)
+		local FontHeight = Font:getHeight()
 		local HeightOffset = -self.Slider.Value
 		for Index, Item in pairs(self.Items) do
 			if HeightOffset >= -FontHeight then
