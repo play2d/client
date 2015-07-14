@@ -24,4 +24,4 @@ function commands.load()
 	commands.load = nil
 end
 
-hook.Add("load", commands.load)
+Hook.Add("load", commands.load)

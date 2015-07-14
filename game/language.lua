@@ -47,4 +47,4 @@ function language.load()
 	language.load = nil
 end
 
-hook.Add("load", language.load)
+Hook.Add("load", language.load)

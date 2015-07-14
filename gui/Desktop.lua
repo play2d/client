@@ -21,33 +21,35 @@ function TDesktop:Init(ThemePath)
 	self.FirstHoverMouseMovement = love.timer.getTime()
 	self.Theme = {love = love}
 
-	hook.Add("draw", function()
-		self:Render(love.timer.getDelta() * 1000)
-	end)
+	if Hook then
+		Hook.Add("draw", function()
+			self:Render(love.timer.getDelta() * 1000)
+		end)
 
-	hook.Add("update", function(dt)
-		self:Update(dt * 1000)
-	end)
+		Hook.Add("update", function(dt)
+			self:Update(dt * 1000)
+		end)
 
-	hook.Add("mousepressed", function(x, y, button)
-		self:mousepressed(x, y, button)
-	end)
+		Hook.Add("mousepressed", function(x, y, button)
+			self:mousepressed(x, y, button)
+		end)
 
-	hook.Add("mousereleased", function(x, y, button)
-		self:mousereleased(x, y, button)
-	end)
+		Hook.Add("mousereleased", function(x, y, button)
+			self:mousereleased(x, y, button)
+		end)
 
-	hook.Add("mousemoved", function(x, y, dx, dy)
-		self:mousemoved(x, y, dx, dy)
-	end)
+		Hook.Add("mousemoved", function(x, y, dx, dy)
+			self:mousemoved(x, y, dx, dy)
+		end)
 
-	hook.Add("keypressed", function(key, unicode)
-		self:keypressed(key)
-	end)
+		Hook.Add("keypressed", function(key, unicode)
+			self:keypressed(key)
+		end)
 
-	hook.Add("textinput", function(text)
-		self:textinput(text)
-	end)
+		Hook.Add("textinput", function(text)
+			self:textinput(text)
+		end)
+	end
 
 	local f = assert(loadfile(ThemePath))
 	setfenv(f, self.Theme)
