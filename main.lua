@@ -89,3 +89,5 @@ function game.StartButton:OnClick()
 		StartWindow:Hide()
 	end
 end
+
+love.graphics.max = 60

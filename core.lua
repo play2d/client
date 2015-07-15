@@ -17,6 +17,8 @@ function love.run()
 
 	-- Main loop time.
 	while true do
+		local startTime = tim.getTime()
+
 		-- Process events.
 		even.pump()
 		for e,a,b,c,d in even.poll() do
@@ -43,6 +45,18 @@ function love.run()
 			graphs.present()
 		end
 
-		tim.sleep(0.001)
+		local endTime = tim.getTime()
+		local deltaF = endTime - startTime
+
+		if graphs.max then
+			local maxDelta = 1 / graphs.max
+			local sleep = maxDelta - deltaF
+
+			if sleep >= 0.001 then
+				tim.sleep(sleep)
+			end
+		else
+			tim.sleep(0.001)
+		end
 	end
 end
