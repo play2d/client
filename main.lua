@@ -23,6 +23,7 @@ elseif jit.arch == "x64" then
 	end
 end
 
+require("core")
 ffi = require("ffi")
 require("modules.hook")
 require("modules.console")
