@@ -41,7 +41,7 @@ function love.run()
 		if love.window and graphs and love.window.isCreated() then
 			graphs.clear()
 			graphs.origin()
-			love.draw()
+			love.draw(delta)
 			graphs.present()
 		end
 
