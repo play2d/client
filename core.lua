@@ -42,6 +42,13 @@ function love.run()
 			graphs.clear()
 			graphs.origin()
 			love.draw(delta)
+
+			local r, g, b, a = graphs.getColor()
+
+			graphs.setColor(200, 200, 200, 175)
+			graphs.print("FPS: "..tostring(tim.getFPS()), 0, 0)
+			
+			graphs.setColor(r, g, b, a)
 			graphs.present()
 		end
 
