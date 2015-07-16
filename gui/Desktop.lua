@@ -22,8 +22,8 @@ function TDesktop:Init(ThemePath)
 	self.Theme = {love = love}
 
 	if Hook then
-		Hook.Add("draw", function()
-			self:Render(love.timer.getDelta() * 1000)
+		Hook.Add("draw", function(dt)
+			self:Render(dt * 1000)
 		end)
 
 		Hook.Add("update", function(dt)
