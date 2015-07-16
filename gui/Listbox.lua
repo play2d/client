@@ -1,6 +1,7 @@
 local TListbox = {}
 local TListboxMetatable = {__index = TListbox}
 TListbox.Type = "Listbox"
+TListbox.ItemCount = 0
 setmetatable(TListbox, gui.TGadgetMetatable)
 
 function gui.CreateListbox(x, y, Width, Height, Parent)
@@ -36,16 +37,22 @@ function TListbox:AddGadget(Gadget)
 end
 
 function TListbox:SetItem(Index, Item)
-	self.Items[Index] = Item
-
-	local Count = 0
-	for _, Item in pairs(self.Items) do
-		Count = Count + 1
+	if not self.Items[Index] then
+		self.ItemCount = self.ItemCount + 1
 	end
+	self.Items[Index] = Item
+	
 	self.Slider.Values = {}
 	self.Slider.Values.Count = self.Size.Height
-	self.Slider.Values.Max = Count * (self:GetFont():getHeight() + 5) - self.Size.Height
+	self.Slider.Values.Max = self.ItemCount * (self:GetFont():getHeight() + 5) - self.Size.Height
 	self.Slider.Hidden = self.Slider.Values.Max < self.Slider.Values.Count
+end
+
+function TListbox:RemoveItem(Index)
+	if self.Items[Index] then
+		self.Items[Index] = nil
+		self.ItemCount = self.ItemCount - 1
+	end
 end
 
 function TListbox:HoverGadget()

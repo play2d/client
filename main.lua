@@ -45,6 +45,13 @@ require("game.config")
 require("game.language")
 require("game.wrapper")
 
+Hook.Add("draw",
+	function ()
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.print(tostring(jit.version), 10, 30)
+	end
+)
+
 -- GUI
 game.Desktop = gui.CreateDesktop("gfx/gui/Default/main.lua")
 game.Window = gui.CreateWindow("Test window", 100, 100, 300, 450, game.Desktop, true)
