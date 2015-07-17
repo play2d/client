@@ -4,11 +4,11 @@ TListview.Type = "Listview"
 TListview.ItemCount = 0
 setmetatable(TListview, gui.TGadgetMetatable)
 
-function gui.CreateListview(x, y, Width, Height, Parent)
+function gui.CreateListview(x, y, Height, Parent)
 	local Listview = TListview.New()
 	if Parent:AddGadget(Listview) then
 		Listview:SetPosition(x, y)
-		Listview:SetSize(Width, Height)
+		Listview:SetSize(0, Height)
 		return Listview:Init()
 	end
 end
@@ -22,6 +22,7 @@ end
 
 function TListview:Init()
 	self.Items = {}
+	self.Column = {}
 	gui.CreateSlider(gui.SLIDER_VER, self.Size.Width - 12, 1, 12, self.Size.Height - 2, self, 1, 1)
 	return self
 end
@@ -44,8 +45,33 @@ function TListview:SetItem(Index, ...)
 	
 	self.Slider.Values = {}
 	self.Slider.Values.Count = self.Size.Height
-	self.Slider.Values.Max = self.ItemCount * (self:GetFont():getHeight() + 5) - self.Size.Height
+	self.Slider.Values.Max = self.ItemCount * (self:GetFont():getHeight() + 5)
 	self.Slider.Hidden = self.Slider.Values.Max < self.Slider.Values.Count
+end
+
+function TListview:AddColumn(Text, Width)
+	self:SetColumn(#self.Column + 1, Text, Width)
+end
+
+function TListview:SetColumn(Index, Text, Width)
+	local Font = self:GetFont()
+	if not Width then
+		Width = Font:getWidth(Text) + 5
+	end
+	if self.Column[Index] then
+		self.Size.Width = self.Size.Width - self.Column[Index].Width
+	end
+	self.Size.Width = self.Size.Width + Width
+	self.Column[Index] = {Text = Text, Width = Width}
+	self.Slider.Offset.x = self.Size.Width - 12
+end
+
+function TListview:RemoveColumn(Index)
+	if self.Column[Index] then
+		local Font = self:GetFont()
+		self.Size.Width = self.Size.Width - self.Column[Index].Width
+		self.Column[Index] = nil
+	end
 end
 
 function TListview:RemoveItem(Index)
@@ -70,38 +96,43 @@ end
 function TListview:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Height = self:Height()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
-
-		love.graphics.setScissor(x, y, Width, Height)
-		love.graphics.setColor(unpack(Theme.Border))
-		love.graphics.rectangle("line", x, y, Width, Height)
-
-		love.graphics.setColor(unpack(Theme.Background))
-		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
-
-		love.graphics.setColor(unpack(Theme.Text))
+		
 		love.graphics.setFont(Font)
+		
 		local FontHeight = Font:getHeight()
-		local HeightOffset = -self.Slider.Value
-		for Index, Item in pairs(self.Items) do
-			if HeightOffset >= -FontHeight then
-				if HeightOffset > Height then
-					break
+		for ColumnID, Column in pairs(self.Column) do
+			local Width = Column.Width
+			local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
+			love.graphics.setScissor(x, y, Width, Height)
+			love.graphics.setColor(unpack(Theme.Border))
+			love.graphics.rectangle("line", x, y, Width, Height)
+			
+			love.graphics.setColor(unpack(Theme.Background))
+			love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
+			
+			love.graphics.setColor(unpack(Theme.Text))
+			for Index, Item in pairs(self.Items) do
+				if HeightOffset >= -FontHeight then
+					if HeightOffset > Height then
+						break
+					end
+					love.graphics.print(Item[ColumnID], x + 2.5, y + HeightOffset + 2.5)
+					if self.Selected == Index then
+						love.graphics.setColor(unpack(Theme.Selected))
+						love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width, FontHeight + 5)
+						love.graphics.setColor(unpack(Theme.Text))
+					elseif self:MouseHoverArea(0, HeightOffset, self.Size.Width, FontHeight + 2) and self:IsHovered() then
+						love.graphics.setColor(unpack(Theme.Hover))
+						love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width, FontHeight + 5)
+						love.graphics.setColor(unpack(Theme.Text))
+					end
 				end
-				love.graphics.print(Item, x + 2.5, y + HeightOffset + 2.5)
-				if self.Selected == Index then
-					love.graphics.setColor(unpack(Theme.Selected))
-					love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width - 5, FontHeight + 5)
-					love.graphics.setColor(unpack(Theme.Text))
-				elseif self:MouseHoverArea(0, HeightOffset, Width, FontHeight + 2) and self:IsHovered() then
-					love.graphics.setColor(unpack(Theme.Hover))
-					love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width - 5, FontHeight + 5)
-					love.graphics.setColor(unpack(Theme.Text))
-				end
+				HeightOffset = HeightOffset + FontHeight + 5
 			end
-			HeightOffset = HeightOffset + FontHeight + 5
+			x = x + Width - 1
 		end
 		self.Slider:Render(dt)
 	end
@@ -116,7 +147,7 @@ function TListview:MouseClicked(x, y)
 
 		local Width, Height = self:Width(), self:Height()
 		local FontHeight = self:GetFont():getHeight()
-		local HeightOffset = -self.Slider.Value
+		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
 		for Index, Item in pairs(self.Items) do
 			if HeightOffset >= -FontHeight then
 				if HeightOffset > Height then

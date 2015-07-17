@@ -44,7 +44,7 @@ function TListbox:SetItem(Index, Item)
 	
 	self.Slider.Values = {}
 	self.Slider.Values.Count = self.Size.Height
-	self.Slider.Values.Max = self.ItemCount * (self:GetFont():getHeight() + 5) - self.Size.Height
+	self.Slider.Values.Max = self.ItemCount * (self:GetFont():getHeight() + 5)
 	self.Slider.Hidden = self.Slider.Values.Max < self.Slider.Values.Count
 end
 
@@ -84,7 +84,7 @@ function TListbox:Render(dt)
 		love.graphics.setColor(unpack(Theme.Text))
 		love.graphics.setFont(Font)
 		local FontHeight = Font:getHeight()
-		local HeightOffset = -self.Slider.Value
+		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
 		for Index, Item in pairs(self.Items) do
 			if HeightOffset >= -FontHeight then
 				if HeightOffset > Height then
@@ -116,7 +116,7 @@ function TListbox:MouseClicked(x, y)
 
 		local Width, Height = self:Width(), self:Height()
 		local FontHeight = self:GetFont():getHeight()
-		local HeightOffset = -self.Slider.Value
+		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
 		for Index, Item in pairs(self.Items) do
 			if HeightOffset >= -FontHeight then
 				if HeightOffset > Height then

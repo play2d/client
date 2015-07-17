@@ -152,3 +152,13 @@ Progressbar = {
 	
 	Font = love.graphics.getFont()
 }
+
+Listview = {
+	Border = {15, 15, 15, 255},
+	Background = {255, 255, 255, 255},
+	Text = {38, 38, 38, 255},
+	Selected = {0, 0, 0, 60},
+	Hover = {100, 100, 100, 60},
+
+	Font = love.graphics.getFont(),
+}
