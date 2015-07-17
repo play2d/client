@@ -9,6 +9,7 @@ end
 
 function commands.load()
 	for File in lfs.dir("sys/commands") do -- CODE CRASHES HERE
+		print("File: "..File)
 		if File ~= "." and File ~= ".." then
 			local Command = string.match(File, "(%a+)%p(%a+)")
 			local Path = "sys/commands/"..File
@@ -25,4 +26,4 @@ function commands.load()
 	commands.load = nil
 end
 
---Hook.Add("load", commands.load)
+Hook.Add("load", commands.load)
