@@ -85,23 +85,22 @@ function TListbox:Render(dt)
 		love.graphics.setFont(Font)
 		local FontHeight = Font:getHeight()
 		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
-		for Index, Item in pairs(self.Items) do
-			if HeightOffset >= -FontHeight then
-				if HeightOffset > Height then
-					break
-				end
-				love.graphics.print(Item, x + 2.5, y + HeightOffset + 2.5)
+		local FirstItem = math.floor((self.Slider.Value / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))
+		local LastItem = FirstItem + math.min(self.ItemCount, math.ceil(Height / (FontHeight + 5)))
+		for Index = FirstItem, LastItem do
+			local Item = self.Items[Index]
+			if Item then
+				love.graphics.print(Item, x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset)
 				if self.Selected == Index then
 					love.graphics.setColor(unpack(Theme.Selected))
-					love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width - 5, FontHeight + 5)
+					love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + HeightOffset, Width - 5, FontHeight + 5)
 					love.graphics.setColor(unpack(Theme.Text))
-				elseif self:MouseHoverArea(0, HeightOffset, Width, FontHeight + 2) and self:IsHovered() then
+				elseif self:MouseHoverArea(0, (Index - 1) * (FontHeight + 5) + HeightOffset, Width, FontHeight + 4.5) and self:IsHovered() then
 					love.graphics.setColor(unpack(Theme.Hover))
-					love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width - 5, FontHeight + 5)
+					love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + HeightOffset, Width - 5, FontHeight + 5)
 					love.graphics.setColor(unpack(Theme.Text))
 				end
 			end
-			HeightOffset = HeightOffset + FontHeight + 5
 		end
 		self.Slider:Render(dt)
 	end
@@ -117,17 +116,15 @@ function TListbox:MouseClicked(x, y)
 		local Width, Height = self:Width(), self:Height()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
-		for Index, Item in pairs(self.Items) do
-			if HeightOffset >= -FontHeight then
-				if HeightOffset > Height then
-					break
-				end
-				if self:MouseHoverArea(0, HeightOffset, Width, FontHeight + 2) then
+		local FirstItem = math.floor((self.Slider.Value / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))
+		local LastItem = FirstItem + math.min(self.ItemCount, math.ceil(Height / (FontHeight + 5)))
+		for Index = FirstItem, LastItem do
+			if self.Items[Index] then
+				if self:MouseHoverArea(0, (Index - 1) * (FontHeight + 5) + HeightOffset, Width, FontHeight + 4.5) then
 					self:OnSelect(Index)
 					self.Selected = Index
 				end
 			end
-			HeightOffset = HeightOffset + FontHeight + 5
 		end
 	end
 end

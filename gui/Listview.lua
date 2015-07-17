@@ -103,6 +103,8 @@ function TListview:Render(dt)
 		love.graphics.setFont(Font)
 		
 		local FontHeight = Font:getHeight()
+		local FirstItem = math.ceil(((self.Slider.Value + FontHeight + 5) / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))
+		local LastItem = FirstItem + math.min(self.ItemCount, math.floor((Height - FontHeight - 5) / (FontHeight + 5)))
 		for ColumnID, Column in pairs(self.Column) do
 			local Width = Column.Width
 			local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)) + FontHeight + 5
@@ -114,23 +116,20 @@ function TListview:Render(dt)
 			love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
 			
 			love.graphics.setColor(unpack(Theme.Text))
-			for Index, Item in pairs(self.Items) do
-				if HeightOffset >= -FontHeight then
-					if HeightOffset > Height then
-						break
-					end
-					love.graphics.print(Item[ColumnID], x + 2.5, y + HeightOffset + 2.5)
+			for Index = FirstItem, LastItem do
+				local Item = self.Items[Index]
+				if Item then
+					love.graphics.print(Item[ColumnID], x + 2.5, y + (Index - 1) * (FontHeight + 5) + 5 + HeightOffset)
 					if self.Selected == Index then
 						love.graphics.setColor(unpack(Theme.Selected))
-						love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width, FontHeight + 5)
+						love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset, Width, FontHeight + 5)
 						love.graphics.setColor(unpack(Theme.Text))
-					elseif self:MouseHoverArea(0, HeightOffset, self.Size.Width, FontHeight + 2) and self:IsHovered() then
+					elseif self:MouseHoverArea(0, (Index - 1) * (FontHeight + 5) + 5 + HeightOffset, self.Size.Width, FontHeight + 4.5) and self:IsHovered() then
 						love.graphics.setColor(unpack(Theme.Hover))
-						love.graphics.rectangle("fill", x + 2.5, y + HeightOffset, Width, FontHeight + 5)
+						love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset, Width, FontHeight + 5)
 						love.graphics.setColor(unpack(Theme.Text))
 					end
 				end
-				HeightOffset = HeightOffset + FontHeight + 5
 			end
 			
 			love.graphics.setColor(unpack(Theme.Border))
@@ -160,17 +159,15 @@ function TListview:MouseClicked(x, y)
 		local Width, Height = self:Width(), self:Height()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)) + FontHeight + 5
-		for Index, Item in pairs(self.Items) do
-			if HeightOffset >= -FontHeight then
-				if HeightOffset > Height then
-					break
-				end
-				if self:MouseHoverArea(0, HeightOffset, Width, FontHeight + 2) then
+		local FirstItem = math.ceil(((self.Slider.Value + FontHeight + 5) / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))
+		local LastItem = FirstItem + math.min(self.ItemCount, math.floor((Height - FontHeight - 5) / (FontHeight + 5)))
+		for Index = FirstItem, LastItem do
+			if self.Items[Index] then
+				if self:MouseHoverArea(0, (Index - 1) * (FontHeight + 5) + 5 + HeightOffset, self.Size.Width, FontHeight + 4.5) and self:IsHovered() then
 					self:OnSelect(Index)
 					self.Selected = Index
 				end
 			end
-			HeightOffset = HeightOffset + FontHeight + 5
 		end
 	end
 end
