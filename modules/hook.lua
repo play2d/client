@@ -34,8 +34,8 @@ Hook.Data.wheelmoved = {}
 
 for Callback, Functions in pairs(Hook.Data) do
 	_G.love[Callback] = function(...)
-		for Func, _ in pairs(Functions) do
-			Func(...)
+		for Index, Function in pairs(Functions) do
+			Function(...)
 		end
 	end
 end
@@ -61,7 +61,7 @@ function Hook.Add(Callback, Func)
 	if not Hook.Data[Callback] then
 		return false, "Hook '" .. Callback .. "' does not exist"
 	end
-	Hook.Data[Callback][Func] = true
+	table.insert(Hook.Data[Callback], Func)
 	return Func
 end
 
@@ -69,7 +69,11 @@ function Hook.Remove(Callback, Func)
 	if not Hook.Data[Callback] then
 		return false, "Hook '" .. Callback .. "' does not exist"
 	end
-	Hook.Data[Callback][Func] = nil
+	for Index, Function in pairs(Hook.Data[Callback]) do
+		if Function == Func then
+			Hook.Data[Callback][Index] = nil
+		end
+	end
 	return true
 end
 
@@ -77,7 +81,7 @@ function Hook.Call(Callback, ...)
 	if not Hook.Data[Callback] then
 		return false, "Hook '" .. Callback .. "' does not exist"
 	end
-	for Function, _ in pairs(Hook.Data[Callback]) do
+	for Index, Function in pairs(Hook.Data[Callback]) do
 		Function(...)
 	end
 	return true

@@ -36,7 +36,7 @@ require("gui")
 
 -- Game
 game = {
-	VERSION = "0001a";			-- Version String
+	VERSION = "0.0.0.1a";			-- Version String
 	CODENAME = "Lua rox";		-- Version codename
 	DATE = "13/07/2015";		-- Last update
 }

@@ -15,9 +15,8 @@ end
 
 function language.list()
 	local List = {}
-	local Files = love.filesystem.getDirectoryItems("sys/language")
-	for _, File in pairs(Files) do
-		if love.filesystem.isFile("sys/language/"..File) then
+	for File in lfs.dir("sys/language") do
+		if lfs.attributes("sys/language/"..File, "mode") == "file" then
 			local Lang = string.match(File, "(.+)%p[%a+]")
 			if #Lang > 0 then
 				table.insert(List, Lang)
@@ -30,7 +29,7 @@ end
 function language.load()
 	local Lang = config["lang"]
 	if Lang and #Lang > 0 then
-		local File = love.filesystem.newFile("sys/language/"..Lang..".txt")
+		local File = io.open("sys/language/"..Lang..".txt", "r")
 		if File then
 			for Line in File:lines() do
 				local Key, Value = Line:match("^%s*(.-)%s*=%s*(.-)%s*$")
@@ -38,6 +37,7 @@ function language.load()
 					language.translation[Key] = Value
 				end
 			end
+			File:close()
 		else
 			print("Failed to open language file")
 		end
