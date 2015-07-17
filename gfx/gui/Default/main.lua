@@ -159,6 +159,8 @@ Listview = {
 	Text = {38, 38, 38, 255},
 	Selected = {0, 0, 0, 60},
 	Hover = {100, 100, 100, 60},
+	Top = {178, 178, 178, 255},
+	Bottom = {153, 153, 153, 255},
 
 	Font = love.graphics.getFont(),
 }

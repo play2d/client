@@ -105,7 +105,7 @@ function TListview:Render(dt)
 		local FontHeight = Font:getHeight()
 		for ColumnID, Column in pairs(self.Column) do
 			local Width = Column.Width
-			local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
+			local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)) + FontHeight + 5
 			love.graphics.setScissor(x, y, Width, Height)
 			love.graphics.setColor(unpack(Theme.Border))
 			love.graphics.rectangle("line", x, y, Width, Height)
@@ -132,6 +132,18 @@ function TListview:Render(dt)
 				end
 				HeightOffset = HeightOffset + FontHeight + 5
 			end
+			
+			love.graphics.setColor(unpack(Theme.Border))
+			love.graphics.rectangle("line", x, y, Width, FontHeight + 5)
+			
+			love.graphics.setColor(unpack(Theme.Top))
+			love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, FontHeight/2 + 2.5)
+			
+			love.graphics.setColor(unpack(Theme.Bottom))
+			love.graphics.rectangle("fill", x + 1, y + FontHeight/2 + 3.5, Width - 2, FontHeight/2 + 1)
+			
+			love.graphics.setColor(unpack(Theme.Text))
+			love.graphics.print(Column.Text, x + 2.5, y + 2.5)
 			x = x + Width - 1
 		end
 		self.Slider:Render(dt)
@@ -147,7 +159,7 @@ function TListview:MouseClicked(x, y)
 
 		local Width, Height = self:Width(), self:Height()
 		local FontHeight = self:GetFont():getHeight()
-		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
+		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)) + FontHeight + 5
 		for Index, Item in pairs(self.Items) do
 			if HeightOffset >= -FontHeight then
 				if HeightOffset > Height then
