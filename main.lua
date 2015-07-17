@@ -24,7 +24,9 @@ elseif jit.arch == "x64" then
 end
 
 require("core")
+lfs = require("lfs")
 ffi = require("ffi")
+
 require("modules.hook")
 require("modules.console")
 require("modules.string")
