@@ -36,3 +36,81 @@ function love.conf(t)
 	t.modules.window = true					-- Enable the window module (boolean)
 	t.modules.thread = true					-- Enable the thread module (boolean)
 end
+
+function love.run()
+	love.math.setRandomSeed(os.time())
+	for i = 1, 3 do love.math.random() end
+ 
+	love.event.pump()
+ 
+	if love.load then love.load(arg) end
+ 
+	-- We don't want the first frame's dt to include time taken by love.load.
+	local tim = love.timer
+	tim.step()
+ 
+	local delta = 0
+ 
+	local graphs = love.graphics
+	local even = love.event
+
+	-- Main loop time.
+	repeat
+		local startTime = tim.getTime()
+
+		-- Process events.
+		even.pump()
+		for e,a,b,c,d in even.poll() do
+			if e == "quit" then
+				if not love.quit or not love.quit() then
+					love.audio.stop()
+					return
+				end
+			end
+			love.handlers[e](a,b,c,d)
+		end
+ 
+		-- Update dt, as we'll be passing it to update
+		tim.step()
+		delta = tim.getDelta()
+ 
+		-- Call update and draw
+		love.update(delta)
+ 		
+		if love.window and graphs and love.window.isCreated() then
+			graphs.clear()
+			graphs.origin()
+			love.draw(delta)
+
+			local r, g, b, a = graphs.getColor()
+
+			graphs.setColor(200, 200, 200, 175)
+			graphs.print("FPS: "..tostring(tim.getFPS()), 0, 0)
+			
+			graphs.setColor(r, g, b, a)
+			graphs.present()
+		end
+
+		local endTime = tim.getTime()
+		local deltaF = endTime - startTime
+
+		if graphs.max then
+			local maxDelta = 1 / graphs.max
+			local sleep = maxDelta - deltaF
+
+			if sleep >= 0.001 then
+				tim.sleep(sleep)
+			end
+		else
+			tim.sleep(0.001)
+		end
+	until false
+end
+
+local ffi = require("ffi")
+ffi.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath); ]]; 
+ffi.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]]
+local liblove = ffi.os == "Windows" and ffi.load("love") or ffi.C
+local docsdir = love.filesystem.getSourceBaseDirectory()
+liblove.PHYSFS_setWriteDir(docsdir)
+liblove.PHYSFS_mount(docsdir, nil, 0)

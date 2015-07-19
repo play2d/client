@@ -1,36 +1,7 @@
--- Modules
-if jit.arch == "x86" then
-	if jit.os == "Windows" then
-		package.cpath = ";./bin/win/?.dll"
-		package.path = ";./bin/win/?.lua"
-	elseif jit.os == "OSX" then
-		package.cpath = ";./bin/osx/?.so"
-		package.path = ";./bin/osx/?.lua"
-	else
-		package.cpath = ";./bin/linux/?.so"
-		package.path = ";./bin/linux/?.lua"
-	end
-elseif jit.arch == "x64" then
-	if jit.os == "Windows" then
-		package.cpath = ";./bin/win64/?.dll"
-		package.path = ";./bin/win64/?.lua"
-	elseif jit.os == "OSX" then
-		package.cpath = ";./bin/osx64/?.so"
-		package.path = ";./bin/osx64/?.lua"
-	else
-		package.cpath = ";./bin/linux64/?.so"
-		package.path = ";./bin/linux64/?.lua"
-	end
-end
-
-require("core")
-lfs = require("lfs")
 ffi = require("ffi")
-
 require("modules.hook")
 require("modules.console")
 require("modules.string")
-require("lfs")
 require("enet")
 require("gui")
 
@@ -45,7 +16,6 @@ require("game.constants")
 require("game.commands")
 require("game.config")
 require("game.language")
-require("game.wrapper")
 
 -- GUI
 game.Desktop = gui.CreateDesktop("gfx/gui/Default/main.lua")

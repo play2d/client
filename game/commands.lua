@@ -14,17 +14,16 @@ function commands.cleanTemp()
 end
 
 function commands.load()
-	for File in lfs.dir("sys/commands") do -- CODE CRASHES HERE
-		if File ~= "." and File ~= ".." then
-			local Command = string.match(File, "(%a+)%p(%a+)")
-			local Path = "sys/commands/"..File
-			if lfs.attributes(Path, "mode") == "file" then
-				local Function, Error = loadfile(Path)
-				if Function then
-					commands.list[string.lower(Command)] = Function
-				else
-					print("Lua Error [Command: "..Command.."]: "..Error)
-				end
+	local Files = love.filesystem.getDirectoryItems("sys/commands")
+	for _, File in pairs(Files) do
+		local Command = string.match(File, "(%a+)%p(%a+)")
+		local Path = "sys/commands/"..File
+		if love.filesystem.isFile(Path) then
+			local Function, Error = loadfile(Path)
+			if Function then
+				commands.list[string.lower(Command)] = Function
+			else
+				print("Lua Error [Command: "..Command.."]: "..Error)
 			end
 		end
 	end

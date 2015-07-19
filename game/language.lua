@@ -29,7 +29,7 @@ end
 function language.load()
 	local Lang = config["lang"]
 	if Lang and #Lang > 0 then
-		local File = io.open("sys/language/"..Lang..".txt", "r")
+		local File = love.filesystem.newFile("sys/language/"..Lang..".txt", "r")
 		if File then
 			for Line in File:lines() do
 				local Key, Value = Line:match("^%s*(.-)%s*=%s*(.-)%s*$")
