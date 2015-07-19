@@ -85,7 +85,7 @@ function love.run()
 			local r, g, b, a = graphs.getColor()
 
 			graphs.setColor(200, 200, 200, 175)
-			graphs.print("FPS: "..tostring(tim.getFPS()), 0, 0)
+			graphs.print("FPS: "..math.floor(1/delta + 0.5), 0, 0)
 			
 			graphs.setColor(r, g, b, a)
 			graphs.present()

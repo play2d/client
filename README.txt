@@ -5,11 +5,8 @@ We hope you enjoy it.
 
 Third parties:
 
-Using LÖVE
+Using LVE
 * https://love2d.org/wiki/License
-
-Using LuaFileSystem
-* https://keplerproject.github.io/luafilesystem/license.html
 
 Using icons from Icons8
 * https://icons8.com/license/
@@ -48,4 +45,3 @@ Magnus - Support
 Dark - Support, Graphics, Linux port
 Pagyra - Graphics
 RYX_Aria - Graphics
-LuaPower - Dynamic libraries
