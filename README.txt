@@ -15,8 +15,8 @@ Using icons from Icons8
 Copyright (c),
 Holders:
 	2015-2015 by Matías "Starkkz" Hermosilla
-	2015-2015 by Eero-Antero Säisä
-	2015-2015 by Yank
+	2015-2015 by Eero-Antero "tarjoilija" Säisä
+	2015-2015 by Kelvin "_Yank" Francisco
 Contributors:
 	2015-2015 by Pagyra
 	2015-2015 by Dark Soul
