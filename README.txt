@@ -5,14 +5,22 @@ We hope you enjoy it.
 
 Third parties:
 
-Using LVE
+Using LÖVE
 * https://love2d.org/wiki/License
 
 Using icons from Icons8
 * https://icons8.com/license/
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Copyright (c) 2015, Play2D Development Team
+Copyright (c),
+Holders:
+	2015-2015 by Matías "Starkkz" Hermosilla
+	2015-2015 by Eero-Antero Säisä
+	2015-2015 by Yank
+Contributors:
+	2015-2015 by Pagyra
+	2015-2015 by Dark Soul
+	2015-2015 by RYX_Aria
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,13 +43,3 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Special thanks to:
-
-Livia - Programmer, Linux port
-Yank - Programmer
-Magnus - Support
-Dark - Support, Graphics, Linux port
-Pagyra - Graphics
-RYX_Aria - Graphics
