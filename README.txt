@@ -5,7 +5,7 @@ We hope you enjoy it.
 
 Third parties:
 
-Using LÖVE
+Using LÃ–VE
 * https://love2d.org/wiki/License
 
 Using icons from Icons8
@@ -14,13 +14,13 @@ Using icons from Icons8
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c),
 Holders:
-	2015-2015 by Matías "Starkkz" Hermosilla
-	2015-2015 by Eero-Antero "tarjoilija" Säisä
-	2015-2015 by Kelvin "_Yank" Francisco
+	2015-2015, MatÃ­as "Starkkz" Hermosilla
+	2015-2015, Eero-Antero "tarjoilija" SÃ¤isÃ¤
+	2015-2015, Kelvin "_Yank" Francisco
 Contributors:
-	2015-2015 by Pagyra
-	2015-2015 by Dark Soul
-	2015-2015 by RYX_Aria
+	2015-2015, Pagyra
+	2015-2015, Dark Soul
+	2015-2015, RYX_Aria
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
