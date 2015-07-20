@@ -2,8 +2,8 @@ ffi = require("ffi")
 require("modules.hook")
 require("modules.console")
 require("modules.string")
+require("modules.gui")
 require("enet")
-require("gui")
 
 -- Game
 game = {
