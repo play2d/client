@@ -16,6 +16,7 @@ require("game.constants")
 require("game.commands")
 require("game.config")
 require("game.language")
+require("game.vector")
 
 -- GUI
 game.Desktop = gui.CreateDesktop("gfx/gui/Default/main.lua")
