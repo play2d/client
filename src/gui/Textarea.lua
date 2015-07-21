@@ -124,7 +124,7 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 	FormatI, Format = next(self.Format, FormatI)
 	if Format and Format.Start < Start + Length then
 		-- Reduce the length of the next format
-		Format.Length = Format.Start + Format.Length - (Start + Length + 1)
+		Format.Length = Format.Start + Format.Length - (Start + Length)
 		-- Increase the position of the next format
 		Format.Start = Start + Length
 		self.Format[FormatI] = nil
@@ -170,6 +170,7 @@ function TTextarea:EachFormat()
 				Format.Height = Format.Font:getHeight()
 				Format.LineBreak = true
 				Format.Line = Line
+				Format.First = nil
 				
 				-- Next line exists, push!
 				return Format
@@ -188,15 +189,18 @@ function TTextarea:EachFormat()
 				DefaultFormat.Start = Format.Start + Format.Length
 				DefaultFormat.Length = #self.Text - DefaultFormat.Start + 1
 				Format = DefaultFormat
+				Format.First = nil
 			elseif NextFormat.Start == Format.Start + Format.Length + 1 or Format == DefaultFormat then
 				-- Oh, it looks like the next format starts just after this one ends, let's just send it
 				Index = NextIndex
 				Format = NextFormat
+				Format.First = nil
 			else
 				-- So, there's a string that is not formatted between the last format and the next one
 				DefaultFormat.Start = Format.Start + Format.Length + 1
 				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start
 				Format = DefaultFormat
+				Format.First = nil
 			end
 		else
 			local NextIndex, NextFormat = next(self.Format)
@@ -206,17 +210,20 @@ function TTextarea:EachFormat()
 					-- That's nice, the format starts at the begining of the textarea
 					Index = 1
 					Format = NextFormat
+					Format.First = true
 				else
 					-- We need to send the string between the begining of the textarea and the next format
 					DefaultFormat.Start = 1
 					DefaultFormat.Length = NextFormat.Start - 1
 					Format = DefaultFormat
+					Format.First = true
 				end
 			else
 				-- We didn't set any format to this textarea? cool, less cpu usage!
 				DefaultFormat.Start = 1
 				DefaultFormat.Length = #self.Text
 				Format = DefaultFormat
+				Format.First = true
 			end
 		end
 		if Format.Length == 0 then
@@ -255,6 +262,7 @@ function TTextarea:Render(dt)
 		love.graphics.setColor(unpack(Theme.Background))
 		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
 		
+		local TextPosition = 0
 		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
 		local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)
 		for Format in self:EachFormat() do
@@ -262,14 +270,186 @@ function TTextarea:Render(dt)
 			love.graphics.setColor(unpack(Format.Color))
 			
 			if Format.LineBreak then
-				HeightOffset = HeightOffset + self.Line[Format.Line].Height
+				TextPosition = TextPosition + 1
 				WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+				HeightOffset = HeightOffset + self.Line[Format.Line].Height
 			end
 			love.graphics.print(Format.Text, x + WidthOffset, y + HeightOffset + self.Line[Format.Line].Height - Format.Height)
+			
+			if self.Length > 0 and TextPosition + #Format.Text >= self.Start then
+				love.graphics.setColor(unpack(Theme.SelectedText))
+				love.graphics.rectangle("fill",
+					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - 1 - TextPosition, 0))),
+					y + HeightOffset + self.Line[Format.Line].Height - Format.Height,
+					Format.Font:getWidth(Format.Text:sub(math.max(self.Start - TextPosition, 0), math.max(self.Start + self.Length - 1 - TextPosition, 0))),
+					Format.Height
+				)
+			elseif self.Length < 0 and TextPosition + #Format.Text >= self.Start + self.Length then
+				love.graphics.setColor(unpack(Theme.SelectedText))
+				love.graphics.rectangle("fill",
+					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start + self.Length - TextPosition, 0))),
+					y + HeightOffset + self.Line[Format.Line].Height - Format.Height,
+					Format.Font:getWidth(Format.Text:sub(math.max(self.Start + self.Length + 1 - TextPosition, 0), math.max(self.Start - TextPosition, 0))),
+					Format.Height
+				)
+			elseif self.Length == 0 and self.Start > TextPosition and self.Start <= TextPosition + #Format.Text then
+				love.graphics.setColor(unpack(Format.Color))
+				love.graphics.print("|",
+					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - TextPosition - 1, 0))) - 2.5,
+					y + HeightOffset + self.Line[Format.Line].Height - Format.Height
+				)
+			end
+			TextPosition = TextPosition + #Format.Text
 			WidthOffset = WidthOffset + Format.Width
 		end
 		
 		self.Slider.Vertical:Render(dt)
 		self.Slider.Horizontal:Render(dt)
+	end
+end
+
+function TTextarea:MouseClicked(x, y)
+	if not self.Hidden and not self.Disabled then
+		self.Dropped = nil
+		self.Grabbed = {x = x - self:x(), y = y - self:y()}
+		self:OnClick(self.Grabbed.x, self.Grabbed.y)
+		self:SetHoverAll()
+
+		local Width, Height = self:Width(), self:Height()
+		local TextPosition = 0
+		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+		local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)
+		for Format in self:EachFormat() do
+			if Format.LineBreak then
+				TextPosition = TextPosition + 1
+				WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+				HeightOffset = HeightOffset + self.Line[Format.Line].Height
+			end
+			if self.Grabbed.y >= HeightOffset and self.Grabbed.y <= HeightOffset + self.Line[Format.Line].Height then
+				if self.Grabbed.x > WidthOffset and self.Grabbed.x <= WidthOffset + Format.Width then
+					local TextWidth = WidthOffset
+					for i = 1, #Format.Text do
+						local CharWidth = Format.Font:getWidth(Format.Text:sub(i, i))
+						if self.Grabbed.x > TextWidth and self.Grabbed.x <= TextWidth + CharWidth then
+							self.Start = TextPosition + i
+							self.Length = 0
+							break
+						end
+						TextWidth = TextWidth + CharWidth
+					end
+				elseif self.Grabbed.x > self.Line[Format.Line].Width then
+					self.Start = TextPosition + #Format.Text + 1
+					self.Length = 0
+				elseif self.Grabbed.x < 0 then
+					if Format.LineBreak or Format.First then
+						self.Start = TextPosition
+						self.Length = 0
+					end
+				end
+			end
+			TextPosition = TextPosition + #Format.Text
+			WidthOffset = WidthOffset + Format.Width
+		end
+	end
+end
+
+function TTextarea:MouseMove(x, y)
+	if not self.Hidden and not self.Disabled then
+		local Position = {x = x - self:x(), y = y - self:y()}
+		local Width, Height = self:Width(), self:Height()
+		local TextPosition = 0
+		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+		local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)
+		for Format in self:EachFormat() do
+			if Format.LineBreak then
+				TextPosition = TextPosition + 1
+				WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+				HeightOffset = HeightOffset + self.Line[Format.Line].Height
+			end
+			if Position.y >= HeightOffset and Position.y <= HeightOffset + self.Line[Format.Line].Height then
+				if Position.x > WidthOffset and Position.x <= WidthOffset + Format.Width then
+					local TextWidth = WidthOffset
+					for i = 1, #Format.Text do
+						local CharWidth = Format.Font:getWidth(Format.Text:sub(i, i))
+						if Position.x > TextWidth and Position.x <= TextWidth + CharWidth then
+							self.Length = TextPosition + i - self.Start
+							break
+						end
+						TextWidth = TextWidth + CharWidth
+					end
+				elseif Position.x > self.Line[Format.Line].Width then
+					self.Length = (TextPosition + #Format.Text) - self.Start
+					if self.Length > 0 then
+						self.Length = self.Length + 1
+					elseif self.Length < 0 then
+						self.Length = self.Length - 1
+					end
+				elseif Position.x < 0 then
+					if Format.LineBreak or Format.First then
+						self.Length = TextPosition - self.Start
+						if self.Length > 0 then
+							self.Length = self.Length + 1
+						elseif self.Length < 0 then
+							self.Length = self.Length - 1
+						end
+					end
+				end
+			end
+			TextPosition = TextPosition + #Format.Text
+			WidthOffset = WidthOffset + Format.Width
+		end
+	end
+end
+
+function TTextarea:MouseDropped(x, y)
+	if not self.Hidden and not self.Disabled then
+		if self.Grabbed then
+			self.Grabbed = nil
+			self.Dropped = {x = x - self:x(), y = y - self:y()}
+			self:OnDrop(self.Dropped.x, self.Dropped.y)
+
+			local Width, Height = self:Width(), self:Height()
+			local TextPosition = 0
+			local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+			local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)
+			for Format in self:EachFormat() do
+				if Format.LineBreak then
+					TextPosition = TextPosition + 1
+					WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+					HeightOffset = HeightOffset + self.Line[Format.Line].Height
+				end
+				if self.Dropped.y >= HeightOffset and self.Dropped.y <= HeightOffset + self.Line[Format.Line].Height then
+					if self.Dropped.x > WidthOffset and self.Dropped.x <= WidthOffset + Format.Width then
+						local TextWidth = WidthOffset
+						for i = 1, #Format.Text do
+							local CharWidth = Format.Font:getWidth(Format.Text:sub(i, i))
+							if self.Dropped.x > TextWidth and self.Dropped.x <= TextWidth + CharWidth then
+								self.Length = TextPosition + i - self.Start
+								break
+							end
+							TextWidth = TextWidth + CharWidth
+						end
+					elseif self.Dropped.x > self.Line[Format.Line].Width then
+						self.Length = (TextPosition + #Format.Text) - self.Start
+						if self.Length > 0 then
+							self.Length = self.Length + 1
+						elseif self.Length < 0 then
+							self.Length = self.Length - 1
+						end
+					elseif self.Dropped.x < 0 then
+						if Format.LineBreak or Format.First then
+							self.Length = TextPosition - self.Start
+							if self.Length > 0 then
+								self.Length = self.Length + 1
+							elseif self.Length < 0 then
+								self.Length = self.Length - 1
+							end
+						end
+					end
+				end
+				TextPosition = TextPosition + #Format.Text
+				WidthOffset = WidthOffset + Format.Width
+			end
+		end
 	end
 end
