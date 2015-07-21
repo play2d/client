@@ -21,7 +21,89 @@ end
 
 function TTextarea:Init()
 	self.Format = {}
+	self.Line = {}
+	self.Slider = {}
+	self.Slider.Vertical = gui.CreateSlider(gui.SLIDER_VER, self:Width() - 13, 1, 12, self:Height() - 2, self, 1, 1)
+	self.Slider.Horizontal = gui.CreateSlider(gui.SLIDER_HOR, 1, self:Height() - 13, self:Width() - 15, 12, self, 1, 1)
+	self.Slider.Vertical.Hidden = true
+	self.Slider.Horizontal.Hidden = true
 	return self
+end
+
+function TTextarea:AddGadget(Gadget)
+	if Gadget.Heading == gui.SLIDER_VER then
+		if not self.Slider.Vertical then
+			Gadget.ID = 1
+			Gadget.Parent = self
+			Gadget.Theme = self.Theme
+			return true
+		end
+	elseif Gadget.Heading == gui.SLIDER_HOR then
+		if not self.Slider.Horizontal then
+			Gadget.ID = 2
+			Gadget.Parent = self
+			Gadget.Theme = self.Theme
+			return true
+		end
+	end
+end
+
+function TTextarea:HoverGadget()
+	if not self.Hidden then
+		local HoverGadget = self.Slider.Vertical:HoverGadget() or self.Slider.Horizontal:HoverGadget()
+		if HoverGadget then
+			return HoverGadget
+		elseif self:MouseHover() then
+			return self
+		end
+	end
+end
+
+function TTextarea:SetSize(Width, Height)
+	self.Size = {Width = Width, Height = Height}
+	if self.Slider then
+		self.Slider.Vertical.Values.Count = self.Size.Height
+		self.Slider.Vertical.Hidden = self.Slider.Vertical.Values.Max < self.Slider.Vertical.Values.Count
+		
+		self.Slider.Horizontal.Values.Count = self.Size.Width
+		self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
+	end
+end
+
+function TTextarea:CalculateLines()
+	self.Line = {}
+	for Format in self:EachFormat() do
+		local Line = self.Line[Format.Line]
+		if Line then
+			Line.Width = Line.Width + Format.Width
+			if Format.Height > Line.Height then
+				Line.Height = Format.Height
+			end
+		else
+			self.Line[Format.Line] = {
+				Width = Format.Width,
+				Height = Format.Height,
+			}
+		end
+	end
+	
+	self.Slider.Vertical.Values.Count = self:Height()
+	self.Slider.Horizontal.Values.Count = self:Width()
+	self.Slider.Vertical.Values.Max = 0
+	self.Slider.Horizontal.Values.Max = 0
+	for LineID, Line in pairs(self.Line) do
+		self.Slider.Vertical.Values.Max = self.Slider.Vertical.Values.Max + Line.Height
+		self.Slider.Vertical.Hidden = self.Slider.Vertical.Values.Max < self.Slider.Vertical.Values.Count
+		if Line.Width > self.Slider.Horizontal.Values.Max then
+			self.Slider.Horizontal.Values.Max = Line.Width
+			self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
+		end
+	end
+end
+
+function TTextarea:SetText(Text)
+	self.Text = Text
+	self:CalculateLines()
 end
 
 function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
@@ -63,6 +145,7 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 			return A.Start < B.Start
 		end
 	)
+	self:CalculateLines()
 end
 
 -- This function is magic, it iterates through formats/non-formatted text/line breaks
@@ -72,24 +155,21 @@ function TTextarea:EachFormat()
 		Color = self:GetTheme().Text,
 	}
 	local Index, Format
-	local Width = 0
-	self.LongestWidth = 0
+	local Line = 1
 	return function ()
 		if Format then
 			local NextLine = next(Format.TextArray, Format.TextIndex)
 			if NextLine then
 				-- This part iterates to the next line break
+				Line = Line + 1
+				
 				Format.TextArray[Format.TextIndex] = nil
 				Format.TextIndex = NextLine
 				Format.Text = Format.TextArray[NextLine]
 				Format.Width = Format.Font:getWidth(Format.Text)
 				Format.Height = Format.Font:getHeight()
 				Format.LineBreak = true
-				
-				Width = Format.Width
-				if Width > self.LongestWidth then
-					self.LongestWidth = Width
-				end
+				Format.Line = Line
 				
 				-- Next line exists, push!
 				return Format
@@ -155,11 +235,7 @@ function TTextarea:EachFormat()
 		Format.TextIndex, Format.Text = next(Format.TextArray)
 		Format.Width = Format.Font:getWidth(Format.Text)
 		Format.Height = Format.Font:getHeight()
-		
-		Width = Width + Format.Width
-		if Width > self.LongestWidth then
-			self.LongestWidth = Width
-		end
+		Format.Line = Line
 		
 		-- Format complete! push!!
 		return Format
@@ -179,17 +255,21 @@ function TTextarea:Render(dt)
 		love.graphics.setColor(unpack(Theme.Background))
 		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
 		
-		local WidthOffset, HeightOffset = 2.5, 2.5
+		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
+		local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)
 		for Format in self:EachFormat() do
 			love.graphics.setFont(Format.Font)
 			love.graphics.setColor(unpack(Format.Color))
 			
 			if Format.LineBreak then
-				HeightOffset = HeightOffset + Format.Height
-				WidthOffset = 2.5
+				HeightOffset = HeightOffset + self.Line[Format.Line].Height
+				WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
 			end
-			love.graphics.print(Format.Text, x + WidthOffset, y + HeightOffset)
+			love.graphics.print(Format.Text, x + WidthOffset, y + HeightOffset + self.Line[Format.Line].Height - Format.Height)
 			WidthOffset = WidthOffset + Format.Width
 		end
+		
+		self.Slider.Vertical:Render(dt)
+		self.Slider.Horizontal:Render(dt)
 	end
 end

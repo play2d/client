@@ -60,8 +60,7 @@ function TListbox:HoverGadget()
 		local HoverGadget = self.Slider:HoverGadget()
 		if HoverGadget then
 			return HoverGadget
-		end
-		if self:MouseHover() then
+		elseif self:MouseHover() then
 			return self
 		end
 	end

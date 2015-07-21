@@ -58,13 +58,11 @@ game.Window4 = gui.CreateWindow("Window4", 340, 100, 300, 400, game.Desktop, tru
 game.Textarea = gui.CreateTextarea(10, 30, 280, 360, game.Window4)
 game.Textarea:SetText [[
 This is a test paragraph,
-I want to see if it's displayed with
-linebreaks and stuff.
+I want to see if it's displayed with linebreaks and stuff.
 And if it's possible, with formatting.
 I hope it works.
 
-PD: Suck it whoever isn't able to
-create textareas like this.
+PD: Results are awesome.
 ]]
 game.Textarea:SetFormat(4, 7, love.graphics.getFont(), 255, 50, 50, 255)
 game.Textarea:SetFormat(12, 10, love.graphics.getFont(), 50, 50, 255, 200)

@@ -8,9 +8,8 @@ gui.SLIDER_VER = 1
 gui.SLIDER_HOR = 2
 
 function gui.CreateSlider(Type, x, y, Width, Height, Parent, ValCount, ValMax)
-	local Slider = TSlider.New()
+	local Slider = TSlider.New(); Slider.Heading = Type
 	if Parent:AddGadget(Slider) then
-		Slider.Heading = Type
 		Slider:SetValues(ValCount, ValMax)
 		Slider:SetPosition(x, y)
 		Slider:SetSize(Width, Height)
