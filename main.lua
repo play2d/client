@@ -54,6 +54,15 @@ game.Listview:AddColumn("test2", 90)
 for i = 1, 20 do
 	game.Listview:AddItem("label "..i, "something "..(20 - i))
 end
+game.Window4 = gui.CreateWindow("Window4", 340, 100, 300, 400, game.Desktop, true)
+game.Textarea = gui.CreateTextarea(10, 30, 280, 360, game.Window4)
+game.Textarea:SetText [[
+This is a test paragraph,
+I want to see if it's displayed with linebreaks and stuff.
+I hope it works.
+
+PD: Suck it whoever isn't able to create textareas like this.
+]]
 
 -- Desktop test
 game.StartButton = gui.CreateButton("Start", 10, 10, 100, 20, game.Desktop)

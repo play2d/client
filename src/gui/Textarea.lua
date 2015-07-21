@@ -147,9 +147,11 @@ function TTextarea:EachFormat()
 		-- This part splits the text into lines, and returns the first line
 		local Text = self.Text:sub(Format.Start, Format.Start + Format.Length - 1)
 		Format.TextArray = {}
-		for Line in Text:gmatch("([^\n]+)") do
-			table.insert(Format.TextArray, Line)
-		end
+		repeat
+			local Match, Position = Text:match("([^\n]*)()")
+			table.insert(Format.TextArray, Match)
+			Text = Text:sub(Position + 1)
+		until #Text == 0
 		Format.TextIndex, Format.Text = next(Format.TextArray)
 		Format.Width = Format.Font:getWidth(Format.Text)
 		Format.Height = Format.Font:getHeight()
@@ -165,4 +167,29 @@ function TTextarea:EachFormat()
 end
 
 function TTextarea:Render(dt)
+	if not self.Hidden then
+		local x, y = self:x(), self:y()
+		local Width, Height = self:Width(), self:Height()
+		local Theme = self:GetTheme()
+		
+		love.graphics.setScissor(x, y, Width, Height)
+		love.graphics.setColor(unpack(Theme.Border))
+		love.graphics.rectangle("line", x, y, Width, Height)
+		
+		love.graphics.setColor(unpack(Theme.Background))
+		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
+		
+		local WidthOffset, HeightOffset = 2.5, 2.5
+		for Format in self:EachFormat() do
+			love.graphics.setFont(Format.Font)
+			love.graphics.setColor(unpack(Format.Color))
+			
+			if Format.LineBreak then
+				HeightOffset = HeightOffset + Format.Height
+				WidthOffset = 2.5
+			end
+			love.graphics.print(Format.Text, x + WidthOffset, y + HeightOffset)
+			WidthOffset = WidthOffset + Format.Width
+		end
+	end
 end
