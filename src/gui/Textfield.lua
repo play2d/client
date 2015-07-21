@@ -86,14 +86,13 @@ function TTextfield:keypressed(key)
 				self.TextOffset = 0
 			end
 			self.Text = self.Text:sub(1, self.Start - 1) .. self.Text:sub(self.Start + 1)
-			self.Start = self.Start - 1
+			self.Start = math.max(self.Start - 1, 0)
 		elseif self.Length > 0 then
 			self.Text = self.Text:sub(1, self.Start) .. self.Text:sub(self.Start + self.Length + 1)
-			self.Start = self.Start
 			self.Length = 0
 		else
 			self.Text = self.Text:sub(1, self.Start + self.Length) .. self.Text:sub(self.Start + 1)
-			self.Start = self.Start + self.Length
+			self.Start = math.max(self.Start + self.Length, 0)
 			self.Length = 0
 		end
 	elseif key == "delete" then
@@ -101,45 +100,44 @@ function TTextfield:keypressed(key)
 			self.Text = self.Text:sub(1, self.Start) .. self.Text:sub(self.Start + 1)
 		elseif self.Length > 0 then
 			self.Text = self.Text:sub(1, self.Start) .. self.Text:sub(self.Start + self.Length + 1)
-			self.Start = self.Start
 			self.Length = 0
 		else
 			self.Text = self.Text:sub(1, self.Start + self.Length) .. self.Text:sub(self.Start + 1)
-			self.Start = self.Start + self.Length
+			self.Start = math.max(self.Start + self.Length, 0)
 			self.Length = 0
 		end
 	elseif key == "left" then
 		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
-				self.Length = math.max(self.Length - 1, -self.Start)
-				if self.Length < 0 then
-					local Width = Font:getWidth(Text:sub(1, self.Start + self.Length))
-					if Width < self.TextOffset then
-						self.TextOffset = Width
-					end
-				elseif self.Length > 0 then
-					local Width = Font:getWidth(Text:sub(1, self.Start))
-					if Width < self.TextOffset then
-						self.TextOffset = Width
-					end
+			self.Length = math.max(self.Length - 1, -self.Start)
+			if self.Length < 0 then
+				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length)) - 2.5
+				if Width < self.TextOffset then
+					self.TextOffset = Width
 				end
+			elseif self.Length > 0 then
+				local Width = Font:getWidth(Text:sub(1, self.Start)) - 2.5
+				if Width < self.TextOffset then
+					self.TextOffset = Width
+				end
+			end
 		else
 			if self.Length == 0 then
 				self.Start = math.max(self.Start - 1, 0)
 				self.Length = 0
-				local Width = Font:getWidth(Text:sub(1, self.Start))
+				local Width = Font:getWidth(Text:sub(1, self.Start)) - 2.5
 				if Width < self.TextOffset then
 					self.TextOffset = Width
 				end
 			elseif self.Length > 0 then
 				self.Length = 0
-				local Width = Font:getWidth(Text:sub(1, self.Start))
+				local Width = Font:getWidth(Text:sub(1, self.Start)) - 2.5
 				if Width < self.TextOffset then
 					self.TextOffset = Width
 				end
 			else
 				self.Start = math.max(self.Start + self.Length, 0)
 				self.Length = 0
-				local Width = Font:getWidth(Text:sub(1, self.Start))
+				local Width = Font:getWidth(Text:sub(1, self.Start)) - 2.5
 				if Width < self.TextOffset then
 					self.TextOffset = Width
 				end
@@ -149,39 +147,58 @@ function TTextfield:keypressed(key)
 		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
 			self.Length = math.min(self.Length + 1, Length - self.Start)
 			if self.Length > 0 then
-				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length))
+				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length)) + 2.5
 				if Width > self.TextOffset + self:Width() then
 					self.TextOffset = Width - self:Width()
 				end
 			elseif self.Length < 0 then
-				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length))
+				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length)) + 2.5
 				if Width > self.TextOffset + self:Width() then
 					self.TextOffset = Width - self:Width()
 				end
 			end
 		else
 			if self.Length == 0 then
-				self.Start = math.min(self.Start + self.Length + 1, Length)
+				self.Start = math.max(math.min(self.Start + self.Length + 1, Length), 0)
 				self.Length = 0
 
-				local Width = Font:getWidth(Text:sub(1, self.Start))
+				local Width = Font:getWidth(Text:sub(1, self.Start)) + 2.5
 				if Width > self.TextOffset + self:Width() then
 					self.TextOffset = Width - self:Width()
 				end
 			elseif self.Length > 0 then
-				self.Start = math.min(self.Start + self.Length, Length)
+				self.Start = math.max(math.min(self.Start + self.Length, Length), 0)
 				self.Length = 0
-				local Width = Font:getWidth(Text:sub(1, self.Start))
+				local Width = Font:getWidth(Text:sub(1, self.Start)) + 2.5
 				if Width > self.TextOffset + self:Width() then
 					self.TextOffset = Width - self:Width()
 				end
 			else
 				self.Length = 0
-				local Width = Font:getWidth(Text:sub(1, self.Start))
+				local Width = Font:getWidth(Text:sub(1, self.Start)) + 2.5
 				if Width > self.TextOffset + self:Width() then
 					self.TextOffset = Width - self:Width()
 				end
 			end
+		end
+	elseif key == "home" then
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			self.Length = -self.Start
+		else
+			self.Start = 0
+			self.Length = 0
+		end
+		self.TextOffset = -2.5
+	elseif key == "end" then
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			self.Length = #Text - self.Start
+		else
+			self.Start = #Text
+			self.Length = 0
+		end
+		local Width = Font:getWidth(Text)
+		if Width > self:Width() then
+			self.TextOffset = Width - self:Width() + 2.5
 		end
 	end
 end
