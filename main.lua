@@ -1,8 +1,13 @@
 ffi = require("ffi")
-require("modules.hook")
-require("modules.console")
-require("modules.string")
-require("modules.gui")
+require("src.hook")
+require("src.console")
+require("src.string")
+require("src.gui")
+require("src.constants")
+require("src.commands")
+require("src.config")
+require("src.language")
+require("src.vector")
 require("enet")
 
 -- Game
@@ -11,12 +16,6 @@ game = {
 	CODENAME = "Lua rox";		-- Version codename
 	DATE = "13/07/2015";		-- Last update
 }
-
-require("game.constants")
-require("game.commands")
-require("game.config")
-require("game.language")
-require("game.vector")
 
 -- GUI
 game.Desktop = gui.CreateDesktop("gfx/gui/Default/main.lua")
@@ -68,5 +67,3 @@ function game.StartButton:OnClick()
 		StartWindow:Hide()
 	end
 end
-
-love.graphics.max = 60

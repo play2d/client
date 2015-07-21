@@ -164,3 +164,14 @@ Listview = {
 
 	Font = love.graphics.getFont(),
 }
+
+Textarea = {
+	Border = {15, 15, 15, 255},
+	Background = {255, 255, 255, 255},
+	Text = {38, 38, 38, 255},
+	SelectedText = {100, 100, 100, 100},
+	HintText = {100, 100, 100, 255},
+
+	Font = love.graphics.getFont(),
+	Cursor = love.mouse.getSystemCursor("ibeam"),
+}

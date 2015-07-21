@@ -21,23 +21,7 @@ end
 
 function TTextarea:Init()
 	self.Format = {}
-	self.LinePosition = {}
-	self.Line = {}
 	return self
-end
-
-function TTextarea:SetText(Text)
-	self.Text = Text
-	self.LinePosition = {}
-	self.Line = {}
-	for Position, Line in Text:gmatch("()(^[\n]+)") do
-		table.insert(self.LinePosition, Position)
-		table.insert(self.Line, Line)
-	end
-	
-	local MaximumWidth, MaximumHeight = 0, 0
-	for i, Format in pairs(self.Format) do
-	end
 end
 
 function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
@@ -75,23 +59,55 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 	table.sort(self.Format, function (A, B) return A.Start < B.Start end)
 end
 
+-- This function is magic, it iterates through formats/non-formatted text/line breaks
 function TTextarea:EachFormat()
-	local DefaultFormat = {}
+	local DefaultFormat = {
+		Font = self:GetFont(),
+		Color = self:GetTheme().Text,
+	}
 	local Index, Format
+	local Width = 0
+	self.LongestWidth = 0
 	return function ()
 		if Format then
+			local NextLine = next(Format.TextArray, Format.TextIndex)
+			if NextLine then
+				-- This part iterates to the next line break
+				Format.TextArray[Format.TextIndex] = nil
+				Format.TextIndex = NextLine
+				Format.Text = Format.TextArray[NextLine]
+				Format.Width = Format.Font:getWidth(Format.Text)
+				Format.Height = Format.Font:getHeight()
+				Format.LineBreak = true
+				
+				Width = Format.Width
+				if Width > self.LongestWidth then
+					self.LongestWidth = Width
+				end
+				
+				-- Next line exists, push!
+				return Format
+			else
+				Format.LineBreak = nil
+			end
+				
 			if Format.Start + Format.Length == #self.Text or Format.Length == 0 then
+				-- The last format returned all we had left, what are you expecting for?
 				return nil
 			end
+			
 			local NextIndex, NextFormat = next(self.Format, Index)
 			if NextFormat == nil then
+				-- Yea we sent the last format, but we didn't send everything
 				DefaultFormat.Start = Format.Start + Format.Length
 				DefaultFormat.Length = #self.Text - DefaultFormat.Start + 1
 				Format = DefaultFormat
 			elseif NextFormat.Start == Format.Start + Format.Length + 1 or Format == DefaultFormat then
+				-- Oh, it looks like the next format starts just after this one ends, let's just send it
 				Index = NextIndex
 				Format = NextFormat
 			else
+				-- So, there's a string that is not formatted between the last format and the next one
 				DefaultFormat.Start = Format.Start + Format.Length + 1
 				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start
 				Format = DefaultFormat
@@ -99,24 +115,45 @@ function TTextarea:EachFormat()
 		else
 			local NextIndex, NextFormat = next(self.Format)
 			if NextFormat then
+				-- Yea it looks like the textarea is formatted
 				if NextFormat.Start == 1 then
+					-- That's nice, the format starts at the begining of the textarea
 					Index = 1
 					Format = NextFormat
 				else
+					-- We need to send the string between the begining of the textarea and the next format
 					DefaultFormat.Start = 1
 					DefaultFormat.Length = NextFormat.Start - 1
 					Format = DefaultFormat
 				end
 			else
+				-- We didn't set any format to this textarea? cool, less cpu usage!
 				DefaultFormat.Start = 1
 				DefaultFormat.Length = #self.Text
 				Format = DefaultFormat
 			end
 		end
 		if Format.Length == 0 then
+			-- We don't return empty formats, it's a needless cpu waste
 			return nil
 		end
-		Format.Text = self.Text:sub(Format.Start, Format.Start + Format.Length - 1)
+		
+		-- This part splits the text into lines, and returns the first line
+		local Text = self.Text:sub(Format.Start, Format.Start + Format.Length - 1)
+		Format.TextArray = {}
+		for Line in Text:gmatch("([^\n]+)") do
+			table.insert(Format.TextArray, Line)
+		end
+		Format.TextIndex, Format.Text = next(Format.TextArray)
+		Format.Width = Format.Font:getWidth(Format.Text)
+		Format.Height = Format.Font:getHeight()
+		
+		Width = Width + Format.Width
+		if Width > self.LongestWidth then
+			self.LongestWidth = Width
+		end
+		
+		-- Format complete! push!!
 		return Format
 	end
 end
