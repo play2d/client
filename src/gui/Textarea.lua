@@ -28,7 +28,7 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 	local FormatI, Format
 	repeat
 		local NextI, NextFormat = next(self.Format, FormatI)
-		if NextFormat.Start > Start then
+		if not NextFormat or NextFormat.Start > Start then
 			-- Find the closest format before this one we're creating
 			break
 		end
@@ -42,9 +42,9 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 	FormatI, Format = next(self.Format, FormatI)
 	if Format and Format.Start < Start + Length then
 		-- Reduce the length of the next format
-		Format.Length = (Start + Length + 1) - Format.Start
+		Format.Length = Format.Start + Format.Length - (Start + Length + 1)
 		-- Increase the position of the next format
-		Format.Start = Start + Length + 1
+		Format.Start = Start + Length
 		self.Format[FormatI] = nil
 		if Format.Length > 0 then
 			table.insert(self.Format, Format)
