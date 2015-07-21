@@ -26,7 +26,7 @@ end
 
 function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 	local FormatI, Format
-	while true do
+	repeat
 		local NextI, NextFormat = next(self.Format, FormatI)
 		if NextFormat.Start > Start then
 			-- Find the closest format before this one we're creating
@@ -34,7 +34,7 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 		end
 		FormatI = NextI
 		Format = NextFormat
-	end
+	until true
 	if Format and Format.Start + Format.Length > Start then
 		-- Reduce the length of the previous format
 		Format.Length = Start - Format.Start
@@ -46,7 +46,9 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 		-- Increase the position of the next format
 		Format.Start = Start + Length + 1
 		self.Format[FormatI] = nil
-		self.Format[Format.Start] = Format
+		if Format.Length > 0 then
+			table.insert(self.Format, Format)
+		end
 	end
 	table.insert(self.Format,
 		{
@@ -56,7 +58,11 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 			Color = {R, G, B, A}
 		}
 	)
-	table.sort(self.Format, function (A, B) return A.Start < B.Start end)
+	table.sort(self.Format,
+		function (A, B)
+			return A.Start < B.Start
+		end
+	)
 end
 
 -- This function is magic, it iterates through formats/non-formatted text/line breaks

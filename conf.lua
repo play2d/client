@@ -4,7 +4,7 @@ function love.conf(t)
 	t.console = true						-- Attach a console (boolean, Windows only)
 
 	t.window.title = "Play2D"				-- The window title (string)
-	t.window.icon = "game/icon.png"			-- Filepath to an image to use as the window's icon (string)
+	t.window.icon = "src/icon.png"			-- Filepath to an image to use as the window's icon (string)
 	t.window.width = 800					-- The window width (number)
 	t.window.height = 600					-- The window height (number)
 	t.window.borderless = false				-- Remove all border visuals from the window (boolean)
