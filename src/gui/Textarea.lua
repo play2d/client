@@ -62,10 +62,10 @@ end
 function TTextarea:SetSize(Width, Height)
 	self.Size = {Width = Width, Height = Height}
 	if self.Slider then
-		self.Slider.Vertical.Values.Count = self.Size.Height - 13
+		self.Slider.Vertical.Values.Count = Height - 13
 		self.Slider.Vertical.Hidden = self.Slider.Vertical.Values.Max < self.Slider.Vertical.Values.Count
 		
-		self.Slider.Horizontal.Values.Count = self.Size.Width - 13
+		self.Slider.Horizontal.Values.Count = Width - 13
 		self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
 	end
 end
@@ -95,8 +95,8 @@ function TTextarea:CalculateLines()
 	for LineID, Line in pairs(self.Line) do
 		self.Slider.Vertical.Values.Max = self.Slider.Vertical.Values.Max + Line.Height
 		self.Slider.Vertical.Hidden = self.Slider.Vertical.Values.Max < self.Slider.Vertical.Values.Count
-		if Line.Width > self.Slider.Horizontal.Values.Max then
-			self.Slider.Horizontal.Values.Max = Line.Width
+		if Line.Width + 13 > self.Slider.Horizontal.Values.Max then
+			self.Slider.Horizontal.Values.Max = Line.Width + 13
 			self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
 		end
 	end
@@ -388,6 +388,38 @@ function TTextarea:MouseMove(x, y)
 			end
 			TextPosition = TextPosition + #Format.Text
 			WidthOffset = WidthOffset + Format.Width
+		end
+	end
+end
+
+function TTextarea:Update(dt)
+	if not self.Hidden and not self.Disabled then
+		if self.Grabbed then
+			local x = love.mouse.getX() - self:x()
+			local y = love.mouse.getY() - self:y()
+			local Width, Height = self:Width() - 13, self:Height() - 13
+			if not self.Slider.Horizontal.Hidden then
+				if x > Width then
+					if self.Slider.Horizontal.Value < self.Slider.Horizontal.Values.Max then
+						self.Slider.Horizontal.Value = math.min(self.Slider.Horizontal.Value + (x - Width) * dt / 170, self.Slider.Horizontal.Values.Max)
+					end
+				elseif x < 0 then
+					if self.Slider.Horizontal.Value > 0 then
+						self.Slider.Horizontal.Value = math.max(self.Slider.Horizontal.Value + x * dt / 170, 0)
+					end
+				end
+			end
+			if not self.Slider.Vertical.Hidden then
+				if y > Height then
+					if self.Slider.Vertical.Value < self.Slider.Vertical.Values.Max then
+						self.Slider.Vertical.Value = math.min(self.Slider.Vertical.Value + (y - Height) * dt / 170, self.Slider.Vertical.Values.Max)
+					end
+				elseif y < 0 then
+					if self.Slider.Vertical.Value > 0 then
+						self.Slider.Vertical.Value = math.max(self.Slider.Vertical.Value + y * dt / 170, 0)
+					end
+				end
+			end
 		end
 	end
 end
