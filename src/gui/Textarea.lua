@@ -23,7 +23,7 @@ function TTextarea:Init()
 	self.Format = {}
 	self.Line = {}
 	self.Slider = {}
-	self.Slider.Vertical = gui.CreateSlider(gui.SLIDER_VER, self:Width() - 13, 1, 12, self:Height() - 2, self, 1, 1)
+	self.Slider.Vertical = gui.CreateSlider(gui.SLIDER_VER, self:Width() - 13, 1, 12, self:Height() - 15, self, 1, 1)
 	self.Slider.Horizontal = gui.CreateSlider(gui.SLIDER_HOR, 1, self:Height() - 13, self:Width() - 15, 12, self, 1, 1)
 	self.Slider.Vertical.Hidden = true
 	self.Slider.Horizontal.Hidden = true
@@ -62,10 +62,10 @@ end
 function TTextarea:SetSize(Width, Height)
 	self.Size = {Width = Width, Height = Height}
 	if self.Slider then
-		self.Slider.Vertical.Values.Count = self.Size.Height
+		self.Slider.Vertical.Values.Count = self.Size.Height - 13
 		self.Slider.Vertical.Hidden = self.Slider.Vertical.Values.Max < self.Slider.Vertical.Values.Count
 		
-		self.Slider.Horizontal.Values.Count = self.Size.Width
+		self.Slider.Horizontal.Values.Count = self.Size.Width - 13
 		self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
 	end
 end
@@ -83,12 +83,13 @@ function TTextarea:CalculateLines()
 			self.Line[Format.Line] = {
 				Width = Format.Width,
 				Height = Format.Height,
+				Start = Format.Start,
 			}
 		end
 	end
 	
-	self.Slider.Vertical.Values.Count = self:Height()
-	self.Slider.Horizontal.Values.Count = self:Width()
+	self.Slider.Vertical.Values.Count = self:Height() - 13
+	self.Slider.Horizontal.Values.Count = self:Width() - 13
 	self.Slider.Vertical.Values.Max = 0
 	self.Slider.Horizontal.Values.Max = 0
 	for LineID, Line in pairs(self.Line) do
@@ -178,7 +179,7 @@ function TTextarea:EachFormat()
 				Format.LineBreak = nil
 			end
 				
-			if Format.Start + Format.Length == #self.Text or Format.Length == 0 then
+			if Format.Start + Format.Length - 1 >= #self.Text then
 				-- The last format returned all we had left, what are you expecting for?
 				return nil
 			end
@@ -187,18 +188,18 @@ function TTextarea:EachFormat()
 			if NextFormat == nil then
 				-- Yea we sent the last format, but we didn't send everything
 				DefaultFormat.Start = Format.Start + Format.Length
-				DefaultFormat.Length = #self.Text - DefaultFormat.Start + 1
+				DefaultFormat.Length = math.max(#self.Text - DefaultFormat.Start + 1, 0)
 				Format = DefaultFormat
 				Format.First = nil
-			elseif NextFormat.Start == Format.Start + Format.Length + 1 or Format == DefaultFormat then
+			elseif NextFormat.Start == Format.Start + Format.Length or Format == DefaultFormat then
 				-- Oh, it looks like the next format starts just after this one ends, let's just send it
 				Index = NextIndex
 				Format = NextFormat
 				Format.First = nil
 			else
 				-- So, there's a string that is not formatted between the last format and the next one
-				DefaultFormat.Start = Format.Start + Format.Length + 1
-				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start
+				DefaultFormat.Start = Format.Start + Format.Length
+				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start - 1
 				Format = DefaultFormat
 				Format.First = nil
 			end
@@ -226,10 +227,6 @@ function TTextarea:EachFormat()
 				Format.First = true
 			end
 		end
-		if Format.Length == 0 then
-			-- We don't return empty formats, it's a needless cpu waste
-			return nil
-		end
 		
 		-- This part splits the text into lines, and returns the first line
 		local Text = self.Text:sub(Format.Start, Format.Start + Format.Length - 1)
@@ -256,11 +253,15 @@ function TTextarea:Render(dt)
 		local Theme = self:GetTheme()
 		
 		love.graphics.setScissor(x, y, Width, Height)
+		love.graphics.setColor(unpack(Theme.SliderArea))
+		love.graphics.rectangle("fill", x, y, Width, Height)
+		
 		love.graphics.setColor(unpack(Theme.Border))
 		love.graphics.rectangle("line", x, y, Width, Height)
 		
+		love.graphics.setScissor(x, y, Width - 13, Height - 13)
 		love.graphics.setColor(unpack(Theme.Background))
-		love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
+		love.graphics.rectangle("fill", x + 1, y + 1, Width - 15, Height - 15)
 		
 		local TextPosition = 0
 		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
@@ -279,9 +280,9 @@ function TTextarea:Render(dt)
 			if self.Length > 0 and TextPosition + #Format.Text >= self.Start then
 				love.graphics.setColor(unpack(Theme.SelectedText))
 				love.graphics.rectangle("fill",
-					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - 1 - TextPosition, 0))),
+					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - TextPosition, 0))),
 					y + HeightOffset + self.Line[Format.Line].Height - Format.Height,
-					Format.Font:getWidth(Format.Text:sub(math.max(self.Start - TextPosition, 0), math.max(self.Start + self.Length - 1 - TextPosition, 0))),
+					Format.Font:getWidth(Format.Text:sub(math.max(self.Start - TextPosition + 1, 0), math.max(self.Start + self.Length - TextPosition, 0))),
 					Format.Height
 				)
 			elseif self.Length < 0 and TextPosition + #Format.Text >= self.Start + self.Length then
@@ -289,13 +290,13 @@ function TTextarea:Render(dt)
 				love.graphics.rectangle("fill",
 					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start + self.Length - TextPosition, 0))),
 					y + HeightOffset + self.Line[Format.Line].Height - Format.Height,
-					Format.Font:getWidth(Format.Text:sub(math.max(self.Start + self.Length + 1 - TextPosition, 0), math.max(self.Start - TextPosition, 0))),
+					Format.Font:getWidth(Format.Text:sub(math.max(self.Start + self.Length - TextPosition + 1, 0), math.max(self.Start - TextPosition, 0))),
 					Format.Height
 				)
 			elseif self.Length == 0 and self.Start > TextPosition and self.Start <= TextPosition + #Format.Text then
 				love.graphics.setColor(unpack(Format.Color))
 				love.graphics.print("|",
-					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - TextPosition - 1, 0))) - 2.5,
+					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - TextPosition, 0))) - 2.5,
 					y + HeightOffset + self.Line[Format.Line].Height - Format.Height
 				)
 			end
@@ -379,19 +380,9 @@ function TTextarea:MouseMove(x, y)
 					end
 				elseif Position.x > self.Line[Format.Line].Width then
 					self.Length = (TextPosition + #Format.Text) - self.Start
-					if self.Length > 0 then
-						self.Length = self.Length + 1
-					elseif self.Length < 0 then
-						self.Length = self.Length - 1
-					end
 				elseif Position.x < 0 then
 					if Format.LineBreak or Format.First then
 						self.Length = TextPosition - self.Start
-						if self.Length > 0 then
-							self.Length = self.Length + 1
-						elseif self.Length < 0 then
-							self.Length = self.Length - 1
-						end
 					end
 				end
 			end
@@ -431,19 +422,9 @@ function TTextarea:MouseDropped(x, y)
 						end
 					elseif self.Dropped.x > self.Line[Format.Line].Width then
 						self.Length = (TextPosition + #Format.Text) - self.Start
-						if self.Length > 0 then
-							self.Length = self.Length + 1
-						elseif self.Length < 0 then
-							self.Length = self.Length - 1
-						end
 					elseif self.Dropped.x < 0 then
 						if Format.LineBreak or Format.First then
 							self.Length = TextPosition - self.Start
-							if self.Length > 0 then
-								self.Length = self.Length + 1
-							elseif self.Length < 0 then
-								self.Length = self.Length - 1
-							end
 						end
 					end
 				end
@@ -451,5 +432,93 @@ function TTextarea:MouseDropped(x, y)
 				WidthOffset = WidthOffset + Format.Width
 			end
 		end
+	end
+end
+
+function TTextarea:Write(Text)
+	if not self.Hidden and not self.Disabled then
+		local Length = #Text
+		if self.Length == 0 then
+			if self.Start == #self.Text then
+				self.Text = self.Text .. Text
+			elseif self.Start < #self.Text then
+				self.Text = self.Text:sub(1, self.Start) .. Text .. self.Text:sub(self.Start + 1)
+			end
+			self.Start = self.Start + Length
+			self:CalculateLines()
+		elseif self.Length > 0 then
+			self.Text = self.Text:sub(1, self.Start) .. Text .. self.Text:sub(self.Start + self.Length + 1)
+			self.Start = self.Start + Length
+			self.Length = 0
+			self:CalculateLines()
+		elseif self.Length < 0 then
+			self.Text = self.Text:sub(1, self.Start + self.Length) .. Text .. self.Text:sub(self.Start + 1)
+			self.Start = self.Start + self.Length + Length
+			self.Length = 0
+			self:CalculateLines()
+		end
+	end
+end
+
+function TTextarea:keypressed(key)
+	if self.Hidden or self.Disabled then
+		return nil
+	end
+
+	if key == "backspace" then
+		if self.Length == 0 then
+			self.Text = self.Text:sub(1, self.Start - 1) .. self.Text:sub(self.Start + 1)
+			self.Start = math.max(self.Start - 1, 0)
+		elseif self.Length > 0 then
+			self.Text = self.Text:sub(1, self.Start) .. self.Text:sub(self.Start + self.Length + 1)
+			self.Length = 0
+		else
+			self.Text = self.Text:sub(1, self.Start + self.Length) .. self.Text:sub(self.Start + 1)
+			self.Start = math.max(self.Start + self.Length, 0)
+			self.Length = 0
+		end
+		self:CalculateLines()
+	elseif key == "delete" then
+		if self.Length == 0 then
+			self.Text = self.Text:sub(1, self.Start) .. self.Text:sub(self.Start + 2)
+		elseif self.Length > 0 then
+			self.Text = self.Text:sub(1, self.Start) .. self.Text:sub(self.Start + self.Length + 1)
+			self.Length = 0
+		else
+			self.Text = self.Text:sub(1, self.Start + self.Length) .. self.Text:sub(self.Start + 1)
+			self.Start = math.max(self.Start + self.Length, 0)
+			self.Length = 0
+		end
+		self:CalculateLines()
+	elseif key == "left" then
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			self.Length = math.max(self.Length - 1, -self.Start)
+		else
+			if self.Length == 0 then
+				self.Start = math.max(self.Start - 1, 0)
+				self.Length = 0
+			elseif self.Length > 0 then
+				self.Length = 0
+			else
+				self.Start = math.max(self.Start + self.Length, 0)
+				self.Length = 0
+			end
+		end
+	elseif key == "right" then
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			self.Length = math.min(self.Length + 1, Length - self.Start)
+		else
+			if self.Length == 0 then
+				self.Start = math.max(math.min(self.Start + self.Length + 1, Length), 0)
+				self.Length = 0
+			elseif self.Length > 0 then
+				self.Start = math.max(math.min(self.Start + self.Length, Length), 0)
+				self.Length = 0
+			else
+				self.Length = 0
+			end
+		end
+	elseif key == "return" then
+		self:Write("\n")
 	end
 end
