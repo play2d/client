@@ -62,9 +62,13 @@ end
 function TTextarea:SetSize(Width, Height)
 	self.Size = {Width = Width, Height = Height}
 	if self.Slider then
+		self.Slider.Vertical:SetPosition(Width - 13, 1)
+		self.Slider.Vertical:SetSize(12, Height - 15)
 		self.Slider.Vertical.Values.Count = Height - 13
 		self.Slider.Vertical.Hidden = self.Slider.Vertical.Values.Max < self.Slider.Vertical.Values.Count
 		
+		self.Slider.Horizontal:SetPosition(1, Height - 13)
+		self.Slider.Horizontal:SetSize(Width - 15, 12)
 		self.Slider.Horizontal.Values.Count = Width - 13
 		self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
 	end
@@ -72,6 +76,8 @@ end
 
 function TTextarea:CalculateLines()
 	self.Line = {}
+	local TextPosition = 0
+	local Width, Height = self:Width(), self:Height()
 	for Format in self:EachFormat() do
 		local Line = self.Line[Format.Line]
 		if Line then
@@ -80,12 +86,29 @@ function TTextarea:CalculateLines()
 				Line.Height = Format.Height
 			end
 		else
-			self.Line[Format.Line] = {
+			Line = {
 				Width = Format.Width,
 				Height = Format.Height,
+				CumulativeHeight = Format.Height,
 				Start = Format.Start,
 			}
+			if self.Line[Format.Line - 1] then
+				Line.CumulativeHeight = self.Line[Format.Line - 1].CumulativeHeight + Format.Height
+			end
+			self.Line[Format.Line] = Line
 		end
+		if Format.LineBreak then
+			TextPosition = TextPosition + 1
+		end
+		if self.Start + self.Length >= TextPosition and self.Start + self.Length <= TextPosition + #Format.Text then
+			if Line.Width > Width then
+				self.Slider.Horizontal.Value = Line.Width + 13
+			end
+			if Line.CumulativeHeight > Height then
+				self.Slider.Vertical.Value = Line.CumulativeHeight + 13
+			end
+		end
+		TextPosition = TextPosition + #Format.Text
 	end
 	
 	self.Slider.Vertical.Values.Count = self:Height() - 13
@@ -100,6 +123,7 @@ function TTextarea:CalculateLines()
 			self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
 		end
 	end
+	self.Slider.Vertical.Values.Max = self.Slider.Vertical.Values.Max + 13
 end
 
 function TTextarea:SetText(Text)
@@ -339,7 +363,7 @@ function TTextarea:MouseClicked(x, y)
 						TextWidth = TextWidth + CharWidth
 					end
 				elseif self.Grabbed.x > self.Line[Format.Line].Width then
-					self.Start = TextPosition + #Format.Text + 1
+					self.Start = TextPosition + #Format.Text
 					self.Length = 0
 				elseif self.Grabbed.x < 0 then
 					if Format.LineBreak or Format.First then
@@ -477,18 +501,16 @@ function TTextarea:Write(Text)
 				self.Text = self.Text:sub(1, self.Start) .. Text .. self.Text:sub(self.Start + 1)
 			end
 			self.Start = self.Start + Length
-			self:CalculateLines()
 		elseif self.Length > 0 then
 			self.Text = self.Text:sub(1, self.Start) .. Text .. self.Text:sub(self.Start + self.Length + 1)
 			self.Start = self.Start + Length
 			self.Length = 0
-			self:CalculateLines()
 		elseif self.Length < 0 then
 			self.Text = self.Text:sub(1, self.Start + self.Length) .. Text .. self.Text:sub(self.Start + 1)
 			self.Start = self.Start + self.Length + Length
 			self.Length = 0
-			self:CalculateLines()
 		end
+		self:CalculateLines()
 	end
 end
 
@@ -497,6 +519,7 @@ function TTextarea:keypressed(key)
 		return nil
 	end
 
+	local Length = #self.Text
 	if key == "backspace" then
 		if self.Length == 0 then
 			self.Text = self.Text:sub(1, self.Start - 1) .. self.Text:sub(self.Start + 1)

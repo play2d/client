@@ -35,10 +35,6 @@ end
 function gui.TGadget:Copy()
 end
 
--- Description: Called when a right click over this gadget is detected
-function gui.TGadget:OpenContext()
-end
-
 -- Description: Called when this gadget is grabbed and the mouse is moved
 function gui.TGadget:MouseMove(x, y, dx, dy)
 end
