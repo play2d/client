@@ -17,7 +17,7 @@ function commands.load()
 	local Files = love.filesystem.getDirectoryItems("sys/commands")
 	for _, File in pairs(Files) do
 		if File:sub(-4) == ".lua" then
-			local Command = string.match(File, "(%a+)%p(%a+)")
+			local Command = string.match(File, "([%a|%_]+)%p(%a+)")
 			local Path = "sys/commands/"..File
 			if love.filesystem.isFile(Path) then
 				local Function, Error = loadfile(Path)

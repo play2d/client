@@ -27,7 +27,7 @@ function language.list()
 end
 
 function language.load()
-	local Lang = config["lang"]
+	local Lang = config["cl_lang"]
 	if Lang and #Lang > 0 then
 		local File = love.filesystem.newFile("sys/language/"..Lang..".txt", "r")
 		if File then
