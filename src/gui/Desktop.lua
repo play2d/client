@@ -4,15 +4,15 @@ TDesktop.Type = "Desktop"
 setmetatable(TDesktop, gui.TGadgetMetatable)
 
 -- Description: Creates a new desktop gadget
-function gui.CreateDesktop(ThemePath)
-	return TDesktop.New():Init(ThemePath)
+function gui.CreateDesktop(ThemePath, Splash)
+	return TDesktop.New():Init(ThemePath, Splash)
 end
 
 function TDesktop.New()
 	return setmetatable({}, TDesktopMetatable)
 end
 
-function TDesktop:Init(ThemePath)
+function TDesktop:Init(ThemePath, Splash)
 	self.Gadgets = {}
 	self.GadgetsOrder = {}
 	self.Offset = {x = 0, y = 0}
@@ -20,6 +20,7 @@ function TDesktop:Init(ThemePath)
 	self.LastMouseMovement = love.timer.getTime()
 	self.FirstHoverMouseMovement = love.timer.getTime()
 	self.Theme = {love = love}
+	self.Splash = Splash
 
 	if Hook then
 		Hook.Add("draw", function(dt) self:Render(dt * 1000) end)
@@ -58,35 +59,49 @@ end
 
 function TDesktop:Render(dt)
 	if not self.Hidden then
+		local x, y = self:GetPosition()
+		local Width, Height = self:GetDimensions()
+		if self.Splash then
+			love.graphics.setScissor(x, y, Width, Height)
+			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.draw(self.Splash, x, y)
+		end
 		self:RenderGadgets(dt)
-		if self.CurrentHover then
-			local Cursor = self.CurrentHover:GetCursor() or self:GetCursor()
-			love.mouse.setCursor(Cursor)
-			love.graphics.setScissor(self:x(), self:y(), self:GetDimensions())
-			if self:MouseHoverIdle() > 0.5 then
-				if self.CurrentHover.Hint then
-					local Font = self:GetFont()
-					love.graphics.setFont(Font)
-					local FontHeight = Font:getHeight()
-					local Width, Height = 0, 0
-					local Lines = {}
-					for Line in string.gmatch(self.CurrentHover.Hint, "([^\n]+)") do
-						table.insert(Lines, Line)
-						local LineWidth = Font:getWidth(Line)
-						if LineWidth > Width then
-							Width = LineWidth
-						end
-						Height = Height + FontHeight + 2.5
+		self:RenderHint()
+	end
+end
+
+function TDesktop:RenderHint()
+	if self.CurrentHover then
+		local Cursor = self.CurrentHover:GetCursor() or self:GetCursor()
+		love.mouse.setCursor(Cursor)
+		
+		local x, y = self:GetPosition()
+		local ScissorWidth, ScissorHeight = self:GetDimensions()
+		love.graphics.setScissor(x, y, ScissorWidth, ScissorHeight)
+		if self:MouseHoverIdle() > 0.5 then
+			if self.CurrentHover.Hint then
+				local Font = self:GetFont()
+				love.graphics.setFont(Font)
+				local FontHeight = Font:getHeight()
+				local Width, Height = 0, 0
+				local Lines = {}
+				for Line in string.gmatch(self.CurrentHover.Hint, "([^\n]+)") do
+					table.insert(Lines, Line)
+					local LineWidth = Font:getWidth(Line)
+					if LineWidth > Width then
+						Width = LineWidth
 					end
-					local MouseX, MouseY = love.mouse.getX(), love.mouse.getY()
-					love.graphics.setColor(unpack(self.Theme.Hint.Background))
-					love.graphics.rectangle("fill", MouseX, MouseY, Width + 10, Height + 6)
-					love.graphics.setColor(unpack(self.Theme.Hint.Border))
-					love.graphics.rectangle("line", MouseX, MouseY, Width + 10, Height + 6)
-					love.graphics.setColor(unpack(self.Theme.Hint.Text))
-					for i, Line in pairs(Lines) do
-						love.graphics.print(Line, MouseX + 5, MouseY + FontHeight * (i - 1) + 2.5 * i)
-					end
+					Height = Height + FontHeight + 2.5
+				end
+				local MouseX, MouseY = love.mouse.getX(), love.mouse.getY()
+				love.graphics.setColor(unpack(self.Theme.Hint.Background))
+				love.graphics.rectangle("fill", MouseX, MouseY, Width + 10, Height + 6)
+				love.graphics.setColor(unpack(self.Theme.Hint.Border))
+				love.graphics.rectangle("line", MouseX, MouseY, Width + 10, Height + 6)
+				love.graphics.setColor(unpack(self.Theme.Hint.Text))
+				for i, Line in pairs(Lines) do
+					love.graphics.print(Line, MouseX + 5, MouseY + FontHeight * (i - 1) + 2.5 * i)
 				end
 			end
 		end
