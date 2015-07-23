@@ -12,7 +12,7 @@ function gui.CreateTextfield(x, y, Width, Height, Parent, HintText)
 	local Textfield = TTextfield.New()
 	if Parent:AddGadget(Textfield) then
 		Textfield:SetPosition(x, y)
-		Textfield:SetSize(Width, Height)
+		Textfield:SetDimensions(Width, Height)
 		return Textfield:Init(HintText)
 	end
 end
@@ -60,7 +60,7 @@ function TTextfield:Write(Text)
 		end
 		local Font = self:GetFont()
 		local Width = Font:getWidth(Text)
-		if Font:getWidth(self.Text) + Width > self.TextOffset + self:Width() then
+		if Font:getWidth(self.Text) + Width > self.TextOffset + self:GetWidth() then
 			self.TextOffset = self.TextOffset + Width
 		end
 	end
@@ -80,7 +80,7 @@ function TTextfield:keypressed(key)
 	if key == "backspace" then
 		if self.Length == 0 then
 			local Width = Font:getWidth(Text:sub(self.Start, self.Start))
-			if Font:getWidth(Text) - Width > self:Width() then
+			if Font:getWidth(Text) - Width > self:GetWidth() then
 				self.TextOffset = math.max(self.TextOffset - Width, 0)
 			else
 				self.TextOffset = 0
@@ -148,13 +148,13 @@ function TTextfield:keypressed(key)
 			self.Length = math.min(self.Length + 1, Length - self.Start)
 			if self.Length > 0 then
 				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length)) + 2.5
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			elseif self.Length < 0 then
 				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length)) + 2.5
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			end
 		else
@@ -163,21 +163,21 @@ function TTextfield:keypressed(key)
 				self.Length = 0
 
 				local Width = Font:getWidth(Text:sub(1, self.Start)) + 2.5
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			elseif self.Length > 0 then
 				self.Start = math.max(math.min(self.Start + self.Length, Length), 0)
 				self.Length = 0
 				local Width = Font:getWidth(Text:sub(1, self.Start)) + 2.5
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			else
 				self.Length = 0
 				local Width = Font:getWidth(Text:sub(1, self.Start)) + 2.5
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			end
 		end
@@ -197,8 +197,8 @@ function TTextfield:keypressed(key)
 			self.Length = 0
 		end
 		local Width = Font:getWidth(Text)
-		if Width > self:Width() then
-			self.TextOffset = Width - self:Width() + 2.5
+		if Width > self:GetWidth() then
+			self.TextOffset = Width - self:GetWidth() + 2.5
 		end
 	end
 end
@@ -319,7 +319,7 @@ function TTextfield:Update(dt)
 	if not self.Hidden and not self.Disabled then
 		if self.Grabbed then
 			local x = love.mouse.getX() - self:x()
-			local Width = self:Width()
+			local Width = self:GetWidth()
 			if x < -2.5 then
 				self.TextOffset = math.max(self.TextOffset + x * dt / 170, -2.5)
 			elseif x > Width + 2.5 then
@@ -342,7 +342,7 @@ end
 function TTextfield:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		local TextY = (Height - Font:getHeight())/2

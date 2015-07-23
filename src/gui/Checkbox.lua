@@ -7,7 +7,7 @@ function gui.CreateCheckbox(Text, x, y, Width, Height, Parent)
 	local Checkbox = TCheckbox.New()
 	if Parent:AddGadget(Checkbox) then
 		Checkbox:SetText(Text)
-		Checkbox:SetSize(Width, Height)
+		Checkbox:SetDimensions(Width, Height)
 		Checkbox:SetPosition(x, y)
 		return Checkbox:Init()
 	end
@@ -20,7 +20,7 @@ end
 function TCheckbox:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		love.graphics.setScissor(x - 1, y - 1, Width + self.TextWidth + 7, Height + 2)
 

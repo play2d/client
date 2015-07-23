@@ -7,7 +7,7 @@ function gui.CreateButton(Text, x, y, Width, Height, Parent)
 	local Button = TButton.New()
 	if Parent:AddGadget(Button) then
 		Button:SetPosition(x, y)
-		Button:SetSize(Width, Height)
+		Button:SetDimensions(Width, Height)
 		Button:SetText(Text)
 		return Button:Init()
 	end
@@ -20,7 +20,7 @@ end
 function TButton:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)
 

@@ -25,7 +25,7 @@ function TTabber:Init()
 	return self
 end
 
-function TTabber:Height()
+function TTabber:GetHeight()
 	return self:GetFont():getHeight() + 5
 end
 
@@ -33,7 +33,7 @@ function TTabber:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
 		local Font = self:GetFont()
-		local Height = self:Height()
+		local Height = self:GetHeight()
 		local Theme = self:GetTheme()
 		love.graphics.setFont(Font)
 
@@ -98,7 +98,7 @@ function TTabber:MouseClicked(x, y)
 		end
 
 		local Font = self:GetFont()
-		local Offset, Height = 0, self:Height()
+		local Offset, Height = 0, self:GetHeight()
 		for Index, Item in pairs(self.Items) do
 			local Width = Item.Width + 5
 			if self.Selected ~= Index and self:GetHoverAll() == self and self:MouseHoverArea(Offset, 0, Width, Height) then

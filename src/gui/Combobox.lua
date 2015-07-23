@@ -8,7 +8,7 @@ function gui.CreateCombobox(x, y, Width, Height, Parent)
 	local Combobox = TCombobox.New()
 	if Parent:AddGadget(Combobox) then
 		Combobox:SetPosition(x, y)
-		Combobox:SetSize(Width, Height)
+		Combobox:SetDimensions(Width, Height)
 		return Combobox:Init()
 	end
 end
@@ -25,7 +25,7 @@ function TCombobox:Init()
 	return self
 end
 
-function TCombobox:Height()
+function TCombobox:GetHeight()
 	if self.Open then
 		return self.Size.Height + self.ItemCount * (self:GetFont():getHeight() + 5)
 	end
@@ -57,7 +57,7 @@ function TCombobox:MouseClicked(mx, my)
 		
 		if not self.Open then
 			local HeightOffset = 0
-			local Width, Height = self:Width(), self:Height()
+			local Width, Height = self:GetDimensions()
 			local FontHeight = self:GetFont():getHeight()
 			for Index, Item in pairs(self.Items) do
 				if self.Selected ~= Index and self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) then
@@ -74,7 +74,7 @@ end
 function TCombobox:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self.Size.Height
+		local Width, Height = self:GetWidth(), self.Size.Height
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		

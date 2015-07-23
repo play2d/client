@@ -8,7 +8,7 @@ function gui.CreateListbox(x, y, Width, Height, Parent)
 	local Listbox = TListbox.New()
 	if Parent:AddGadget(Listbox) then
 		Listbox:SetPosition(x, y)
-		Listbox:SetSize(Width, Height)
+		Listbox:SetDimensions(Width, Height)
 		return Listbox:Init()
 	end
 end
@@ -38,11 +38,11 @@ function TListbox:AddGadget(Gadget)
 	return self.BaseClass.AddGadget(self, Gadget)
 end
 
-function TListbox:SetSize(Width, Height)
+function TListbox:SetDimensions(Width, Height)
 	self.Size = {Width = Width, Height = Height}
 	if self.Slider then
 		self.Slider:SetPosition(Width - 12, 1)
-		self.Slider:SetSize(12, Height - 2)
+		self.Slider:SetDimensions(12, Height - 2)
 	end
 end
 
@@ -78,7 +78,7 @@ end
 function TListbox:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 
@@ -125,7 +125,7 @@ function TListbox:MouseClicked(x, y)
 			self.Context.Hidden = true
 		end
 
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
 		local FirstItem = math.floor((self.Slider.Value / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))

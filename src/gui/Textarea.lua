@@ -10,7 +10,7 @@ function gui.CreateTextarea(x, y, Width, Height, Parent)
 	local Textarea = TTextarea.New()
 	if Parent:AddGadget(Textarea) then
 		Textarea:SetPosition(x, y)
-		Textarea:SetSize(Width, Height)
+		Textarea:SetDimensions(Width, Height)
 		return Textarea:Init()
 	end
 end
@@ -23,8 +23,8 @@ function TTextarea:Init()
 	self.Format = {}
 	self.Line = {}
 	self.Slider = {}
-	self.Slider.Vertical = gui.CreateSlider(gui.SLIDER_VER, self:Width() - 13, 1, 12, self:Height() - 15, self, 1, 1)
-	self.Slider.Horizontal = gui.CreateSlider(gui.SLIDER_HOR, 1, self:Height() - 13, self:Width() - 15, 12, self, 1, 1)
+	self.Slider.Vertical = gui.CreateSlider(gui.SLIDER_VER, self:GetWidth() - 13, 1, 12, self:GetHeight() - 15, self, 1, 1)
+	self.Slider.Horizontal = gui.CreateSlider(gui.SLIDER_HOR, 1, self:GetHeight() - 13, self:GetWidth() - 15, 12, self, 1, 1)
 	self.Slider.Vertical.Hidden = true
 	self.Slider.Horizontal.Hidden = true
 	return self
@@ -59,16 +59,16 @@ function TTextarea:HoverGadget()
 	end
 end
 
-function TTextarea:SetSize(Width, Height)
+function TTextarea:SetDimensions(Width, Height)
 	self.Size = {Width = Width, Height = Height}
 	if self.Slider then
 		self.Slider.Vertical:SetPosition(Width - 13, 1)
-		self.Slider.Vertical:SetSize(12, Height - 15)
+		self.Slider.Vertical:SetDimensions(12, Height - 15)
 		self.Slider.Vertical.Values.Count = Height - 13
 		self.Slider.Vertical.Hidden = self.Slider.Vertical.Values.Max < self.Slider.Vertical.Values.Count
 		
 		self.Slider.Horizontal:SetPosition(1, Height - 13)
-		self.Slider.Horizontal:SetSize(Width - 15, 12)
+		self.Slider.Horizontal:SetDimensions(Width - 15, 12)
 		self.Slider.Horizontal.Values.Count = Width - 13
 		self.Slider.Horizontal.Hidden = self.Slider.Horizontal.Values.Max < self.Slider.Horizontal.Values.Count
 	end
@@ -77,7 +77,7 @@ end
 function TTextarea:CalculateLines()
 	self.Line = {}
 	local TextPosition = 0
-	local Width, Height = self:Width(), self:Height()
+	local Width, Height = self:GetDimensions()
 	for Format in self:EachFormat() do
 		local Line = self.Line[Format.Line]
 		if Line then
@@ -111,8 +111,8 @@ function TTextarea:CalculateLines()
 		TextPosition = TextPosition + #Format.Text
 	end
 	
-	self.Slider.Vertical.Values.Count = self:Height() - 13
-	self.Slider.Horizontal.Values.Count = self:Width() - 13
+	self.Slider.Vertical.Values.Count = self:GetHeight() - 13
+	self.Slider.Horizontal.Values.Count = self:GetWidth() - 13
 	self.Slider.Vertical.Values.Max = 0
 	self.Slider.Horizontal.Values.Max = 0
 	for LineID, Line in pairs(self.Line) do
@@ -273,7 +273,7 @@ end
 function TTextarea:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		
 		love.graphics.setScissor(x, y, Width, Height)
@@ -344,7 +344,7 @@ function TTextarea:MouseClicked(x, y)
 			self.Context.Hidden = true
 		end
 
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local TextPosition = 0
 		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
 		local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)
@@ -385,7 +385,7 @@ end
 function TTextarea:MouseMove(x, y)
 	if not self.Hidden and not self.Disabled then
 		local Position = {x = x - self:x(), y = y - self:y()}
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local TextPosition = 0
 		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
 		local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)
@@ -425,7 +425,7 @@ function TTextarea:Update(dt)
 		if self.Grabbed then
 			local x = love.mouse.getX() - self:x()
 			local y = love.mouse.getY() - self:y()
-			local Width, Height = self:Width() - 13, self:Height() - 13
+			local Width, Height = self:GetWidth() - 13, self:GetHeight() - 13
 			if not self.Slider.Horizontal.Hidden then
 				if x > Width then
 					if self.Slider.Horizontal.Value < self.Slider.Horizontal.Values.Max then
@@ -460,7 +460,7 @@ function TTextarea:MouseDropped(x, y)
 			self.Dropped = {x = x - self:x(), y = y - self:y()}
 			self:OnDrop(self.Dropped.x, self.Dropped.y)
 
-			local Width, Height = self:Width(), self:Height()
+			local Width, Height = self:GetDimensions()
 			local TextPosition = 0
 			local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
 			local HeightOffset = 2.5 - self.Slider.Vertical.Value * (self.Slider.Vertical.Values.Max - Height + 5) / (self.Slider.Vertical.Values.Max)

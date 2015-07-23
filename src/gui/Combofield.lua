@@ -13,7 +13,7 @@ function gui.CreateCombofield(x, y, Width, Height, Parent)
 	local Combofield = TCombofield.New()
 	if Parent:AddGadget(Combofield) then
 		Combofield:SetPosition(x, y)
-		Combofield:SetSize(Width, Height)
+		Combofield:SetDimensions(Width, Height)
 		return Combofield:Init()
 	end
 end
@@ -63,7 +63,7 @@ function TCombofield:Write(Text)
 		end
 		local Font = self:GetFont()
 		local Width = Font:getWidth(Text)
-		if Font:getWidth(self.Text) + Width > self.TextOffset + self:Width() then
+		if Font:getWidth(self.Text) + Width > self.TextOffset + self:GetWidth() then
 			self.TextOffset = self.TextOffset + Width
 		end
 	end
@@ -83,7 +83,7 @@ function TCombofield:keypressed(key)
 	if key == "backspace" then
 		if self.Length == 0 then
 			local Width = Font:getWidth(Text:sub(self.Start, self.Start))
-			if Font:getWidth(Text) - Width > self:Width() then
+			if Font:getWidth(Text) - Width > self:GetWidth() then
 				self.TextOffset = math.max(self.TextOffset - Width, 0)
 			else
 				self.TextOffset = 0
@@ -153,13 +153,13 @@ function TCombofield:keypressed(key)
 			self.Length = math.min(self.Length + 1, Length - self.Start)
 			if self.Length > 0 then
 				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length))
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			elseif self.Length < 0 then
 				local Width = Font:getWidth(Text:sub(1, self.Start + self.Length))
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			end
 		else
@@ -168,21 +168,21 @@ function TCombofield:keypressed(key)
 				self.Length = 0
 
 				local Width = Font:getWidth(Text:sub(1, self.Start))
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			elseif self.Length > 0 then
 				self.Start = math.min(self.Start + self.Length, Length)
 				self.Length = 0
 				local Width = Font:getWidth(Text:sub(1, self.Start))
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			else
 				self.Length = 0
 				local Width = Font:getWidth(Text:sub(1, self.Start))
-				if Width > self.TextOffset + self:Width() then
-					self.TextOffset = Width - self:Width()
+				if Width > self.TextOffset + self:GetWidth() then
+					self.TextOffset = Width - self:GetWidth()
 				end
 			end
 		end
@@ -195,7 +195,7 @@ function TCombofield:GetCursor()
 	end
 	local MouseX, MouseY = love.mouse.getPosition()
 	local Theme = self:GetTheme()
-	if MouseX - self:x() >= self:Width() - Theme.DropImage:getWidth() or MouseY - self:y() > self.Size.Height then
+	if MouseX - self:x() >= self:GetWidth() - Theme.DropImage:getWidth() or MouseY - self:y() > self.Size.Height then
 		return self:GetTheme().HandCursor
 	end
 	return self:GetTheme().TextCursor
@@ -213,11 +213,11 @@ function TCombofield:MouseClicked(mx, my)
 		end
 		
 		local Theme = self:GetTheme()
-		if self.Grabbed.x >= self:Width() - Theme.DropImage:getWidth() or self.Grabbed.y > self.Size.Height then
+		if self.Grabbed.x >= self:GetWidth() - Theme.DropImage:getWidth() or self.Grabbed.y > self.Size.Height then
 			self.Open = not self.Open
 			if not self.Open then
 				local HeightOffset = 0
-				local Width, Height = self:Width(), self:Height()
+				local Width, Height = self:GetDimensions()
 				local FontHeight = self:GetFont():getHeight()
 				for Index, Item in pairs(self.Items) do
 					if self.Selected ~= Index and self:MouseHoverArea(0, Height + HeightOffset, Width, FontHeight + 4.5) then
@@ -334,7 +334,7 @@ function TCombofield:Copy()
 	end
 end
 
-function TCombofield:Height()
+function TCombofield:GetHeight()
 	if self.Open then
 		return self.Size.Height + self.ItemCount * (self:GetFont():getHeight() + 5)
 	end
@@ -359,7 +359,7 @@ function TCombofield:Update(dt)
 	if not self.Hidden and not self.Disabled then
 		if self.Grabbed then
 			local x = love.mouse.getX() - self:x()
-			local Width = self:Width()
+			local Width = self:GetWidth()
 			if x < -2.5 then
 				self.TextOffset = math.max(self.TextOffset + x * dt / 170, -2.5)
 			elseif x > Width + 2.5 then
@@ -383,7 +383,7 @@ end
 function TCombofield:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self.Size.Height
+		local Width, Height = self:GetWidth(), self.Size.Height
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		

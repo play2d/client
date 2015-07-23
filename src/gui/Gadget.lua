@@ -97,7 +97,7 @@ function gui.TGadget:Remove()
 end
 
 -- Description: Changes the size of the object
-function gui.TGadget:SetSize(Width, Height)
+function gui.TGadget:SetDimensions(Width, Height)
 	self.Size = {Width = Width, Height = Height}
 end
 
@@ -107,13 +107,18 @@ function gui.TGadget:SetPosition(x, y)
 end
 
 -- Returns: [Number] The width of this gadget
-function gui.TGadget:Width()
+function gui.TGadget:GetWidth()
 	return self.Size.Width
 end
 
 -- Returns: [Number] The height of this gadget
-function gui.TGadget:Height()
+function gui.TGadget:GetHeight()
 	return self.Size.Height
+end
+
+-- Returns: [Number] The width of this gadget, [Number] The height of this gadget
+function gui.TGadget:GetDimensions()
+	return self:GetWidth(), self:GetHeight()
 end
 
 -- Returns: [Number] The x coordinate of this object
@@ -259,7 +264,7 @@ end
 -- Returns: [true/false] If a vector is inside the area of this gadget
 function gui.TGadget:Hover(x, y)
 	if not self.Hidden then
-		return x >= self:x() and y >= self:y() and x <= self:x() + self:Width() and y <= self:y() + self:Height()
+		return x >= self:x() and y >= self:y() and x <= self:x() + self:GetWidth() and y <= self:y() + self:GetHeight()
 	end
 end
 
@@ -303,7 +308,7 @@ function gui.TGadget:MouseHover()
 	if not self.Hidden then
 		local MouseX, MouseY = love.mouse.getPosition()
 		local x, y = self:x(), self:y()
-		return MouseX >= x and MouseY >= y and MouseX <= x + self:Width() and MouseY <= y + self:Height()
+		return MouseX >= x and MouseY >= y and MouseX <= x + self:GetWidth() and MouseY <= y + self:GetHeight()
 	end
 end
 

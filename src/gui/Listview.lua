@@ -8,7 +8,7 @@ function gui.CreateListview(x, y, Height, Parent)
 	local Listview = TListview.New()
 	if Parent:AddGadget(Listview) then
 		Listview:SetPosition(x, y)
-		Listview:SetSize(0, Height)
+		Listview:SetDimensions(0, Height)
 		return Listview:Init()
 	end
 end
@@ -39,11 +39,11 @@ function TListview:AddGadget(Gadget)
 	return self.BaseClass.AddGadget(self, Gadget)
 end
 
-function TListview:SetSize(Width, Height)
+function TListview:SetDimensions(Width, Height)
 	self.Size = {Width = Width, Height = Height}
 	if self.Slider then
 		self.Slider:SetPosition(Width - 12, 1)
-		self.Slider:SetSize(12, Height - 2)
+		self.Slider:SetDimensions(12, Height - 2)
 	end
 end
 
@@ -104,7 +104,7 @@ end
 function TListview:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Height = self:Height()
+		local Height = self:GetHeight()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		
@@ -168,7 +168,7 @@ function TListview:MouseClicked(x, y)
 			self.Context.Hidden = true
 		end
 
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)) + FontHeight + 5
 		local FirstItem = math.ceil(((self.Slider.Value + FontHeight + 5) / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))

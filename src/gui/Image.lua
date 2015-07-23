@@ -7,7 +7,7 @@ function gui.CreateImage(ImageData, x, y, Width, Height, Parent)
 	local Image = TImage.New()
 	if Parent:AddGadget(Image) then
 		Image:SetPosition(x, y)
-		Image:SetSize(Width, Height)
+		Image:SetDimensions(Width, Height)
 		Image.Image = ImageData
 		return Image
 	end
@@ -17,14 +17,14 @@ function TImage.New()
 	return setmetatable({}, TImageMetatable)
 end
 
-function TImage:Width()
+function TImage:GetWidth()
 	if self.Size.Width then
 		return self.Size.Width
 	end
 	return self.Image:getWidth()
 end
 
-function TImage:Height()
+function TImage:GetHeight()
 	if self.Size.Height then
 		return self.Size.Height
 	end
@@ -34,7 +34,7 @@ end
 function TImage:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)
 		love.graphics.setColor(unpack(Theme.Background))

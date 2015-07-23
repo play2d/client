@@ -66,7 +66,7 @@ end
 function TContext:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		
@@ -95,7 +95,7 @@ end
 
 function TContext:MouseClicked(x, y)
 	if not self.Disabled and not self.Hidden then
-		local Width = self:Width()
+		local Width = self:GetWidth()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = 0
 		for Index, Item in pairs(self.Items) do

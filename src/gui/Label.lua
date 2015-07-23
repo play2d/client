@@ -25,7 +25,7 @@ end
 function TLabel:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)

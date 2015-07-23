@@ -8,7 +8,7 @@ function gui.CreateProgressbar(x, y, Width, Height, Parent)
 	local Progressbar = TProgressbar.New()
 	if Parent:AddGadget(Progressbar) then
 		Progressbar:SetPosition(x, y, Width, Height)
-		Progressbar:SetSize(Width, Height)
+		Progressbar:SetDimensions(Width, Height)
 		return Progressbar
 	end
 end
@@ -20,7 +20,7 @@ end
 function TProgressbar:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		

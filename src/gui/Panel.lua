@@ -8,7 +8,7 @@ function gui.CreatePanel(Text, x, y, Width, Height, Parent)
 	local Panel = TPanel.New()
 	if Parent:AddGadget(Panel) then
 		Panel:SetPosition(x, y)
-		Panel:SetSize(Width, Height)
+		Panel:SetDimensions(Width, Height)
 		Panel:SetText(Text)
 		return Panel:Init()
 	end
@@ -27,7 +27,7 @@ end
 function TPanel:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		

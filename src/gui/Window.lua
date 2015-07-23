@@ -9,7 +9,7 @@ function gui.CreateWindow(Text, x, y, Width, Height, Parent, Closeable)
 	if Parent:AddGadget(Window) then
 		Window.Closeable = Closeable
 		Window:SetPosition(x, y)
-		Window:SetSize(Width, Height)
+		Window:SetDimensions(Width, Height)
 		Window:SetText(Text)
 		return Window:Init()
 	end
@@ -28,7 +28,7 @@ end
 function TWindow:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local CloseImage = Theme.CloseImage
 		local CloseImageHeight = CloseImage:getHeight()
@@ -76,7 +76,7 @@ function TWindow:MouseDropped(x, y)
 		if self.Closeable then
 			local Theme = self:GetTheme()
 			local CloseImage = Theme.CloseImage
-			local Width = self:Width()
+			local Width = self:GetWidth()
 			if self.Dropped.x >= Width - CloseImage:getWidth() and self.Dropped.y >= 0 and self.Dropped.y <= CloseImage:getHeight() and self.Dropped.x <= Width then
 				self:Hide()
 			end
@@ -89,7 +89,7 @@ function TWindow:MouseMove(x, y, dx, dy)
 		local Theme = self:GetTheme()
 		local CloseImage = Theme.CloseImage
 		if self.Grabbed.y <= CloseImage:getHeight() then
-			if not self.Closeable or self.Closeable and self.Grabbed.x <= self:Width() - CloseImage:getWidth() then
+			if not self.Closeable or self.Closeable and self.Grabbed.x <= self:GetWidth() - CloseImage:getWidth() then
 				self:SetPosition(self.Offset.x + dx, self.Offset.y + dy)
 			end
 		end

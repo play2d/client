@@ -12,7 +12,7 @@ function gui.CreateSlider(Type, x, y, Width, Height, Parent, ValCount, ValMax)
 	if Parent:AddGadget(Slider) then
 		Slider:SetValues(ValCount, ValMax)
 		Slider:SetPosition(x, y)
-		Slider:SetSize(Width, Height)
+		Slider:SetDimensions(Width, Height)
 		return Slider
 	end
 end
@@ -32,24 +32,24 @@ end
 
 function TSlider:BarSize()
 	if self.Heading == gui.SLIDER_VER then
-		return math.floor(self.Values.Count/self.Values.Max * self:Height() - 3.5)
+		return math.floor(self.Values.Count/self.Values.Max * self:GetHeight() - 3.5)
 	else
-		return math.floor(self.Values.Count/self.Values.Max * self:Width() - 3.5)
+		return math.floor(self.Values.Count/self.Values.Max * self:GetWidth() - 3.5)
 	end
 end
 
 function TSlider:BarPosition()
 	if self.Heading == gui.SLIDER_VER then
-		return math.floor(self.Value/self.Values.Max * (self:Height() - self:BarSize() - 4) + 2.5)
+		return math.floor(self.Value/self.Values.Max * (self:GetHeight() - self:BarSize() - 4) + 2.5)
 	else
-		return math.floor(self.Value/self.Values.Max * (self:Width() - self:BarSize() - 4) + 2.5)
+		return math.floor(self.Value/self.Values.Max * (self:GetWidth() - self:BarSize() - 4) + 2.5)
 	end
 end
 
 function TSlider:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
-		local Width, Height = self:Width(), self:Height()
+		local Width, Height = self:GetDimensions()
 		local BarPosition = self:BarPosition()
 		local BarSize = self:BarSize()
 		local Color = self:GetTheme()
@@ -109,9 +109,9 @@ end
 function TSlider:MouseMove(x, y, dx, dy)
 	if not self.Disabled then
 		if self.Heading == gui.SLIDER_VER then
-			self.Value = math.max(math.min(self.Value + dy/(self:Height() - self:BarSize()) * self.Values.Max, self.Values.Max), 0)
+			self.Value = math.max(math.min(self.Value + dy/(self:GetHeight() - self:BarSize()) * self.Values.Max, self.Values.Max), 0)
 		elseif self.Heading == gui.SLIDER_HOR then
-			self.Value = math.max(math.min(self.Value + dx/(self:Width() - self:BarSize()) * self.Values.Max, self.Values.Max), 0)
+			self.Value = math.max(math.min(self.Value + dx/(self:GetWidth() - self:BarSize()) * self.Values.Max, self.Values.Max), 0)
 		end
 	end
 end

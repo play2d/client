@@ -62,7 +62,7 @@ function TDesktop:Render(dt)
 		if self.CurrentHover then
 			local Cursor = self.CurrentHover:GetCursor() or self:GetCursor()
 			love.mouse.setCursor(Cursor)
-			love.graphics.setScissor(self:x(), self:y(), self:Width(), self:Height())
+			love.graphics.setScissor(self:x(), self:y(), self:GetDimensions())
 			if self:MouseHoverIdle() > 0.5 then
 				if self.CurrentHover.Hint then
 					local Font = self:GetFont()
