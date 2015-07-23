@@ -93,6 +93,9 @@ function TTabber:MouseClicked(x, y)
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		if self.Context then
+			self.Context.Hidden = true
+		end
 
 		local Font = self:GetFont()
 		local Offset, Height = 0, self:Height()

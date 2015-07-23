@@ -54,6 +54,9 @@ function TCheckbox:MouseClicked(x, y)
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:SetHoverAll()
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
+		if self.Context then
+			self.Context.Hidden = true
+		end
 	end
 end
 

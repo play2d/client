@@ -270,6 +270,9 @@ function gui.TGadget:MouseClicked(x, y)
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		if self.Context then
+			self.Context.Hidden = true
+		end
 	end
 end
 

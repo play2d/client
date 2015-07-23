@@ -23,19 +23,28 @@ end
 function TListview:Init()
 	self.Items = {}
 	self.Column = {}
-	gui.CreateSlider(gui.SLIDER_VER, self.Size.Width - 12, 1, 12, self.Size.Height - 2, self, 1, 1)
+	self.Slider = gui.CreateSlider(gui.SLIDER_VER, self.Size.Width - 12, 1, 12, self.Size.Height - 2, self, 1, 1)
 	return self
 end
 
 function TListview:AddGadget(Gadget)
-	if Gadget.Type == "Slider" and not self.Slider then
-		self.Slider = Gadget
-		Gadget.Parent = self
-		Gadget.Theme = self.Theme
-		Gadget.Hidden = true
-		return true
+	if Gadget.Heading == gui.SLIDER_VER then
+		if not self.Slider then
+			Gadget.Parent = self
+			Gadget.Theme = self.Theme
+			Gadget.Hidden = true
+			return true
+		end
 	end
 	return self.BaseClass.AddGadget(self, Gadget)
+end
+
+function TListview:SetSize(Width, Height)
+	self.Size = {Width = Width, Height = Height}
+	if self.Slider then
+		self.Slider:SetPosition(Width - 12, 1)
+		self.Slider:SetSize(12, Height - 2)
+	end
 end
 
 function TListview:SetItem(Index, ...)
@@ -155,6 +164,9 @@ function TListview:MouseClicked(x, y)
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		if self.Context then
+			self.Context.Hidden = true
+		end
 
 		local Width, Height = self:Width(), self:Height()
 		local FontHeight = self:GetFont():getHeight()

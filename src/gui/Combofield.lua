@@ -208,6 +208,9 @@ function TCombofield:MouseClicked(mx, my)
 		self.Grabbed = {x = mx - x, y = my - y}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		if self.Context then
+			self.Context.Hidden = true
+		end
 		
 		local Theme = self:GetTheme()
 		if self.Grabbed.x >= self:Width() - Theme.DropImage:getWidth() or self.Grabbed.y > self.Size.Height then

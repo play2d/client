@@ -209,6 +209,9 @@ function TTextfield:MouseClicked(x, y)
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		if self.Context then
+			self.Context.Hidden = true
+		end
 
 		local Text = self.Text
 		local Length = #self.Text
