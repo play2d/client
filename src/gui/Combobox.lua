@@ -48,8 +48,8 @@ end
 
 function TCombobox:MouseClicked(mx, my)
 	if not self.Disabled and not self.Hidden then
-		local x, y = self:x(), self:y()
-		self.Dropped = mil
+		local x, y = self:GetPosition()
+		self.Dropped = nil
 		self.Grabbed = {x = mx - x, y = my - y}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
@@ -73,7 +73,7 @@ end
 
 function TCombobox:Render(dt)
 	if not self.Hidden then
-		local x, y = self:x(), self:y()
+		local x, y = self:GetPosition()
 		local Width, Height = self:GetWidth(), self.Size.Height
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()

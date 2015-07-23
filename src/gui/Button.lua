@@ -19,7 +19,7 @@ end
 
 function TButton:Render(dt)
 	if not self.Hidden then
-		local x, y = self:x(), self:y()
+		local x, y = self:GetPosition()
 		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)

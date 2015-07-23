@@ -19,7 +19,7 @@ end
 
 function TCheckbox:Render(dt)
 	if not self.Hidden then
-		local x, y = self:x(), self:y()
+		local x, y = self:GetPosition()
 		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		love.graphics.setScissor(x - 1, y - 1, Width + self.TextWidth + 7, Height + 2)
@@ -51,6 +51,7 @@ end
 function TCheckbox:MouseClicked(x, y)
 	if not self.Disabled and not self.Hidden then
 		self.Status = not self.Status
+		self.Dropped = nil
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:SetHoverAll()
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)

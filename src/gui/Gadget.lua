@@ -121,7 +121,12 @@ function gui.TGadget:GetDimensions()
 	return self:GetWidth(), self:GetHeight()
 end
 
--- Returns: [Number] The x coordinate of this object
+-- Returns: [Number] The X coordinate of this gadget, [Number] The Y coordinate of this gadget
+function gui.TGadget:GetPosition()
+	return self:x(), self:y()
+end
+
+-- Returns: [Number] The X coordinate of this gadget
 function gui.TGadget:x()
 	if self.Parent then
 		return self.Parent:x() + self.Offset.x
@@ -129,7 +134,7 @@ function gui.TGadget:x()
 	return self.Offset.x
 end
 
--- Returns: [Number] The y coordinate of this object
+-- Returns: [Number] The Y coordinate of this gadget
 function gui.TGadget:y()
 	if self.Parent then
 		return self.Parent:y() + self.Offset.y
@@ -307,17 +312,17 @@ end
 function gui.TGadget:MouseHover()
 	if not self.Hidden then
 		local MouseX, MouseY = love.mouse.getPosition()
-		local x, y = self:x(), self:y()
+		local x, y = self:GetPosition()
 		return MouseX >= x and MouseY >= y and MouseX <= x + self:GetWidth() and MouseY <= y + self:GetHeight()
 	end
 end
 
 -- Returns [true/false] If the mouse is hovering certain area of this gadget
-function gui.TGadget:MouseHoverArea(Offset_X, Offset_Y, Width, Height)
+function gui.TGadget:MouseHoverArea(OffsetX, OffsetY, Width, Height)
 	if not self.Hidden then
 		local MouseX, MouseY = love.mouse.getPosition()
-		local x, y = self:x(), self:y()
-		return MouseX >= x + Offset_X and MouseY >= y + Offset_Y and MouseX <= x + Offset_X + Width and MouseY <= y + Offset_Y + Height
+		local x, y = self:GetPosition()
+		return MouseX >= x + OffsetX and MouseY >= y + OffsetY and MouseX <= x + OffsetX + Width and MouseY <= y + OffsetY + Height
 	end
 end
 

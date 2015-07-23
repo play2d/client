@@ -65,7 +65,7 @@ end
 
 function TContext:Render(dt)
 	if not self.Hidden then
-		local x, y = self:x(), self:y()
+		local x, y = self:GetPosition()
 		local Width, Height = self:GetDimensions()
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()

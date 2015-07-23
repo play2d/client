@@ -31,7 +31,7 @@ end
 
 function TTabber:Render(dt)
 	if not self.Hidden then
-		local x, y = self:x(), self:y()
+		local x, y = self:GetPosition()
 		local Font = self:GetFont()
 		local Height = self:GetHeight()
 		local Theme = self:GetTheme()
@@ -89,7 +89,7 @@ end
 
 function TTabber:MouseClicked(x, y)
 	if not self.Disabled and not self.Hidden then
-		self.Dropped = mil
+		self.Dropped = nil
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
