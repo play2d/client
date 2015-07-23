@@ -25,7 +25,7 @@ function TWindow:Init()
 	return self
 end
 
-function TWindow:Render()
+function TWindow:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
 		local Width, Height = self:Width(), self:Height()
@@ -63,7 +63,7 @@ function TWindow:Render()
 			end
 			love.graphics.draw(CloseImage, x + Width - CloseImageWidth, y)
 		end
-		self:RenderGadgets()
+		self:RenderGadgets(dt)
 	end
 end
 

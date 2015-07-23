@@ -46,6 +46,7 @@ function TTextarea:AddGadget(Gadget)
 			return true
 		end
 	end
+	return self.BaseClass.AddGadget(self, Gadget)
 end
 
 function TTextarea:HoverGadget()
@@ -53,9 +54,8 @@ function TTextarea:HoverGadget()
 		local HoverGadget = self.Slider.Vertical:HoverGadget() or self.Slider.Horizontal:HoverGadget()
 		if HoverGadget then
 			return HoverGadget
-		elseif self:MouseHover() then
-			return self
 		end
+		return self.BaseClass.HoverGadget(self)
 	end
 end
 
@@ -330,6 +330,7 @@ function TTextarea:Render(dt)
 		
 		self.Slider.Vertical:Render(dt)
 		self.Slider.Horizontal:Render(dt)
+		self:RenderGadgets(dt)
 	end
 end
 
@@ -445,6 +446,7 @@ function TTextarea:Update(dt)
 				end
 			end
 		end
+		self:UpdateGadgets(dt)
 	end
 end
 

@@ -9,7 +9,7 @@ function gui.CreateCheckbox(Text, x, y, Width, Height, Parent)
 		Checkbox:SetText(Text)
 		Checkbox:SetSize(Width, Height)
 		Checkbox:SetPosition(x, y)
-		return Checkbox
+		return Checkbox:Init()
 	end
 end
 
@@ -44,6 +44,7 @@ function TCheckbox:Render(dt)
 			local Mark = Theme.MarkImage
 			love.graphics.draw(Mark, x + (Width - Mark:getWidth())/2, y + (Height - Mark:getHeight())/2)
 		end
+		self:RenderGadgets(dt)
 	end
 end
 

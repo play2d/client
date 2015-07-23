@@ -34,6 +34,7 @@ function TListbox:AddGadget(Gadget)
 		Gadget.Hidden = true
 		return true
 	end
+	return self.BaseClass.AddGadget(self, Gadget)
 end
 
 function TListbox:SetItem(Index, Item)
@@ -60,9 +61,8 @@ function TListbox:HoverGadget()
 		local HoverGadget = self.Slider:HoverGadget()
 		if HoverGadget then
 			return HoverGadget
-		elseif self:MouseHover() then
-			return self
 		end
+		return self.BaseClass.HoverGadget(self)
 	end
 end
 
@@ -102,6 +102,7 @@ function TListbox:Render(dt)
 			end
 		end
 		self.Slider:Render(dt)
+		self:RenderGadgets(dt)
 	end
 end
 

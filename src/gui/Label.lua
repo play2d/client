@@ -22,7 +22,7 @@ function TLabel:SetText(Text)
 	self.Size = {Width = Font:getWidth(Text), Height = Font:getHeight()}
 end
 
-function TLabel:Render()
+function TLabel:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
 		local Width, Height = self:Width(), self:Height()
@@ -32,5 +32,6 @@ function TLabel:Render()
 		love.graphics.setColor(unpack(Theme.Text))
 		love.graphics.setFont(Font)
 		love.graphics.print(self.Text, x, y)
+		self:RenderGadgets(dt)
 	end
 end

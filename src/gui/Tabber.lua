@@ -29,7 +29,7 @@ function TTabber:Height()
 	return self:GetFont():getHeight() + 5
 end
 
-function TTabber:Render()
+function TTabber:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
 		local Font = self:GetFont()
@@ -83,6 +83,7 @@ function TTabber:Render()
 			Offset = Offset + Width + 1
 			x = x + Width + 1
 		end
+		self:RenderGadgets(dt)
 	end
 end
 

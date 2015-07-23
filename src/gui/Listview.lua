@@ -35,6 +35,7 @@ function TListview:AddGadget(Gadget)
 		Gadget.Hidden = true
 		return true
 	end
+	return self.BaseClass.AddGadget(self, Gadget)
 end
 
 function TListview:SetItem(Index, ...)
@@ -87,9 +88,7 @@ function TListview:HoverGadget()
 		if HoverGadget then
 			return HoverGadget
 		end
-		if self:MouseHover() then
-			return self
-		end
+		return self.BaseClass.HoverGadget(self)
 	end
 end
 
@@ -146,6 +145,7 @@ function TListview:Render(dt)
 			x = x + Width - 1
 		end
 		self.Slider:Render(dt)
+		self:RenderGadgets(dt)
 	end
 end
 

@@ -102,6 +102,7 @@ function TSlider:Render(dt)
 			love.graphics.line(x + BarPosition + BarSize/2, y + 3, x + BarPosition + BarSize/2, y + Height - 3)
 			love.graphics.line(x + BarPosition + BarSize/2 + 3, y + 3, x + BarPosition + BarSize/2 + 3, y + Height - 3)
 		end
+		self:RenderGadgets(dt)
 	end
 end
 

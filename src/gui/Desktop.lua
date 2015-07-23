@@ -121,8 +121,9 @@ function TDesktop:GetFirstAll()
 	return self.CurrentFirst
 end
 
-function TDesktop:OnClick(x, y)
+function TDesktop:MouseClicked(x, y)
 	if self:Hover(x, y) then
+		self:OnClick(x, y)
 		if self.CurrentHover and self.CurrentHover ~= self then
 			self.CurrentHover:MouseClicked(x, y)
 			self.CurrentGrabbed = self.CurrentHover
@@ -132,7 +133,16 @@ function TDesktop:OnClick(x, y)
 	end
 end
 
-function TDesktop:OnDrop(x, y)
+function TDesktop:MouseRightClicked(x, y)
+	if self:Hover(x, y) then
+		self:OnClick(x, y)
+		if self.CurrentHover and self.CurrentHover ~= self then
+			self.CurrentHover:MouseRightClicked(x, y)
+		end
+	end
+end 
+
+function TDesktop:MouseDropped(x, y)
 	if self:Hover(x, y) then
 		if self.CurrentGrabbed then
 			self.CurrentGrabbed:MouseDropped(x, y)
@@ -155,17 +165,6 @@ function TDesktop:Copy()
 	end
 end
 
-function TDesktop:OpenContext(x, y)
-	if self:Hover(x, y) then
-		local Hover = self:HoverGadget()
-		if (Hover and Hover ~= self) or not Hover then
-			if Hover then
-				Hover:OpenContext()
-			end
-		end
-	end
-end
-
 function TDesktop:MouseIdle()
 	return love.timer.getTime() - self.LastMouseMovement
 end
@@ -176,9 +175,9 @@ end
 
 function TDesktop:mousepressed(x, y, Button)
 	if Button == "l" then
-		self:OnClick(x, y)
+		self:MouseClicked(x, y)
 	elseif Button == "r" then
-		self:OpenContext(x, y)
+		self:MouseRightClicked(x, y)
 	elseif Button == "wu" then
 		self:WheelUp()
 	elseif Button == "wd" then
@@ -188,7 +187,7 @@ end
 
 function TDesktop:mousereleased(x, y, Button)
 	if Button == "l" then
-		self:OnDrop(x, y)
+		self:MouseDropped(x, y)
 	end
 end
 

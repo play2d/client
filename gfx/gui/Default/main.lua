@@ -175,3 +175,12 @@ Textarea = {
 	Font = love.graphics.getFont(),
 	Cursor = love.mouse.getSystemCursor("ibeam"),
 }
+
+Context = {
+	Background = {220, 220, 220, 255},
+	Border = {15, 15, 15, 255},
+	Text = {38, 38, 38, 255},
+	Hover = {100, 100, 100, 60},
+	
+	Font = love.graphics.getFont(),
+}

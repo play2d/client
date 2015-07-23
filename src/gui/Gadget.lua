@@ -23,6 +23,10 @@ end
 function gui.TGadget:OnClick(x, y)
 end
 
+-- Description: Called when the mouse right clicks this gadget
+function gui.TGadget:OnRightClick(x, y)
+end
+
 -- Description: Called when the mouse stops grabbing this gadget
 function gui.TGadget:OnDrop(x, y)
 end
@@ -75,8 +79,8 @@ function gui.TGadget:Init()
 	--self.Gadgets = {} -- Child gadgets
 	--self.GadgetsOrder = {} -- Rendering order
 	--self.Items = {} -- Gadget items
-	self.Offset = {x = 0, y = 0}
-	self.Size = {Width = 0, Height = 0}
+	--self.Offset = {x = 0, y = 0}
+	--self.Size = {Width = 0, Height = 0}
 	--self.Hidden = false
 	--self.Disabled = false
 	--self.Text = ""
@@ -142,6 +146,20 @@ function gui.TGadget:AddGadget(Gadget)
 		return true
 	end
 	return false
+end
+
+-- Returns: [true/false] If a gadget managed to be parented forcefully
+function gui.TGadget:ForceAddGadget(Gadget)
+	if self:AddGadget(Gadget) then
+		return true
+	end
+	if not self.Gadgets then
+		self.Gadgets = {}
+	end
+	if not self.GadgetsOrder then
+		self.GadgetsOrder = {}
+	end
+	return self:AddGadget(Gadget)
 end
 
 -- Description: Removes a child gadget
@@ -248,10 +266,23 @@ end
 -- Description: Do not use
 function gui.TGadget:MouseClicked(x, y)
 	if not self.Disabled and not self.Hidden then
-		self.Dropped = mil
+		self.Dropped = nil
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+	end
+end
+
+-- Description: Do not use
+function gui.TGadget:MouseRightClicked(x, y)
+	if not self.Disabled and not self.Hidden then
+		local Position = {x = x - self:x(), y = y - self:y()}
+		if self.Context then
+			self.Context.Hidden = nil
+			self.Context:SetHoverAll()
+			self.Context:SetPosition(Position.x, Position.y)
+		end
+		self:OnRightClick(Position.x, Position.y)
 	end
 end
 
@@ -336,15 +367,22 @@ end
 -- Description: Sets this gadget on top of every gadget
 function gui.TGadget:SetHoverAll()
 	if not self.Hidden then
-		if self.Parent and self.Parent.GadgetsOrder then
-			local GadgetsOrder = {}
-			for _, Gadget in pairs(self.Parent.GadgetsOrder) do
-				if Gadget ~= self then
-					table.insert(GadgetsOrder, Gadget)
+		if self.Parent then
+			if self.Parent.GadgetsOrder then
+				local GadgetsOrder = {}
+				for _, Gadget in pairs(self.Parent.GadgetsOrder) do
+					if Gadget ~= self then
+						table.insert(GadgetsOrder, Gadget)
+					end
+				end
+				table.insert(GadgetsOrder, self)
+				self.Parent.GadgetsOrder = GadgetsOrder
+			end
+			if self.Parent.Context then
+				if self.Parent.Context ~= self then
+					self.Parent.Context.Hidden = true
 				end
 			end
-			table.insert(GadgetsOrder, self)
-			self.Parent.GadgetsOrder = GadgetsOrder
 			self.Parent:SetHoverAll()
 		end
 	end
@@ -388,9 +426,9 @@ function gui.TGadget:FirstGadget()
 	if self.GadgetsOrder then
 		local FirstGadget
 		for _, Gadget in pairs(self.GadgetsOrder) do
-			local FirstChild = Gadget:FirstGadget()
-			if FirstChild then
-				FirstGadget = FirstChild
+			local First = Gadget:FirstGadget()
+			if First then
+				FirstGadget = First
 			end
 		end
 		if FirstGadget then

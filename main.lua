@@ -67,6 +67,15 @@ PD: Results are awesome.
 game.Textarea:SetFormat(4, 7, love.graphics.getFont(), 255, 50, 50, 255)
 game.Textarea:SetFormat(12, 10, love.graphics.getFont(), 50, 50, 255, 200)
 game.Textarea:SetFormat(10, 4, love.graphics.getFont(), 200, 150, 0, 200)
+game.Textarea:AddContext("Copy", "Paste")
+
+function game.Textarea:OnContext(Index, Text)
+	if Text == "Copy" then
+		print("Attempt to copy")
+	elseif Text == "Paste" then
+		print("Attempt to paste")
+	end
+end
 
 -- Desktop test
 game.StartButton = gui.CreateButton("Start", 10, 10, 100, 20, game.Desktop)

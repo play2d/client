@@ -373,6 +373,7 @@ function TCombofield:Update(dt)
 				end
 			end
 		end
+		self:UpdateGadgets(dt)
 	end
 end
 
@@ -463,5 +464,6 @@ function TCombofield:Render(dt)
 			love.graphics.setColor(255, 255, 255, 255)
 			love.graphics.draw(Theme.DropImage, x + Width - Theme.DropImage:getWidth(), y + (Height - Theme.DropImage:getHeight())/2)
 		end
+		self:RenderGadgets(dt)
 	end
 end

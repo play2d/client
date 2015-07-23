@@ -31,7 +31,7 @@ function TImage:Height()
 	return self.Image:getHeight()
 end
 
-function TImage:Render()
+function TImage:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
 		local Width, Height = self:Width(), self:Height()
@@ -39,5 +39,6 @@ function TImage:Render()
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)
 		love.graphics.setColor(unpack(Theme.Background))
 		love.graphics.draw(self.Image, x, y, 0, Width/self.Image:getWidth(), Height/self.Image:getHeight())
+		self:RenderGadgets(dt)
 	end
 end

@@ -9,7 +9,7 @@ function gui.CreateButton(Text, x, y, Width, Height, Parent)
 		Button:SetPosition(x, y)
 		Button:SetSize(Width, Height)
 		Button:SetText(Text)
-		return Button
+		return Button:Init()
 	end
 end
 
@@ -56,5 +56,6 @@ function TButton:Render(dt)
 		local Font = self:GetFont()
 		love.graphics.setFont(Font)
 		love.graphics.print(self.Text, x + (Width - Font:getWidth(self.Text))/2, y + (Height - Font:getHeight())/2)
+		self:RenderGadgets(dt)
 	end
 end

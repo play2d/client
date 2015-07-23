@@ -336,7 +336,7 @@ function TTextfield:Update(dt)
 	end
 end
 
-function TTextfield:Render()
+function TTextfield:Render(dt)
 	if not self.Hidden then
 		local x, y = self:x(), self:y()
 		local Width, Height = self:Width(), self:Height()
@@ -387,5 +387,6 @@ function TTextfield:Render()
 				love.graphics.rectangle("fill", x + Font:getWidth(Text:sub(1, self.Start + self.Length)) - self.TextOffset, y + TextY, Font:getWidth(Text:sub(self.Start + self.Length + 1, self.Start)), Font:getHeight())
 			end
 		end
+		self:RenderGadgets(dt)
 	end
 end
