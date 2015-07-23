@@ -77,6 +77,10 @@ function game.Textarea:OnContext(Index, Text)
 	end
 end
 
+game.Window5 = gui.CreateWindow("asd window", 100, 50, 300, 400, game.Window4, true)
+game.Panel = gui.CreatePanel("Panel", 10, 30, 280, 360, game.Window5)
+game.Field3 = gui.CreateTextfield(10, 50, 100, 20, game.Panel)
+
 -- Desktop test
 game.StartButton = gui.CreateButton("Start", 10, 10, 100, 20, game.Desktop)
 function game.StartButton:OnClick()

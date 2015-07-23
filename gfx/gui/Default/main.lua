@@ -183,4 +183,13 @@ Context = {
 	Hover = {100, 100, 100, 60},
 	
 	Font = love.graphics.getFont(),
+	Cursor = love.mouse.getSystemCursor("hand"),
+}
+
+Panel = {
+	Background = {230, 230, 230, 255},
+	Border = {80, 80, 80, 255},
+	Text = {38, 38, 38, 255},
+
+	Font = love.graphics.getFont(),
 }
