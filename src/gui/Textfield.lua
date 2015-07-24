@@ -32,6 +32,13 @@ end
 
 function TTextfield:SetText(Text)
 	self.Text = Text
+	if self.Start > #Text then
+		self.Start = #Text
+	elseif self.Length > 0 then
+		if self.Start + self.Length > #Text then
+			self.Length = #Text - self.Start
+		end
+	end
 end
 
 function TTextfield:SetFont(Font)
@@ -85,9 +92,9 @@ function TTextfield:keypressed(key)
 		if self.Length == 0 then
 			local Width = Font:getWidth(Text:sub(self.Start, self.Start))
 			if Font:getWidth(Text) - Width > self:GetWidth() then
-				self.TextOffset = math.max(self.TextOffset - Width, 0)
+				self.TextOffset = math.max(self.TextOffset - Width, -2.5)
 			else
-				self.TextOffset = 0
+				self.TextOffset = -2.5
 			end
 			self.Text = self.Text:sub(1, self.Start - 1) .. self.Text:sub(self.Start + 1)
 			self.Start = math.max(self.Start - 1, 0)

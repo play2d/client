@@ -1,6 +1,6 @@
 game = {
 	_VERSION = "0.0.0.1a",
-	CODENAME = "Lua rox",
+	CODENAME = "LuaJIT Rox",
 	DATE = "13/07/2015",
 }
 
@@ -16,3 +16,11 @@ require("src.language")
 require("src.vector")
 require("src.interface")
 require("enet")
+
+-- We should remove all trace of loading functions
+Hook.Add("load",
+	function ()
+		love.load = nil
+		Hook.Data.load = nil
+	end
+)

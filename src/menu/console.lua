@@ -39,6 +39,7 @@ end
 
 function game.ui.OpenConsole()
 	game.ui.Console.Hidden = nil
+	game.ui.ConsoleInput:SetHoverAll()
 end
 
 local function InitializeConsoleMenu()
@@ -64,6 +65,7 @@ local function InitializeConsoleMenu()
 		game.ui.ConsoleInput:SetText("")
 		game.Console.Print("> "..Command)
 	end
+	game.Console.Print("Play2D "..game._VERSION.." ["..game.CODENAME.."] initialized", 0, 200, 0, 255)
 	
 	InitializeConsoleMenu = nil
 end
