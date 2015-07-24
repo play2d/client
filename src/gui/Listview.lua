@@ -124,18 +124,20 @@ function TListview:Render(dt)
 			love.graphics.rectangle("fill", x + 1, y + 1, Width - 2, Height - 2)
 			
 			love.graphics.setColor(unpack(Theme.Text))
-			for Index = FirstItem, LastItem do
-				local Item = self.Items[Index]
-				if Item then
-					love.graphics.print(Item[ColumnID], x + 2.5, y + (Index - 1) * (FontHeight + 5) + 5 + HeightOffset)
-					if self.Selected == Index then
-						love.graphics.setColor(unpack(Theme.Selected))
-						love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset, Width, FontHeight + 5)
-						love.graphics.setColor(unpack(Theme.Text))
-					elseif self:MouseHoverArea(0, (Index - 1) * (FontHeight + 5) + 5 + HeightOffset, self.Size.Width, FontHeight + 4.5) and self:IsHovered() then
-						love.graphics.setColor(unpack(Theme.Hover))
-						love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset, Width, FontHeight + 5)
-						love.graphics.setColor(unpack(Theme.Text))
+			if next(self.Items) then
+				for Index = FirstItem, LastItem do
+					local Item = self.Items[Index]
+					if Item then
+						love.graphics.print(Item[ColumnID], x + 2.5, y + (Index - 1) * (FontHeight + 5) + 5 + HeightOffset)
+						if self.Selected == Index then
+							love.graphics.setColor(unpack(Theme.Selected))
+							love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset, Width, FontHeight + 5)
+							love.graphics.setColor(unpack(Theme.Text))
+						elseif self:MouseHoverArea(0, (Index - 1) * (FontHeight + 5) + 5 + HeightOffset, self.Size.Width, FontHeight + 4.5) and self:IsHovered() then
+							love.graphics.setColor(unpack(Theme.Hover))
+							love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset, Width, FontHeight + 5)
+							love.graphics.setColor(unpack(Theme.Text))
+						end
 					end
 				end
 			end

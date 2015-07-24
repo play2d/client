@@ -24,6 +24,7 @@ local function InitializeMainMenu()
 	
 	game.ui.FindServersButton = gui.CreateLabel(language.get("gui_label_find_servers"), 20, 260, game.ui.Desktop)
 	game.ui.FindServersButton:SetColor("Text", 150, 150, 150, 255)
+	game.ui.FindServersButton.OnClick = game.ui.OpenServerBrowser
 	game.ui.FindServersButton.MouseEnter = HighlightLabel
 	game.ui.FindServersButton.MouseExit = NormalizeLabel
 	
