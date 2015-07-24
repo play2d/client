@@ -51,8 +51,8 @@ function TCombobox:MouseClicked(mx, my)
 		local x, y = self:GetPosition()
 		self.Dropped = nil
 		self.Grabbed = {x = mx - x, y = my - y}
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self.Open = not self.Open
 		
 		if not self.Open then

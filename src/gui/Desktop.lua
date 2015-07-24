@@ -218,5 +218,5 @@ function TDesktop:keypressed(key)
 end
 
 function TDesktop:textinput(text)
-	game.Desktop:Write(text)
+	self:Write(text)
 end

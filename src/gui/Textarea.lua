@@ -182,6 +182,9 @@ function TTextarea:EachFormat()
 	local Index, Format
 	local Line = 1
 	return function ()
+		if #self.Text == 0 then
+			return nil
+		end
 		if Format then
 			local NextLine = next(Format.TextArray, Format.TextIndex)
 			if NextLine then
@@ -293,14 +296,14 @@ function TTextarea:Render(dt)
 		for Format in self:EachFormat() do
 			love.graphics.setFont(Format.Font)
 			love.graphics.setColor(unpack(Format.Color))
-			
+				
 			if Format.LineBreak then
 				TextPosition = TextPosition + 1
 				WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
 				HeightOffset = HeightOffset + self.Line[Format.Line].Height
 			end
 			love.graphics.print(Format.Text, x + WidthOffset, y + HeightOffset + self.Line[Format.Line].Height - Format.Height)
-			
+				
 			if self.Length > 0 and TextPosition + #Format.Text >= self.Start then
 				love.graphics.setColor(unpack(Theme.SelectedText))
 				love.graphics.rectangle("fill",
@@ -335,11 +338,11 @@ function TTextarea:Render(dt)
 end
 
 function TTextarea:MouseClicked(x, y)
-	if not self.Hidden and not self.Disabled then
+	if not self.Hidden then
 		self.Dropped = nil
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		if self.Context then
 			self.Context.Hidden = true
 		end
@@ -383,7 +386,7 @@ function TTextarea:MouseClicked(x, y)
 end
 
 function TTextarea:MouseMove(x, y)
-	if not self.Hidden and not self.Disabled then
+	if not self.Hidden then
 		local Position = {x = x - self:x(), y = y - self:y()}
 		local Width, Height = self:GetDimensions()
 		local TextPosition = 0
@@ -421,7 +424,7 @@ function TTextarea:MouseMove(x, y)
 end
 
 function TTextarea:Update(dt)
-	if not self.Hidden and not self.Disabled then
+	if not self.Hidden then
 		if self.Grabbed then
 			local x = love.mouse.getX() - self:x()
 			local y = love.mouse.getY() - self:y()
@@ -454,7 +457,7 @@ function TTextarea:Update(dt)
 end
 
 function TTextarea:MouseDropped(x, y)
-	if not self.Hidden and not self.Disabled then
+	if not self.Hidden then
 		if self.Grabbed then
 			self.Grabbed = nil
 			self.Dropped = {x = x - self:x(), y = y - self:y()}

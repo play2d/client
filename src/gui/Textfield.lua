@@ -17,6 +17,9 @@ function gui.CreateTextfield(x, y, Width, Height, Parent, HintText)
 	end
 end
 
+function TTextfield:Send()
+end
+
 function TTextfield.New()
 	return setmetatable({}, TTextfieldMetatable)
 end
@@ -55,13 +58,14 @@ function TTextfield:Write(Text)
 			self.Length = 0
 		end
 
+		local TextfieldText = self.Text
 		if self.Password then
-			Text = string.rep("*", Length)
+			TextfieldText = string.rep("*", Length)
 		end
 		local Font = self:GetFont()
-		local Width = Font:getWidth(Text)
-		if Font:getWidth(self.Text) + Width > self.TextOffset + self:GetWidth() then
-			self.TextOffset = self.TextOffset + Width
+		local Position = Font:getWidth(TextfieldText:sub(1, Start)) + 2.5
+		if Position > self:GetWidth() then
+			self.TextOffset = Position - self:GetWidth()
 		end
 	end
 end
@@ -200,6 +204,8 @@ function TTextfield:keypressed(key)
 		if Width > self:GetWidth() then
 			self.TextOffset = Width - self:GetWidth() + 2.5
 		end
+	elseif key == "return" then
+		self:Send()
 	end
 end
 
@@ -207,8 +213,8 @@ function TTextfield:MouseClicked(x, y)
 	if not self.Hidden and not self.Disabled then
 		self.Dropped = nil
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		self:SetHoverAll()
+		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		if self.Context then
 			self.Context.Hidden = true
 		end

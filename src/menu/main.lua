@@ -13,6 +13,7 @@ local function InitializeMainMenu()
 	
 	game.ui.ConsoleButton = gui.CreateLabel(language.get("gui_label_console"), 20, 200, game.ui.Desktop)
 	game.ui.ConsoleButton:SetColor("Text", 150, 150, 150, 255)
+	game.ui.ConsoleButton.OnClick = game.ui.OpenConsole
 	game.ui.ConsoleButton.MouseEnter = HighlightLabel
 	game.ui.ConsoleButton.MouseExit = NormalizeLabel
 	
