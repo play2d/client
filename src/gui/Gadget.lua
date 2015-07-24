@@ -521,7 +521,7 @@ end
 function gui.TGadget:SetColor(What, R, G, B, A)
 	if not self.CustomTheme then
 		self.CustomTheme = {}
-		for k, v in pairs(self.Theme) do
+		for k, v in pairs(self.Theme[self.Type]) do
 			self.CustomTheme[k] = v
 		end
 	end

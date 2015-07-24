@@ -5,7 +5,7 @@ Window = {
 	TitleBottom = {153, 153, 153, 255},
 	TitleText = {38, 38, 38, 255},
 
-	CloseImage = love.graphics.newImage("gfx/gui/Default/close.png"),
+	CloseImage = love.graphics.newImage("gfx/gui/default/close.png"),
 	CloseDefault = {180, 180, 180, 255},
 	CloseHover = {255, 255, 255},
 
@@ -61,7 +61,7 @@ Checkbox = {
 	HoverBackground = {255, 255, 255, 255},
 	Text = {38, 38, 38, 255},
 
-	MarkImage = love.graphics.newImage("gfx/gui/Default/checkmark.png"),
+	MarkImage = love.graphics.newImage("gfx/gui/default/checkmark.png"),
 	Font = love.graphics.getFont(),
 }
 
@@ -123,7 +123,7 @@ Combobox = {
 	
 	Font = love.graphics.getFont(),
 	Cursor = love.mouse.getSystemCursor("hand"),
-	DropImage = love.graphics.newImage("gfx/gui/Default/down.png"),
+	DropImage = love.graphics.newImage("gfx/gui/default/down.png"),
 }
 
 Combofield = {
@@ -139,7 +139,7 @@ Combofield = {
 	Font = love.graphics.getFont(),
 	HandCursor = love.mouse.getSystemCursor("hand"),
 	TextCursor = love.mouse.getSystemCursor("ibeam"),
-	DropImage = love.graphics.newImage("gfx/gui/Default/down.png"),
+	DropImage = love.graphics.newImage("gfx/gui/default/down.png"),
 }
 
 Progressbar = {

@@ -56,6 +56,7 @@ local function InitializeConsoleMenu()
 	end
 
 	game.ui.ConsoleOutput = gui.CreateTextarea(10, 30, 480, 510, game.ui.Console)
+	game.ui.ConsoleOutput:SetColor("Text", 120, 120, 120, 255)
 	game.ui.ConsoleOutput.Disabled = true
 	
 	game.ui.ConsoleInput = gui.CreateTextfield(10, 550, 370, 20, game.ui.Console)
