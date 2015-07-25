@@ -22,6 +22,24 @@ function TCanvas:Init()
 	return self
 end
 
+function TCanvas:HoverGadget()
+	if not self.Hidden then
+		if self.GadgetsOrder then
+			local HoverGadget
+			for _, Gadget in pairs(self.GadgetsOrder) do
+				local HoverChild = Gadget:HoverGadget()
+				if HoverChild then
+					HoverGadget = HoverChild
+				end
+			end
+			if HoverGadget then
+				return HoverGadget
+			end
+		end
+		-- Canvas shall never return itself, otherwise it will cover necessary things
+	end
+end
+
 function TCanvas:Draw(x, y, Width, Height, dt)
 end
 
