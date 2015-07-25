@@ -28,3 +28,4 @@ gui_options_tab_graphics = Graphics
 gui_options_tab_sound = Sound
 gui_options_tab_net = Net
 gui_options_tab_more = More
+gui_options_player_name = Name

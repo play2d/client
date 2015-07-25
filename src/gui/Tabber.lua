@@ -1,6 +1,7 @@
 local TTabber = {}
 local TTabberMetatable = {__index = TTabber}
 TTabber.Type = "Tabber"
+TTabber.Selected = 1
 setmetatable(TTabber, gui.TGadgetMetatable)
 
 function gui.CreateTabber(x, y, Parent)
