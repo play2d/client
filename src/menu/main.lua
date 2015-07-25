@@ -42,6 +42,7 @@ local function InitializeMainMenu()
 	
 	game.ui.OptionsButton = gui.CreateLabel(language.get("gui_label_options"), 20, 360, game.ui.MainMenu)
 	game.ui.OptionsButton:SetColor("Text", 150, 150, 150, 255)
+	game.ui.OptionsButton.OnClick = game.ui.OpenOptionsMenu
 	game.ui.OptionsButton.MouseEnter = HighlightLabel
 	game.ui.OptionsButton.MouseExit = NormalizeLabel
 	
