@@ -514,7 +514,10 @@ function gui.TGadget:GetCursor()
 	if self.Cursor then
 		return self.Cursor
 	end
-	return self:GetTheme().Cursor
+	local Theme = self:GetTheme()
+	if Theme then
+		return Theme.Cursor
+	end
 end
 
 -- Description: Modifies the gadget's color theme
