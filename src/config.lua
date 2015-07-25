@@ -1,10 +1,15 @@
 config = {}
 
+-- Default configuration
+config["name"] = "Player"
+
 function config.load()
 	local File = love.filesystem.newFile("sys/client.cfg", "r")
 	if File then
 		for Command in File:lines() do
-			parse(Command)
+			if Command:sub(1, 2) ~= "//" then
+				parse(Command)
+			end
 		end
 		File:close()
 	end

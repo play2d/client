@@ -363,7 +363,7 @@ function TTextarea:MouseClicked(x, y)
 					for i = 1, #Format.Text do
 						local CharWidth = Format.Font:getWidth(Format.Text:sub(i, i))
 						if self.Grabbed.x > TextWidth and self.Grabbed.x <= TextWidth + CharWidth then
-							self.Start = TextPosition + i
+							self.Start = TextPosition + i - 1
 							self.Length = 0
 							break
 						end
@@ -404,7 +404,7 @@ function TTextarea:MouseMove(x, y)
 					for i = 1, #Format.Text do
 						local CharWidth = Format.Font:getWidth(Format.Text:sub(i, i))
 						if Position.x > TextWidth and Position.x <= TextWidth + CharWidth then
-							self.Length = TextPosition + i - self.Start
+							self.Length = TextPosition + i - self.Start - 1
 							break
 						end
 						TextWidth = TextWidth + CharWidth
@@ -479,7 +479,7 @@ function TTextarea:MouseDropped(x, y)
 						for i = 1, #Format.Text do
 							local CharWidth = Format.Font:getWidth(Format.Text:sub(i, i))
 							if self.Dropped.x > TextWidth and self.Dropped.x <= TextWidth + CharWidth then
-								self.Length = TextPosition + i - self.Start
+								self.Length = TextPosition + i - self.Start - 1
 								break
 							end
 							TextWidth = TextWidth + CharWidth

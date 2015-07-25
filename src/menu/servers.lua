@@ -28,6 +28,7 @@ local function InitializeServersMenu()
 	game.ui.ServerBrowserRefreshButton = gui.CreateButton(language.get("gui_browser_refresh"), 120, 550, 100, 20, game.ui.ServerBrowser)
 	
 	game.ui.ServerBrowserConnectButton = gui.CreateButton(language.get("gui_browser_connect"), 555, 550, 100, 20, game.ui.ServerBrowser)
+	InitializeServersMenu = nil
 end
 
 Hook.Add("load", InitializeServersMenu)
