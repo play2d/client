@@ -82,6 +82,10 @@ local function InitializeOptionsMenu()
 	
 	-- Controls panel
 	game.ui.Options.Panels[2] = gui.CreatePanel(language.get("gui_options_tab_controls"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.MovementPanel = gui.CreatePanel(language.get("gui_options_controls_movement"), 10, 20, 120, 60, game.ui.Options.Panels[2])
+	
+	game.ui.Options.AbsMovementRadioButton = gui.CreateRadioButton(language.get("gui_options_controls_movement_absolute"), 10, 20, 5, game.ui.Options.MovementPanel)
+	game.ui.Options.RelativeToDirRadioButton = gui.CreateRadioButton(language.get("gui_options_controls_movement_relativetodir"), 10, 40, 5, game.ui.Options.MovementPanel)
 	
 	-- Game panel
 	game.ui.Options.Panels[3] = gui.CreatePanel(language.get("gui_options_tab_game"), 10, 60, 650, 510, game.ui.Options.Window)

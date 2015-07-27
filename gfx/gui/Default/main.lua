@@ -193,3 +193,12 @@ Panel = {
 
 	Font = love.graphics.getFont(),
 }
+
+RadioButton = {
+	Background = {100, 100, 100, 255},
+	HoverBackground = {150, 150, 150, 255},
+	Border = {15, 15, 15, 255},
+	Text = {38, 38, 38, 255},
+
+	Font = love.graphics.getFont(),
+}

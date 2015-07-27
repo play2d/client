@@ -30,6 +30,6 @@ gui_options_tab_net = Net
 gui_options_tab_more = More
 gui_options_player_name = Name
 gui_options_player_spraylogo = Spraylogo: $SPRAYLOGO
-gui_options_controls_movement = Movement:
+gui_options_controls_movement = Movement
 gui_options_controls_movement_absolute = Absolute
 gui_options_controls_movement_relativetodir = Relative to dir.
