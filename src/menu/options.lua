@@ -45,6 +45,9 @@ local function InitializeOptionsMenu()
 	game.ui.Options.Tab:AddItem(language.get("gui_options_tab_net"))
 	game.ui.Options.Tab:AddItem(language.get("gui_options_tab_more"))
 	
+	game.ui.Options.Okay = gui.CreateButton(language.get("gui_label_okay"), 450, 550, 100, 20, game.ui.Options.Window)
+	game.ui.Options.Cancel = gui.CreateButton(language.get("gui_label_cancel"), 560, 550, 100, 20, game.ui.Options.Window)
+	
 	function game.ui.Options.Tab:OnSelect(Index)
 		game.ui.Options.Panels[self.Selected].Hidden = true
 		game.ui.Options.Panels[Index].Hidden = nil
@@ -53,7 +56,7 @@ local function InitializeOptionsMenu()
 	game.ui.Options.Panels = {}
 	
 	-- Player panel
-	game.ui.Options.Panels[1] = gui.CreatePanel(language.get("gui_options_tab_player"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.Panels[1] = gui.CreatePanel(language.get("gui_options_tab_player"), 10, 60, 650, 480, game.ui.Options.Window)
 	gui.CreateLabel(language.get("gui_options_player_name"), 20, 30, game.ui.Options.Panels[1])
 	
 	game.ui.Options.NameField = gui.CreateTextfield(20, 50, 200, 20, game.ui.Options.Panels[1])
@@ -81,26 +84,30 @@ local function InitializeOptionsMenu()
 	end
 	
 	-- Controls panel
-	game.ui.Options.Panels[2] = gui.CreatePanel(language.get("gui_options_tab_controls"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.Panels[2] = gui.CreatePanel(language.get("gui_options_tab_controls"), 10, 60, 650, 480, game.ui.Options.Window)
 	game.ui.Options.MovementPanel = gui.CreatePanel(language.get("gui_options_controls_movement"), 10, 20, 120, 60, game.ui.Options.Panels[2])
 	
 	game.ui.Options.AbsMovementRadioButton = gui.CreateRadioButton(language.get("gui_options_controls_movement_absolute"), 10, 20, 5, game.ui.Options.MovementPanel)
 	game.ui.Options.RelativeToDirRadioButton = gui.CreateRadioButton(language.get("gui_options_controls_movement_relativetodir"), 10, 40, 5, game.ui.Options.MovementPanel)
 	
+	game.ui.Options.ControlsList = gui.CreateListview(140, 20, 450, game.ui.Options.Panels[2])
+	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_control"), 300)
+	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_bind"), 200)
+	
 	-- Game panel
-	game.ui.Options.Panels[3] = gui.CreatePanel(language.get("gui_options_tab_game"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.Panels[3] = gui.CreatePanel(language.get("gui_options_tab_game"), 10, 60, 650, 480, game.ui.Options.Window)
 	
 	-- Graphics panel
-	game.ui.Options.Panels[4] = gui.CreatePanel(language.get("gui_options_tab_graphics"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.Panels[4] = gui.CreatePanel(language.get("gui_options_tab_graphics"), 10, 60, 650, 480, game.ui.Options.Window)
 	
 	-- Sound panel
-	game.ui.Options.Panels[5] = gui.CreatePanel(language.get("gui_options_tab_sound"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.Panels[5] = gui.CreatePanel(language.get("gui_options_tab_sound"), 10, 60, 650, 480, game.ui.Options.Window)
 	
 	-- Net panel
-	game.ui.Options.Panels[6] = gui.CreatePanel(language.get("gui_options_tab_net"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.Panels[6] = gui.CreatePanel(language.get("gui_options_tab_net"), 10, 60, 650, 480, game.ui.Options.Window)
 	
 	-- More Panel
-	game.ui.Options.Panels[7] = gui.CreatePanel(language.get("gui_options_tab_more"), 10, 60, 650, 510, game.ui.Options.Window)
+	game.ui.Options.Panels[7] = gui.CreatePanel(language.get("gui_options_tab_more"), 10, 60, 650, 480, game.ui.Options.Window)
 	
 	for i = 2, #game.ui.Options.Panels do
 		game.ui.Options.Panels[i].Hidden = true
