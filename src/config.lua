@@ -2,6 +2,7 @@ config = {}
 
 -- Default configuration
 config["name"] = "Player"
+config["relativemovement"] = 0
 
 function config.load()
 	local File = love.filesystem.newFile("sys/client.cfg", "r")

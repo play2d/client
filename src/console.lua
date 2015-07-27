@@ -85,7 +85,7 @@ function console.parse(command)
 	return Commands
 end
 
-function console.run(command, commandList, errorFunction)
+function console.run(command, commandList, source, errorFunction)
 	assert(type(command) == "string", "#1: expected string")
 	assert(type(commandList) == "table", "#2: expected table")
 	local Commands = console.parse(command)
@@ -93,7 +93,7 @@ function console.run(command, commandList, errorFunction)
 		for _, CMD in pairs(Commands) do
 			local Function = commandList[CMD.Command]
 			if Function then
-				Function(unpack(CMD.Arguments))
+				Function(source, unpack(CMD.Arguments))
 			elseif errorFunction then
 				errorFunction(CMD.Command)
 			end

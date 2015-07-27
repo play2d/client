@@ -2,9 +2,9 @@ commands = {}
 commands.list = {}
 commands.temp = {}
 
-function parse(command)
+function parse(command, source)
 	if type(command) == "string" then
-		console.run(command, commands.list)
+		console.run(command, commands.list, source or {source = "game"})
 	end
 end
 

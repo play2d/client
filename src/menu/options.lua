@@ -90,6 +90,23 @@ local function InitializeOptionsMenu()
 	game.ui.Options.AbsMovementRadioButton = gui.CreateRadioButton(language.get("gui_options_controls_movement_absolute"), 10, 20, 5, game.ui.Options.MovementPanel)
 	game.ui.Options.RelativeToDirRadioButton = gui.CreateRadioButton(language.get("gui_options_controls_movement_relativetodir"), 10, 40, 5, game.ui.Options.MovementPanel)
 	
+	if config["relativemovement"] == 0 then
+		game.ui.Options.MovementPanel.RadioButton = game.ui.Options.AbsMovementRadioButton
+	elseif config["relativemovement"] == 1 then
+		game.ui.Options.MovementPanel.RadioButton = game.ui.Options.RelativeToDirRadioButton
+	end
+
+--[[
+	-- Noes, this configuration has to be applied when they click "okay"
+	function game.ui.Options.AbsMovementRadioButton:OnClick()
+		config["relativemovement"] = 0
+	end
+	
+	function game.ui.Options.RelativeToDirRadioButton:OnClick()
+		config["relativemovement"] = 1
+	end
+]]
+	
 	game.ui.Options.ControlsList = gui.CreateListview(140, 20, 450, game.ui.Options.Panels[2])
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_control"), 300)
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_bind"), 200)
