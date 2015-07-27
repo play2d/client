@@ -217,15 +217,7 @@ function TTextfield:keypressed(key)
 end
 
 function TTextfield:MouseClicked(x, y)
-	if not self.Hidden and not self.Disabled then
-		self.Dropped = nil
-		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:SetHoverAll()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
-		if self.Context then
-			self.Context.Hidden = true
-		end
-
+	if self.BaseClass.MouseClicked(self, x, y) then
 		local Text = self.Text
 		local Length = #self.Text
 		if self.Password then
@@ -251,6 +243,7 @@ function TTextfield:MouseClicked(x, y)
 			self.Start = 0
 			self.Length = 0
 		end
+		return true
 	end
 end
 

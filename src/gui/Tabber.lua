@@ -89,15 +89,7 @@ function TTabber:Render(dt)
 end
 
 function TTabber:MouseClicked(x, y)
-	if not self.Disabled and not self.Hidden then
-		self.Dropped = nil
-		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:SetHoverAll()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
-		if self.Context then
-			self.Context.Hidden = true
-		end
-
+	if self.BaseClass.MouseClicked(self, x, y) then
 		local Font = self:GetFont()
 		local Offset, Height = 0, self:GetHeight()
 		for Index, Item in pairs(self.Items) do
@@ -108,6 +100,7 @@ function TTabber:MouseClicked(x, y)
 			end
 			Offset = Offset + Width + 1
 		end
+		return true
 	end
 end
 

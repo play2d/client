@@ -196,22 +196,13 @@ function TCombofield:GetCursor()
 	local MouseX, MouseY = love.mouse.getPosition()
 	local Theme = self:GetTheme()
 	if MouseX - self:x() >= self:GetWidth() - Theme.DropImage:getWidth() or MouseY - self:y() > self.Size.Height then
-		return self:GetTheme().HandCursor
+		return Theme.HandCursor
 	end
-	return self:GetTheme().TextCursor
+	return self.BaseClass.GetCursor(self)
 end
 
 function TCombofield:MouseClicked(mx, my)
-	if not self.Hidden and not self.Disabled then
-		local x, y = self:GetPosition()
-		self.Dropped = nil
-		self.Grabbed = {x = mx - x, y = my - y}
-		self:SetHoverAll()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
-		if self.Context then
-			self.Context.Hidden = true
-		end
-		
+	if self.BaseClass.MouseClicked(self, mx, my) then
 		local Theme = self:GetTheme()
 		if self.Grabbed.x >= self:GetWidth() - Theme.DropImage:getWidth() or self.Grabbed.y > self.Size.Height then
 			self.Open = not self.Open
@@ -255,6 +246,7 @@ function TCombofield:MouseClicked(mx, my)
 				self.Length = 0
 			end
 		end
+		return true
 	end
 end
 

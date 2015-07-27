@@ -20,15 +20,19 @@ end
 function TImage:GetWidth()
 	if self.Size.Width then
 		return self.Size.Width
+	elseif self.Image then
+		return self.Image:getWidth()
 	end
-	return self.Image:getWidth()
+	return self.BaseClass.GetWidth(self)
 end
 
 function TImage:GetHeight()
 	if self.Size.Height then
 		return self.Size.Height
+	elseif self.Image then
+		return self.Image:getHeight()
 	end
-	return self.Image:getHeight()
+	return self.BaseClass.GetHeight(self)
 end
 
 function TImage:Render(dt)

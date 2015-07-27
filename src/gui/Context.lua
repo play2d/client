@@ -94,7 +94,7 @@ function TContext:Render(dt)
 end
 
 function TContext:MouseClicked(x, y)
-	if not self.Disabled and not self.Hidden then
+	if self.BaseClass.MouseClicked(self, x, y) then
 		local Width = self:GetWidth()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = 0
@@ -108,6 +108,6 @@ function TContext:MouseClicked(x, y)
 			end
 			HeightOffset = HeightOffset + FontHeight + 5
 		end
-		self:OnClick(x - self:x(), y - self:y())
+		return true
 	end
 end

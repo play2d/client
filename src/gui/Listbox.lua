@@ -116,15 +116,7 @@ function TListbox:Render(dt)
 end
 
 function TListbox:MouseClicked(x, y)
-	if not self.Disabled and not self.Hidden then
-		self.Dropped = nil
-		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:SetHoverAll()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
-		if self.Context then
-			self.Context.Hidden = true
-		end
-
+	if self.BaseClass.MouseClicked(self, x, y) then
 		local Width, Height = self:GetDimensions()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height) / (self.ItemCount * (FontHeight + 5))
@@ -138,5 +130,6 @@ function TListbox:MouseClicked(x, y)
 				end
 			end
 		end
+		return true
 	end
 end

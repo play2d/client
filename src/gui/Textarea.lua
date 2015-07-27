@@ -338,15 +338,7 @@ function TTextarea:Render(dt)
 end
 
 function TTextarea:MouseClicked(x, y)
-	if not self.Hidden then
-		self.Dropped = nil
-		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:SetHoverAll()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
-		if self.Context then
-			self.Context.Hidden = true
-		end
-
+	if self.BaseClass.MouseClicked(self, x, y) then
 		local Width, Height = self:GetDimensions()
 		local TextPosition = 0
 		local WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
@@ -382,6 +374,7 @@ function TTextarea:MouseClicked(x, y)
 			TextPosition = TextPosition + #Format.Text
 			WidthOffset = WidthOffset + Format.Width
 		end
+		return true
 	end
 end
 

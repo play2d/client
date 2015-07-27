@@ -128,6 +128,7 @@ function TDesktop:MouseClicked(x, y)
 				self.Context.Hidden = true
 			end
 		end
+		return true
 	end
 end
 

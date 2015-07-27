@@ -27,9 +27,9 @@ end
 
 function TCombobox:GetHeight()
 	if self.Open then
-		return self.Size.Height + self.ItemCount * (self:GetFont():getHeight() + 5)
+		return self.BaseClass.GetHeight(self) + self.ItemCount * (self:GetFont():getHeight() + 5)
 	end
-	return self.Size.Height
+	return self.BaseClass.GetHeight(self)
 end
 
 function TCombobox:SetItem(Index, Item)
@@ -47,14 +47,8 @@ function TCombobox:RemoveItem(Index)
 end
 
 function TCombobox:MouseClicked(mx, my)
-	if not self.Disabled and not self.Hidden then
-		local x, y = self:GetPosition()
-		self.Dropped = nil
-		self.Grabbed = {x = mx - x, y = my - y}
-		self:SetHoverAll()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
+	if self.BaseClass.MouseClicked(self, mx, my) then
 		self.Open = not self.Open
-		
 		if not self.Open then
 			local HeightOffset = 0
 			local Width, Height = self:GetDimensions()
@@ -68,6 +62,7 @@ function TCombobox:MouseClicked(mx, my)
 				HeightOffset = HeightOffset + FontHeight + 5
 			end
 		end
+		return true
 	end
 end
 

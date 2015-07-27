@@ -49,15 +49,9 @@ function TCheckbox:Render(dt)
 end
 
 function TCheckbox:MouseClicked(x, y)
-	if not self.Disabled and not self.Hidden then
+	if self.BaseClass.MouseClicked(self, x, y) then
 		self.Status = not self.Status
-		self.Dropped = nil
-		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:SetHoverAll()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
-		if self.Context then
-			self.Context.Hidden = true
-		end
+		return true
 	end
 end
 

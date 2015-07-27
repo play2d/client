@@ -283,6 +283,7 @@ function gui.TGadget:MouseClicked(x, y)
 		if self.Context then
 			self.Context.Hidden = true
 		end
+		return true
 	end
 end
 
@@ -296,6 +297,7 @@ function gui.TGadget:MouseRightClicked(x, y)
 			self.Context:SetPosition(Position.x, Position.y)
 		end
 		self:OnRightClick(Position.x, Position.y)
+		return true
 	end
 end
 
