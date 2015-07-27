@@ -26,7 +26,7 @@ function game.Console.Print(Text, R, G, B, A)
 		end
 		local ConsoleText = table.concat(game.Console.Line, "\n")
 		if R or G or B or A then
-			game.ui.ConsoleOutput:SetFormat(#ConsoleText + 1, #Text, game.ui.ConsoleOutput:GetFont(), R or 255, G or 255, B or 255, A or 255)
+			game.ui.ConsoleOutput:SetFormat(#ConsoleText + 1, #Text + 1, game.ui.ConsoleOutput:GetFont(), R or 255, G or 255, B or 255, A or 255)
 		end
 		table.insert(game.Console.Line, Text)
 		if #ConsoleText > 0 then

@@ -1,4 +1,4 @@
-Thanks for playing this game.
+﻿Thanks for playing this game.
 We hope you enjoy it.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
