@@ -38,7 +38,9 @@ function TImage:Render(dt)
 		local Theme = self:GetTheme()
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)
 		love.graphics.setColor(unpack(Theme.Background))
-		love.graphics.draw(self.Image, x, y, 0, Width/self.Image:getWidth(), Height/self.Image:getHeight())
+		if self.Image then
+			love.graphics.draw(self.Image, x, y, 0, Width/self.Image:getWidth(), Height/self.Image:getHeight())
+		end
 		self:RenderGadgets(dt)
 	end
 end

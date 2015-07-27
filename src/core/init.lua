@@ -1,0 +1,3 @@
+local Path = ...
+
+require(Path..".map")
