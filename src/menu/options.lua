@@ -33,7 +33,7 @@ end
 
 local function InitializeOptionsMenu()
 	game.ui.Options = {}
-	game.ui.Options.Window = gui.CreateWindow(language.get("gui_label_options"), 120, 10, 670, 580, game.ui.Desktop, true)
+	game.ui.Options.Window = gui.CreateWindow(language.get("gui_label_options"), 120, 10, 670, 580, game.ui.Desktop)
 	game.ui.Options.Window.Hidden = true
 	
 	game.ui.Options.Tab = gui.CreateTabber(10, 35, game.ui.Options.Window)
@@ -46,7 +46,42 @@ local function InitializeOptionsMenu()
 	game.ui.Options.Tab:AddItem(language.get("gui_options_tab_more"))
 	
 	game.ui.Options.Okay = gui.CreateButton(language.get("gui_label_okay"), 450, 550, 100, 20, game.ui.Options.Window)
+	function game.ui.Options.Okay:OnClick()
+		-- Player name
+		config["name"] = game.ui.Options.NameField:GetText()
+		
+		-- Spraylogo
+		if game.Spraylogo then
+			config["spraylogo"] = game.Spraylogo[2]
+		end
+		
+		-- Relative to dir movement
+		if game.ui.Options.MovementPanel.RadioButton == game.ui.Options.AbsMovementRadioButton then
+			config["relativemovement"] = 0
+		elseif game.ui.Options.MovementPanel.RadioButton == game.ui.Options.RelativeToDirRadioButton then
+			config["relativemovement"] = 1
+		end
+		game.ui.Options.Window.Hidden = true
+		config.save()
+	end
+	
 	game.ui.Options.Cancel = gui.CreateButton(language.get("gui_label_cancel"), 560, 550, 100, 20, game.ui.Options.Window)
+	function game.ui.Options.Cancel:OnClick()
+		-- Player name
+		game.ui.Options.NameField:SetText(config["name"])
+		
+		-- Spraylogo
+		game.Spraylogo = nil
+		game.ReloadSpraylogos()
+		
+		-- Relative to dir movement
+		if config["relativemovement"] == 0 then
+			game.ui.Options.MovementPanel.RadioButton = game.ui.Options.AbsMovementRadioButton
+		elseif config["relativemovement"] == 1 then
+			game.ui.Options.MovementPanel.RadioButton = game.ui.Options.RelativeToDirRadioButton
+		end
+		game.ui.Options.Window.Hidden = true
+	end
 	
 	function game.ui.Options.Tab:OnSelect(Index)
 		game.ui.Options.Panels[self.Selected].Hidden = true
@@ -70,7 +105,6 @@ local function InitializeOptionsMenu()
 	function game.ui.Options.PrevSpraylogo:OnClick()
 		if game.Spraylogo then
 			game.SetSpraylogo(game.Spraylogo[1] - 1)
-			config["spraylogo"] = game.Spraylogo[2]
 			game.ui.Options.SpraylogoLabel:SetText(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = config["spraylogo"] or ""}))
 		end
 	end
@@ -78,7 +112,6 @@ local function InitializeOptionsMenu()
 	function game.ui.Options.NextSpraylogo:OnClick()
 		if game.Spraylogo then
 			game.SetSpraylogo(game.Spraylogo[1] + 1)
-			config["spraylogo"] = game.Spraylogo[2]
 			game.ui.Options.SpraylogoLabel:SetText(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = config["spraylogo"] or ""}))
 		end
 	end
@@ -95,17 +128,6 @@ local function InitializeOptionsMenu()
 	elseif config["relativemovement"] == 1 then
 		game.ui.Options.MovementPanel.RadioButton = game.ui.Options.RelativeToDirRadioButton
 	end
-
---[[
-	-- Noes, this configuration has to be applied when they click "okay"
-	function game.ui.Options.AbsMovementRadioButton:OnClick()
-		config["relativemovement"] = 0
-	end
-	
-	function game.ui.Options.RelativeToDirRadioButton:OnClick()
-		config["relativemovement"] = 1
-	end
-]]
 	
 	game.ui.Options.ControlsList = gui.CreateListview(140, 20, 450, game.ui.Options.Panels[2])
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_control"), 300)

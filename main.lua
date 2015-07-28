@@ -4,6 +4,8 @@ game = {
 	DATE = "13/07/2015",
 }
 
+CLIENT = true
+
 ffi = require("ffi")
 require("src.hook")
 require("src.console")

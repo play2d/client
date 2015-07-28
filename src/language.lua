@@ -15,8 +15,8 @@ end
 
 function language.list()
 	local List = {}
-	for File in lfs.dir("sys/language") do
-		if lfs.attributes("sys/language/"..File, "mode") == "file" then
+	for _, File in pairs(love.filesystem.getDirectoryItems("sys/language")) do
+		if love.filesystem.isFile("sys/language/"..File) then
 			local Lang = string.match(File, "(.+)%p[%a+]")
 			if #Lang > 0 then
 				table.insert(List, Lang)

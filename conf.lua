@@ -113,6 +113,6 @@ local ffi = require("ffi")
 ffi.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath); ]]; 
 ffi.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]]
 local liblove = ffi.os == "Windows" and ffi.load("love") or ffi.C
-local docsdir = love.filesystem.getSourceBaseDirectory()
+local docsdir = love.filesystem.getWorkingDirectory()
 liblove.PHYSFS_setWriteDir(docsdir)
 liblove.PHYSFS_mount(docsdir, nil, 0)
