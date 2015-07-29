@@ -1,9 +1,5 @@
 config = {}
 
--- Default configuration
-config["name"] = "Player"
-config["relativemovement"] = 0
-
 function config.load()
 	local File = io.open("sys/client.cfg", "r")
 	if File then

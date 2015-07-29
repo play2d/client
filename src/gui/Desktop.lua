@@ -153,7 +153,9 @@ end
 function TDesktop:Write(Text)
 	local Gadget = self.CurrentFirst
 	if Gadget and Gadget ~= self then
-		Gadget:Write(Text)
+		if Gadget.Writeable then
+			Gadget:Write(Text)
+		end
 	end
 end
 

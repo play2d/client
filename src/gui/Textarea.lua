@@ -4,6 +4,7 @@ TTextarea.Type = "Textarea"
 TTextarea.Text = ""
 TTextarea.Start = 0
 TTextarea.Length = 0
+TTextarea.Writeable = true
 setmetatable(TTextarea, gui.TGadgetMetatable)
 
 function gui.CreateTextarea(x, y, Width, Height, Parent)

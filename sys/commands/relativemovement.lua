@@ -2,6 +2,8 @@ if not CLIENT then
 	return nil
 end
 
+config["relativemovement"] = 0
+
 local Command = {
 	Category = "Player"
 }

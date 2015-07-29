@@ -7,6 +7,7 @@ TCombofield.TextOffset = -2.5
 TCombofield.Start = 0
 TCombofield.Length = 0
 TCombofield.ItemCount = 0
+TCombofield.Writeable = true
 setmetatable(TCombofield, gui.TGadgetMetatable)
 
 function gui.CreateCombofield(x, y, Width, Height, Parent)

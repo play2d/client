@@ -6,6 +6,7 @@ TTextfield.HintText = ""
 TTextfield.TextOffset = -2.5
 TTextfield.Start = 0
 TTextfield.Length = 0
+TTextfield.Writeable = true
 setmetatable(TTextfield, gui.TGadgetMetatable)
 
 function gui.CreateTextfield(x, y, Width, Height, Parent, HintText)

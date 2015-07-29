@@ -2,6 +2,8 @@ if not CLIENT then
 	return nil
 end
 
+config["name"] = "Player"
+
 local Command = {
 	Category = "Player"
 }
