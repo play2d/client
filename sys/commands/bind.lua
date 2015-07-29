@@ -9,6 +9,9 @@ local Command = {
 }
 
 function Command.Call(Source, Key, Bind)
+	if Source.source == "game" then
+		config["bind"][Key] = Bind
+	end
 end
 
 function Command.GetSaveString()
@@ -34,7 +37,7 @@ function Command.ParsePlus()
 		end
 	end
 end
-Hook.Add("update", Command.Plus)
+Hook.Add("update", Command.ParsePlus)
 
 function Command.ParseMinus(Key)
 	if game.ui.Desktop.CurrentFirst and game.ui.Desktop.CurrentFirst.Writeable then

@@ -37,3 +37,5 @@ gui_options_controls_movement_absolute = Absolute
 gui_options_controls_movement_relativetodir = Relative to dir.
 gui_options_controls_control = Control
 gui_options_controls_bind = Bind
+gui_binds_walkforward = Walk forward
+gui_binds_walkback = Walk back

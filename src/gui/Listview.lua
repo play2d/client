@@ -111,7 +111,7 @@ function TListview:Render(dt)
 		love.graphics.setFont(Font)
 		
 		local FontHeight = Font:getHeight()
-		local FirstItem = math.ceil(((self.Slider.Value + FontHeight + 5) / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))
+		local FirstItem = math.max(math.ceil(((self.Slider.Value + FontHeight + 5) / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5))), 0)
 		local LastItem = FirstItem + math.min(self.ItemCount, math.floor((Height - FontHeight - 5) / (FontHeight + 5)))
 		for ColumnID, Column in pairs(self.Column) do
 			local Width = Column.Width
@@ -165,7 +165,7 @@ function TListview:MouseClicked(x, y)
 		local Width, Height = self:GetDimensions()
 		local FontHeight = self:GetFont():getHeight()
 		local HeightOffset = -self.Slider.Value * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)) + FontHeight + 5
-		local FirstItem = math.ceil(((self.Slider.Value + FontHeight + 5) / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5)))
+		local FirstItem = math.max(math.ceil(((self.Slider.Value + FontHeight + 5) / (FontHeight + 5)) * (self.ItemCount * (FontHeight + 5) - Height + FontHeight + 5) / (self.ItemCount * (FontHeight + 5))), 0)
 		local LastItem = FirstItem + math.min(self.ItemCount, math.floor((Height - FontHeight - 5) / (FontHeight + 5)))
 		for Index = FirstItem, LastItem do
 			if self.Items[Index] then

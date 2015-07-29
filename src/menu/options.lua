@@ -1,3 +1,9 @@
+game.ui.BindList = {}
+
+function game.ui.CreateBind(Text, Command)
+	game.ui.BindList[Text] = Command
+end
+
 function game.ui.OpenOptionsMenu()
 	game.ui.Options.Window.Hidden = nil
 end
@@ -132,6 +138,22 @@ local function InitializeOptionsMenu()
 	game.ui.Options.ControlsList = gui.CreateListview(140, 20, 450, game.ui.Options.Panels[2])
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_control"), 300)
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_bind"), 200)
+	
+	for Keyword, Command in pairs(game.ui.BindList) do
+		local BindFound
+		if config["bind"] then
+			for Key, BoundCommand in pairs(config["bind"]) do
+				if Command == BoundCommand then
+					game.ui.Options.ControlsList:AddItem(Keyword, Key)
+					BindFound = true
+					break
+				end
+			end
+		end
+		if not BindFound then
+			game.ui.Options.ControlsList:AddItem(Keyword, "")
+		end
+	end
 	
 	-- Game panel
 	game.ui.Options.Panels[3] = gui.CreatePanel(language.get("gui_options_tab_game"), 10, 60, 650, 480, game.ui.Options.Window)

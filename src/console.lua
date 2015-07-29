@@ -24,6 +24,10 @@ function console.parse(command)
 
 	while Index < #command do
 		local Character = Next()
+		while Character == " " do
+			Character = Next()
+		end
+		
 		if Character == ";" then
 			PushCommand()
 		elseif not CMD then
@@ -43,11 +47,12 @@ function console.parse(command)
 			end
 		elseif not Argument then
 			if Character == "\"" or Character == "'" or Character == " " then
+				local Separator = Character
 				Argument = ""
-				local Separator = ""..Character
 				Character = Next()
 				while #Character > 0 do
 					if Character == Separator then
+						Next()
 						break
 					else
 						Argument = Argument .. Character
@@ -85,17 +90,17 @@ function console.parse(command)
 	return Commands
 end
 
-function console.run(command, commandList, source, errorFunction)
-	assert(type(command) == "string", "#1: expected string")
-	assert(type(commandList) == "table", "#2: expected table")
-	local Commands = console.parse(command)
+function console.run(Command, CommandList, Source, ErrorFunction)
+	assert(type(Command) == "string", "#1: expected string")
+	assert(type(CommandList) == "table", "#2: expected table")
+	local Commands = console.parse(Command)
 	if next(Commands) then
 		for _, CMD in pairs(Commands) do
-			local Function = commandList[CMD.Command]
+			local Function = CommandList[CMD.Command]
 			if Function then
-				Function(source, unpack(CMD.Arguments))
-			elseif errorFunction then
-				errorFunction(CMD.Command)
+				Function(Source, unpack(CMD.Arguments))
+			elseif ErrorFunction then
+				ErrorFunction(CMD.Command)
 			end
 		end
 	end

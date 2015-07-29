@@ -44,6 +44,15 @@ function language.load()
 	else
 		print("Language not found")
 	end
+	
+	for _, Command in pairs(Commands.List) do
+		if Command.LoadLanguage then
+			local Success, Error = pcall(Command.LoadLanguage)
+			if not Success then
+				print("Lua Error [Command: "..Command.."]: "..Error)
+			end
+		end
+	end
 	language.load = nil
 end
 
