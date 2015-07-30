@@ -2,6 +2,7 @@ local TCombobox = {}
 local TComboboxMetatable = {__index = TCombobox}
 TCombobox.Type = "Combobox"
 TCombobox.ItemCount = 0
+TCombobox.Selected = 0
 setmetatable(TCombobox, gui.TGadgetMetatable)
 
 function gui.CreateCombobox(x, y, Width, Height, Parent)
@@ -18,6 +19,14 @@ function TCombobox.New()
 end
 
 function TCombobox:OnSelect(Index)
+end
+
+function TCombobox:Select(Index)
+	local Item = self.Items[Index]
+	if Item then
+		self.Selected = Index
+		self.Text = Item
+	end
 end
 
 function TCombobox:Init()

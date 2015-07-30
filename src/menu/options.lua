@@ -96,6 +96,14 @@ local function InitializeOptionsMenu()
 			config["bind"][Key] = Bind
 		end
 		game.NewBinds = {}
+		
+		-- Apply the new language
+		local SelectedLanguage = game.ui.LanguageBox:GetItem(game.ui.LanguageBox.Selected)
+		if SelectedLanguage then
+			config["cl_lang"] = SelectedLanguage
+		end
+		
+		-- Save the configuration
 		config.save()
 	end
 	
@@ -119,6 +127,15 @@ local function InitializeOptionsMenu()
 		-- Delete the new binds and reload the listview with the current binds
 		game.NewBinds = {}
 		game.ReloadBinds()
+		
+		-- Reload the current language on it's combobox
+		game.ui.LanguageBox:ClearItems()
+		for Index, Item in pairs(language.list()) do
+			game.ui.LanguageBox:SetItem(Index, Item)
+			if config["cl_lang"] and config["cl_lang"] == Item then
+				game.ui.LanguageBox:Select(Index)
+			end
+		end
 	end
 	
 	function game.ui.Options.Tab:OnSelect(Index)
@@ -193,6 +210,15 @@ local function InitializeOptionsMenu()
 	
 	-- Game panel
 	game.ui.Options.Panels[3] = gui.CreatePanel(language.get("gui_options_tab_game"), 10, 60, 650, 480, game.ui.Options.Window)
+	gui.CreateLabel(language.get("gui_options_game_language"), 20, 30, game.ui.Options.Panels[3])
+	
+	game.ui.LanguageBox = gui.CreateCombobox(20, 50, 200, 20, game.ui.Options.Panels[3])
+	for Index, Item in pairs(language.list()) do
+		game.ui.LanguageBox:SetItem(Index, Item)
+		if config["cl_lang"] and config["cl_lang"] == Item then
+			game.ui.LanguageBox:Select(Index)
+		end
+	end
 	
 	-- Graphics panel
 	game.ui.Options.Panels[4] = gui.CreatePanel(language.get("gui_options_tab_graphics"), 10, 60, 650, 480, game.ui.Options.Window)
