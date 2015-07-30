@@ -52,7 +52,6 @@ function console.parse(command)
 				Character = Next()
 				while #Character > 0 do
 					if Character == Separator then
-						Next()
 						break
 					else
 						Argument = Argument .. Character

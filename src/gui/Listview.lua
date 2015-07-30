@@ -2,6 +2,7 @@ local TListview = {}
 local TListviewMetatable = {__index = TListview}
 TListview.Type = "Listview"
 TListview.ItemCount = 0
+TListview.Selected = 0
 setmetatable(TListview, gui.TGadgetMetatable)
 
 function gui.CreateListview(x, y, Height, Parent)

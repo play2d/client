@@ -1,7 +1,7 @@
 game.ui.BindList = {}
 
 function game.ui.CreateBind(Text, Command)
-	game.ui.BindList[Text] = Command
+	table.insert(game.ui.BindList, {Text, Command})
 end
 
 function game.ui.OpenOptionsMenu()
@@ -37,6 +37,28 @@ function game.SetSpraylogo(Index)
 	game.ui.Options.Spraylogo.Image = game.Spraylogo[3]
 end
 
+function game.ReloadBinds()
+	game.ui.Options.ControlsList:ClearItems()
+	for _, Pack in pairs(game.ui.BindList) do
+		local BindFound
+		if config["bind"] then
+			for Key, BoundCommand in pairs(config["bind"]) do
+				if Pack[2] == BoundCommand then
+					game.ui.Options.ControlsList:AddItem(Pack[1], Key)
+					BindFound = true
+					break
+				end
+			end
+		end
+		if not BindFound then
+			game.ui.Options.ControlsList:AddItem(Keyword, "")
+		end
+	end
+	if game.ui.Options.ControlsField then
+		game.ui.Options.ControlsField:SetText("")
+	end
+end
+
 local function InitializeOptionsMenu()
 	game.ui.Options = {}
 	game.ui.Options.Window = gui.CreateWindow(language.get("gui_label_options"), 120, 10, 670, 580, game.ui.Desktop)
@@ -68,6 +90,12 @@ local function InitializeOptionsMenu()
 			config["relativemovement"] = 1
 		end
 		game.ui.Options.Window.Hidden = true
+		
+		-- Apply new binds
+		for Bind, Key in pairs(game.NewBinds) do
+			config["bind"][Key] = Bind
+		end
+		game.NewBinds = {}
 		config.save()
 	end
 	
@@ -87,6 +115,10 @@ local function InitializeOptionsMenu()
 			game.ui.Options.MovementPanel.RadioButton = game.ui.Options.RelativeToDirRadioButton
 		end
 		game.ui.Options.Window.Hidden = true
+		
+		-- Delete the new binds and reload the listview with the current binds
+		game.NewBinds = {}
+		game.ReloadBinds()
 	end
 	
 	function game.ui.Options.Tab:OnSelect(Index)
@@ -135,23 +167,27 @@ local function InitializeOptionsMenu()
 		game.ui.Options.MovementPanel.RadioButton = game.ui.Options.RelativeToDirRadioButton
 	end
 	
-	game.ui.Options.ControlsList = gui.CreateListview(140, 20, 450, game.ui.Options.Panels[2])
+	game.ui.Options.ControlsList = gui.CreateListview(140, 20, 420, game.ui.Options.Panels[2])
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_control"), 300)
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_bind"), 200)
+	game.ReloadBinds()
 	
-	for Keyword, Command in pairs(game.ui.BindList) do
-		local BindFound
-		if config["bind"] then
-			for Key, BoundCommand in pairs(config["bind"]) do
-				if Command == BoundCommand then
-					game.ui.Options.ControlsList:AddItem(Keyword, Key)
-					BindFound = true
-					break
-				end
-			end
+	function game.ui.Options.ControlsList:OnSelect(Index)
+		local Items = game.ui.Options.ControlsList.Items[Index]
+		if Items then
+			game.ui.Options.ControlsField:SetText(Items[2])
 		end
-		if not BindFound then
-			game.ui.Options.ControlsList:AddItem(Keyword, "")
+	end
+	
+	game.NewBinds = {}
+	game.ui.Options.ControlsField = gui.CreateTextfield(140, 450, 200, 20, game.ui.Options.Panels[2])
+	game.ui.Options.ControlsApplyButton = gui.CreateButton(language.get("gui_options_controls_apply"), 350, 450, 100, 20, game.ui.Options.Panels[2])
+	function game.ui.Options.ControlsApplyButton:OnClick()
+		local BindID = game.ui.Options.ControlsList.Selected
+		local BindPack = game.ui.BindList[BindID]
+		if BindPack and BindPack[2] then
+			game.NewBinds[BindPack[2]] = game.ui.Options.ControlsField:GetText()
+			game.ui.Options.ControlsList:SetItem(BindID, game.ui.BindList[BindID][1], game.ui.Options.ControlsField:GetText())
 		end
 	end
 	
