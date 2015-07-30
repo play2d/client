@@ -1,7 +1,7 @@
-game.ui.BindList = {}
+game.Binds.List = {}
 
 function game.ui.CreateBind(Text, Command)
-	table.insert(game.ui.BindList, {Text, Command})
+	table.insert(game.Binds.List, {Text, Command})
 end
 
 function game.ui.OpenOptionsMenu()
@@ -35,28 +35,6 @@ function game.SetSpraylogo(Index)
 	end
 	game.Spraylogo = game.Spraylogos[Index]
 	game.ui.Options.Spraylogo.Image = game.Spraylogo[3]
-end
-
-function game.ReloadBinds()
-	game.ui.Options.ControlsList:ClearItems()
-	for _, Pack in pairs(game.ui.BindList) do
-		local BindFound
-		if config["bind"] then
-			for Key, BoundCommand in pairs(config["bind"]) do
-				if Pack[2] == BoundCommand then
-					game.ui.Options.ControlsList:AddItem(Pack[1], Key)
-					BindFound = true
-					break
-				end
-			end
-		end
-		if not BindFound then
-			game.ui.Options.ControlsList:AddItem(Keyword, "")
-		end
-	end
-	if game.ui.Options.ControlsField then
-		game.ui.Options.ControlsField:SetText("")
-	end
 end
 
 local function InitializeOptionsMenu()
@@ -93,6 +71,10 @@ local function InitializeOptionsMenu()
 		
 		-- Apply new binds
 		for Bind, Key in pairs(game.NewBinds) do
+			local PreviousBind = game.Binds.Find(Bind)
+			if PreviousBind then
+				config["bind"][PreviousBind] = nil
+			end
 			config["bind"][Key] = Bind
 		end
 		game.NewBinds = {}
@@ -126,7 +108,7 @@ local function InitializeOptionsMenu()
 		
 		-- Delete the new binds and reload the listview with the current binds
 		game.NewBinds = {}
-		game.ReloadBinds()
+		game.Binds.Reload()
 		
 		-- Reload the current language on it's combobox
 		game.ui.LanguageBox:ClearItems()
@@ -187,7 +169,7 @@ local function InitializeOptionsMenu()
 	game.ui.Options.ControlsList = gui.CreateListview(140, 20, 420, game.ui.Options.Panels[2])
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_control"), 300)
 	game.ui.Options.ControlsList:AddColumn(language.get("gui_options_controls_bind"), 200)
-	game.ReloadBinds()
+	game.Binds.Reload()
 	
 	function game.ui.Options.ControlsList:OnSelect(Index)
 		local Items = game.ui.Options.ControlsList.Items[Index]
@@ -201,10 +183,10 @@ local function InitializeOptionsMenu()
 	game.ui.Options.ControlsApplyButton = gui.CreateButton(language.get("gui_options_controls_apply"), 350, 450, 100, 20, game.ui.Options.Panels[2])
 	function game.ui.Options.ControlsApplyButton:OnClick()
 		local BindID = game.ui.Options.ControlsList.Selected
-		local BindPack = game.ui.BindList[BindID]
+		local BindPack = game.Binds.List[BindID]
 		if BindPack and BindPack[2] then
 			game.NewBinds[BindPack[2]] = game.ui.Options.ControlsField:GetText()
-			game.ui.Options.ControlsList:SetItem(BindID, game.ui.BindList[BindID][1], game.ui.Options.ControlsField:GetText())
+			game.ui.Options.ControlsList:SetItem(BindID, game.Binds.List[BindID][1], game.ui.Options.ControlsField:GetText())
 		end
 	end
 	

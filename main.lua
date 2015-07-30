@@ -17,6 +17,7 @@ require("src.config")
 require("src.language")
 require("src.vector")
 require("src.core")
+require("src.binds")
 require("src.interface")
 require("enet")
 
