@@ -1,11 +1,11 @@
 Network = {}
 
 local Path = ...
-require("bit")
 require("socket")
 require(Path..".Server")
 require(Path..".Client")
 require(Path..".Packet")
+require(Path..".Channel")
 zlib = require(Path..".zlib")
 
 function string:ReadByte()
@@ -22,6 +22,14 @@ end
 
 function string:ReadString(Length)
 	return self:sub(1, Length), self:sub(Length + 1)
+end
+
+function string:ReadLine()
+	local Find = self:find("\n")
+	if Find then
+		return self:sub(1, Find - 1), self:sub(Find + 1)
+	end
+	return self, ""
 end
 
 function string:WriteByte(n)
@@ -45,33 +53,6 @@ function string:WriteString(String)
 	return self .. String
 end
 
---[[
-NETWORK PLAN
-
-PACKET HEADER:
-
-[1 BYTE = {
-		1 BIT IS IT A PACKET/PING REPLY?,
-		1 BIT RELIABLE,
-		1 BIT SEQUENCED,
-		1 BIT CHANNEL OPENED AND THIS IS THE FIRST PACKET OR NOT,
-		1 BIT CHANNEL CLOSED AND THIS IS THE LAST PACKET OR NOT,
-		1 BIT PING REQUESTED,
-		1 BIT PACKET PART,
-	}
-] [1 BYTE CHANNEL LENGTH] [STRING CHANNEL] [2 BYTES (SIZE)] [2 BYTES (TYPE)] [COMPRESSED OR UNCOMPRESSED DATA]
-
---> AND EVERYTHING GETS COMPRESSED TOGETHER AGAIN INTO THIS:
-[1 BYTE = {
-		1 BIT COMPRESSED WITH ZLIB OR NOT COMPRESSED,
-		1 BIT ALL MESSAGES FROM NOW SHOULD BE SENT COMPRESSED WITH ZLIB OR NOT,
-	}
-] [COMPRESSED OR UNCOMPRESSED DATA]
-
-DEFLATE/INFLATE USAGE:
-
-local Data = "this is a test string I'm trying to compress"
-local AMemory = zlib.deflate(Data, {}, DATA_SIZE_HERE, "zlib", 9)
-local BMemory = zlib.inflate(AMemory, {}, nil, "zlib")
-print(table.concat(BMemory), #AMemory)
-]]
+function string:WriteLine(String)
+	return self .. String .. "\n"
+end

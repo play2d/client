@@ -19,9 +19,18 @@ function Network.CreateUDPServer(Port)
 end
 
 function TServer:GetConnection(IP, Port)
-	if self.Connection[IP] then
-		return self.Connection[IP][Port]
+	local ConnectionList = self.Connection[IP]
+	if not ConnectionList then
+		ConnectionList = {}
+		self.Connection[IP] = ConnectionList
 	end
+	
+	local Connection = ConnectionList[Port]
+	if not Connection then
+		Connection = Network.CreateConnection(IP, Port)
+		ConnectionList[Port] = Connection
+	end
+	return Connection
 end
 
 function TServer:ReceiveFrom(Message, IP, Port)
@@ -39,41 +48,127 @@ function TServer:ReceiveFrom(Message, IP, Port)
 		local IsClosed = (Data % 16) == 0
 		local IsPing = (Data % 32) == 0
 		local IsFragment = (Data % 64) == 0
+		local IsCompressed = (Data % 128) == 0
+		
+		local Connection = self:GetConnection(IP, Port)
+		
 		if IsReply then
 			if IsPing then
 				-- If it's a ping reply then compare it
+				local PingLength, Ping
+				PingLength, Message = Message:ReadByte()
+				Ping, Message = Message:ReadString(PingLength)
 			elseif IsClosed then
 				-- The client now knows that the channel is closed
 			elseif IsOpened then 
 				-- The client now knows that the channel is opened
 			else
 				-- If it's a packet reply then check it
-				local PacketID, FragmentID, ChannelLength, Channel
+				local PacketID, FragmentID, ChannelLength, ChannelName
 				PacketID, Message = Message:ReadShort()
 				if IsFragment then
 					-- It looks like they're trying to delete a fragment of this packet, let's just do it
 					FragmentID, Message = Message:ReadByte()
 				end
-				
 				ChannelLength, Message = Message:ReadByte()
-				Channel, Message = Message:ReadString(ChannelLength)
+				ChannelName, Message = Message:ReadString(ChannelLength)
 			end
 		else
 			if IsPing then
 				-- If it's a ping then add it to the reply-queue
 			else
 				-- If it's a packet then process it
-				if IsClosed then
-					-- They're trying to close a connection, let's tell them we're going to close it
-				elseif IsOpened then
-					-- They're trying to open a connection, let's let them receive replies from us on this channel
+				local ChannelLength, ChannelName
+				ChannelLength, Message = Message:ReadByte()
+				ChannelName, Message = Message:ReadString(ChannelLength)
+				local Channel = Connection:GetChannel(ChannelName)
+				
+				local PacketID, PacketType, PacketLength
+				local PacketData = ""
+				PacketID, Message = Message:ReadShort()
+				PacketType, Message = Message:ReadShort()
+				PacketLength, Message = Message:ReadShort()
+				if #PacketLength > 0 then
+					PacketData, Message = Message:ReadString(PacketLength)
+				end
+				local Packet = Channel:GetPacket(PacketID)
+				
+				Packet.Reply = true
+				
+				if IsOpened then
+					Channel.Open = true
 				end
 				
 				if IsFragment then
+					local FragmentID, FragmentCount
+					FragmentID, Message = Message:ReadByte()
+					FragmentCount, Message = Message:ReadByte()
+					if not Packet.Processed then
+						-- It's necessary to confirm the received pieces of packets
+						if not Packet.Confirm then
+							Packet.Confirm = {}
+						end
+						Packet.Confirm[FragmentID] = true
+						
+						if not Packet.Complete then
+							-- Completed packets do not need to overwrite pieces of it
+							if not Packet.Fragment then
+								Packet.Fragment = {}
+							end
+							Packet.Fragment[FragmentID] = PacketData
+							
+							if #Packet.Fragment == FragmentCount then
+								-- We can put together all the fragments when they're complete
+								
+								-- Inflate eventually pushes errors
+								local Success, Memory = pcall(zlib.inflate, Packet.Fragment, {}, nil, "zlib")
+								if not Success then
+									return self:Log("FAILED TO INFLATE FRAGMENTED PACKET (#"..PacketID..") FROM "..IP..":"..Port)
+								end
+								Packet.Data = table.concat(Memory)
+								Packet.Fragment = nil
+								Packet.Complete = true
+							end
+						end
+					end
+				elseif IsCompressed then
+					if not Packet.Processed then
+						-- Inflate eventually pushes errors
+						local Success, Memory = pcall(zlib.inflate, PacketData, {}, nil, "zlib")
+						if not Success then
+							return self:Log("FAILED TO INFLATE PACKET (#"..PacketID..") FROM "..IP..":"..Port)
+						end
+						Packet.Data = table.concat(Memory)
+					end
+				elseif not Packet.Processed then
+					-- No compression + no fragmentation
+					Packet.Data = PacketData
+				end
+				
+				if IsClosed then
+					local ProcessedPacket = self:ProcessNextPacket()
+					repeat
+						ProcessedPacket = self:ProcessNextPacket()
+					until not ProcessedPacket or ProcessedPacket == Packet
+					Connection:CloseChannel(ChannelName)
 				end
 			end
 		end
 	until #Message == 0
+end
+
+function TServer:GetNextPacket()
+	for IP, ConnectionList in pairs(self.Connection) do
+		for Port, Connection in pairs(ConnectionList) do
+			local Packet = Connection:GetNextPacket()
+			if Packet then
+				return Packet
+			end
+		end
+	end
+end
+
+function TServer:ProcessNextPacket()
 end
 
 function TServer:Receive()
@@ -97,6 +192,10 @@ function TServer:Receive()
 		end
 		return true
 	end
+end
+
+function TServer:Log(Text)
+	print(Text)
 end
 
 function TServer:Send()
