@@ -11,6 +11,12 @@ Using LÖVE
 Using icons from Icons8
 * https://icons8.com/license/
 
+Using zlib
+* http://www.zlib.net/zlib_license.html
+
+Using LuaPower's zlib module
+* https://github.com/luapower/zlib
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c),
 Holders:

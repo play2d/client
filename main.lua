@@ -3,7 +3,6 @@ game = {
 	CODENAME = "LuaJIT Rox",
 	DATE = "13/07/2015",
 }
-
 CLIENT = true
 
 ffi = require("ffi")
@@ -19,7 +18,7 @@ require("src.vector")
 require("src.core")
 require("src.binds")
 require("src.interface")
-require("enet")
+require("src.network")
 
 -- We should remove all trace of loading functions
 Hook.Add("load",
