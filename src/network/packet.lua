@@ -1,6 +1,7 @@
 local TPacket = {}
 local TPacketMetatable = {__index = TPacket}
 TPacket.Type = "Packet"
+TPacket.DistID = 500
 
 function Network.CreatePacket()
 	local Packet = {
@@ -8,6 +9,19 @@ function Network.CreatePacket()
 		Position = 1,
 	}
 	return setmetatable(Packet, TPacketMetatable)
+end
+
+function TPacket:IsAfter(Packet)
+	if Packet.ID < self.ID then
+		return Packet.ID >= self.ID - TPacket.DistID
+	end
+	return Packet.ID - 65536 >= self.ID - TPacket.DistID
+end
+
+function TPacket:IsRightAfter(Packet)
+	if (Packet.ID + 1) % 65536 == self.ID then
+		return true
+	end
 end
 
 function TPacket:ReadByte()

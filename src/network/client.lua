@@ -23,9 +23,9 @@ function TConnection:CloseChannel(Name)
 	self.Channel[Name] = nil
 end
 
-function TConnection:GetNextPacket()
+function TConnection:GetNextReceivedPacket()
 	for Name, Channel in pairs(self.Channel) do
-		local Packet = Channel:GetNextPacket()
+		local Packet = Channel:GetNextReceivedPacket()
 		if Packet then
 			return Packet
 		end

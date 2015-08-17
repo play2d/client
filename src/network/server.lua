@@ -91,12 +91,14 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				if #PacketLength > 0 then
 					PacketData, Message = Message:ReadString(PacketLength)
 				end
-				local Packet = Channel:GetPacket(PacketID)
+				local Packet = Channel:GetPacket(PacketID, IsOpened, IsReliable, IsSequenced)
 				
+				Packet.Reliable = Reliable
+				Packet.Sequenced = Sequenced
 				Packet.Reply = true
 				
 				if IsOpened then
-					Channel.Open = true
+					Channel.Open = Packet
 				end
 				
 				if IsFragment then
@@ -157,10 +159,10 @@ function TServer:ReceiveFrom(Message, IP, Port)
 	until #Message == 0
 end
 
-function TServer:GetNextPacket()
+function TServer:GetNextReceivedPacket()
 	for IP, ConnectionList in pairs(self.Connection) do
 		for Port, Connection in pairs(ConnectionList) do
-			local Packet = Connection:GetNextPacket()
+			local Packet = Connection:GetNextReceivedPacket()
 			if Packet then
 				return Packet
 			end

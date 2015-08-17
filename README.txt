@@ -15,7 +15,7 @@ Using zlib
 * http://www.zlib.net/zlib_license.html
 
 Using LuaPower's zlib module
-* https://github.com/luapower/zlib
+* https://luapower.com/zlib
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c),
