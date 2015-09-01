@@ -41,6 +41,9 @@ function TServer:ReceiveFrom(Message, IP, Port)
 		local Data
 		Data, Message = Message:ReadByte()
 		
+		-- I'm not really sure if you can send a byte 256 but I'll add this anyway
+		Data = Data + 1
+		
 		local IsReply = (Data % 1) == 0
 		local IsReliable = (Data % 2) == 0
 		local IsSequenced = (Data % 4) == 0
@@ -89,6 +92,7 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				PacketType, Message = Message:ReadShort()
 				PacketLength, Message = Message:ReadShort()
 				if #PacketLength > 0 then
+					-- If the packet length is higher than zero, there's a message
 					PacketData, Message = Message:ReadString(PacketLength)
 				end
 				local Packet = Channel:GetPacket(PacketID, IsOpened, IsReliable, IsSequenced)
@@ -97,22 +101,24 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				Packet.Sequenced = Sequenced
 				Packet.Reply = true
 				
-				if IsOpened then
-					Channel.Open = Packet
-				end
-				
 				if IsFragment then
+					-- This packet is fragmented into smaller pieces
+					
+					-- Get the current fragment
 					local FragmentID, FragmentCount
 					FragmentID, Message = Message:ReadByte()
 					FragmentCount, Message = Message:ReadByte()
+					
 					if not Packet.Processed then
-						-- It's necessary to confirm the received pieces of packets
+						
+						-- It's necessary to confirm the received pieces of packets on the other side of the network
 						if not Packet.Confirm then
 							Packet.Confirm = {}
 						end
 						Packet.Confirm[FragmentID] = true
 						
 						if not Packet.Complete then
+							
 							-- Completed packets do not need to overwrite pieces of it
 							if not Packet.Fragment then
 								Packet.Fragment = {}
@@ -171,12 +177,16 @@ function TServer:GetNextReceivedPacket()
 end
 
 function TServer:ProcessNextPacket()
+	local Packet = self:GetNextReceivedPacket()
+	-- We need some callback functions that will read this packet
 end
 
 function TServer:Receive()
 	local Message, IP, Port = self.Socket:ReceiveFrom()
 	if Message then
 		local MessageData, Message = Message:ReadByte()
+		
+		-- I'm not sure if you can send a byte 256 but I'll add this anyway
 		MessageData = MessageData + 1
 		
 		local Compressed = (MessageData % 1) == 0
@@ -190,6 +200,7 @@ function TServer:Receive()
 		
 		local Connection = self:GetConnection(IP, Port)
 		if Connection then
+			-- Some people might use scripts from PHP browsers to do this and they probably won't have ZLIB support
 			Connection.ZLib = ZLibAvailable
 		end
 		return true
