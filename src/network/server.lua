@@ -14,8 +14,17 @@ function Network.CreateUDPServer(Port)
 		IP = IP,
 		Port = Port,
 		Connection = {},
+		Protocol = {},
 	}
 	return setmetatable(Server, TServerMetatable)
+end
+
+function TServer:SetProtocol(ID, Receive, Accept, Timeout)
+	self.Protocol[ID] = {
+		Receive = Receive,
+		Accept = Accept,
+		Timeout = Timeout
+	}
 end
 
 function TServer:GetConnection(IP, Port)
@@ -61,10 +70,48 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				local PingLength, Ping
 				PingLength, Message = Message:ReadByte()
 				Ping, Message = Message:ReadString(PingLength)
+				
+				Connection.Ping.Received = {
+					Key = Ping,
+					When = socket.gettime(),
+				}
 			elseif IsClosed then
 				-- The client now knows that the channel is closed
+				
+				local ChannelLength, ChannelName
+				ChannelLength, Message = Message:ReadByte()
+				ChannelName, Message = Message:ReadString(ChannelLength)
+				
+				local Channel = Connection.Channel[ChannelName]
+				if Channel then
+					
+					-- Channel exists
+					if Channel.Closing then
+						Connection.Channel[ChannelName] = nil
+					else
+						self:Log("ATTEMPT TO CLOSE CHANNEL "..Channel.." NO CLOSE REQUEST SENT")
+					end
+				else
+					self:Log("ATTEMPT TO CLOSE CHANNEL "..Channel.." IT DOES NOT EXIST")
+				end
 			elseif IsOpened then 
 				-- The client now knows that the channel is opened
+				local ChannelLength, ChannelName
+				ChannelLength, Message = Message:ReadByte()
+				ChannelName, Message = Message:ReadString(ChannelLength)
+				
+				local Channel = Connection.Channel[ChannelName]
+				if Channel then
+					
+					-- Channel exists
+					if Channel.Closing then
+						self:Log("ATTEMPT TO OPEN A CLOSING CHANNEL "..Channel)
+					else
+						Channel.Open = true
+					end
+				else
+					self:Log("ATTEMPT TO OPEN CHANNEL "..Channel.." NO OPEN REQUEST SENT")
+				end
 			else
 				-- If it's a packet reply then check it
 				local PacketID, FragmentID, ChannelLength, ChannelName
@@ -128,19 +175,26 @@ function TServer:ReceiveFrom(Message, IP, Port)
 							if #Packet.Fragment == FragmentCount then
 								-- We can put together all the fragments when they're complete
 								
-								-- Inflate eventually pushes errors
-								local Success, Memory = pcall(zlib.inflate, Packet.Fragment, {}, nil, "zlib")
-								if not Success then
-									return self:Log("FAILED TO INFLATE FRAGMENTED PACKET (#"..PacketID..") FROM "..IP..":"..Port)
+								if IsCompressed then
+									-- Compression + fragmentation, zlib.inflate eventually triggers Lua errors so pcall
+									local Success, Memory = pcall(zlib.inflate, Packet.Fragment, {}, nil, "zlib")
+									if not Success then
+										return self:Log("FAILED TO INFLATE FRAGMENTED PACKET (#"..PacketID..") FROM "..IP..":"..Port)
+									end
+									Packet.Data = table.concat(Memory)
+								else
+									-- No compression + fragmentation
+									Packet.Data = table.concat(Packet.Fragment)
 								end
-								Packet.Data = table.concat(Memory)
 								Packet.Fragment = nil
 								Packet.Complete = true
 							end
 						end
 					end
 				elseif IsCompressed then
+					-- Compression + no fragmentation
 					if not Packet.Processed then
+						
 						-- Inflate eventually pushes errors
 						local Success, Memory = pcall(zlib.inflate, PacketData, {}, nil, "zlib")
 						if not Success then
@@ -154,10 +208,13 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				end
 				
 				if IsClosed then
+					-- If this is a close request, we must process all packets
 					local ProcessedPacket = self:ProcessNextPacket()
 					repeat
 						ProcessedPacket = self:ProcessNextPacket()
-					until not ProcessedPacket or ProcessedPacket == Packet
+					until not ProcessedPacket
+					
+					-- Once all the packets are processed, close the channel
 					Connection:CloseChannel(ChannelName)
 				end
 			end
@@ -178,7 +235,11 @@ end
 
 function TServer:ProcessNextPacket()
 	local Packet = self:GetNextReceivedPacket()
-	-- We need some callback functions that will read this packet
+	if Packet then
+		-- We need some callback functions that will read this packet
+		
+		return Packet
+	end
 end
 
 function TServer:Receive()
@@ -211,10 +272,14 @@ function TServer:Log(Text)
 	print(Text)
 end
 
+function TServer:ReceiveLoop()
+	repeat until not self:Receive()
+end
+
 function TServer:Send()
 end
 
 function TServer:Update()
-	repeat until not self:Receive()
+	self:ReceiveLoop()
 	self:Send()
 end
