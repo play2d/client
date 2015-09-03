@@ -5,7 +5,7 @@ TConnection.PingSleepTime = 500
 TConnection.PingTimeAfterLastPing = 5000
 TConnection.PingTimeBeforeFreeze = 2000
 TConnection.PingTimeBeforeDisconnect = 40000
-TConnection.PacketMaxSize = 500
+TConnection.PacketMaxSize = 1000
 TConnection.PacketMaxDelay = 500
 
 function Network.CreateConnection(IP, Port)

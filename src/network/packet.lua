@@ -1,6 +1,7 @@
 local TPacket = {}
 local TPacketMetatable = {__index = TPacket}
 TPacket.Type = "Packet"
+TPacket.MaxSize = 500
 TPacket.DistID = 500
 
 function Network.CreatePacket()
@@ -9,6 +10,37 @@ function Network.CreatePacket()
 		Position = 1,
 	}
 	return setmetatable(Packet, TPacketMetatable)
+end
+
+function TPacket:GenerateBuffer()
+	-- Should return: Compressed string, uses zlib, is fragmented
+	
+	-- Check that the size is not higher than self.MaxSize, otherwise split it into fragments of self.MaxSize each one
+	-- Check that zlib compression is available
+	if zlib then
+		local Success, Compression = pcall(zlib.deflate, self.Buffer, {}, self.MaxSize, "zlib", 9)
+		if Success then
+			if #Compression > 1 then
+				self.Part = Compression
+				return nil, true, true
+			else
+				return table.concat(Compression), true, false
+			end
+		end
+	end
+	
+	if #self.Buffer > self.MaxSize then
+		local Compression = {}
+		for i = 1, #self.Buffer, self.MaxSize + 1 do
+			local Part = self.Buffer:sub(i, i + self.MaxSize)
+			
+			table.insert(Compression, Part)
+		end
+		self.Part = Compression
+		return nil, false, true
+	end
+	
+	return self.Buffer, false, false
 end
 
 function TPacket:IsAfter(Packet)

@@ -43,6 +43,7 @@ function TServer:GetConnection(IP, Port)
 end
 
 function TServer:ReceiveFrom(Message, IP, Port)
+	local Time = socket.gettime()
 	local Packets = {}
 	local DeleteRequests = {}
 	local Channels = {}
@@ -70,11 +71,13 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				local PingLength, Ping
 				PingLength, Message = Message:ReadByte()
 				Ping, Message = Message:ReadString(PingLength)
-				
-				Connection.Ping.Received = {
-					Key = Ping,
-					When = socket.gettime(),
-				}
+
+				if Connection.Ping.Send then
+					if Connection.Ping.Send.Key == Ping then
+						Connection.Ping.Send.Received = Time
+						Connection.Ping.Value = (Time - Connection.Ping.Send.Last)/2
+					end
+				end
 			elseif IsClosed then
 				-- The client now knows that the channel is closed
 				
@@ -126,6 +129,10 @@ function TServer:ReceiveFrom(Message, IP, Port)
 		else
 			if IsPing then
 				-- If it's a ping then add it to the reply-queue
+				Connection.Ping.Received = {
+					Key = Ping,
+					When = Time,
+				}
 			else
 				-- If it's a packet then process it
 				local ChannelLength, ChannelName
@@ -297,24 +304,40 @@ function TServer:Send()
 
 				Connection.Ping.Send = {
 					Key = string.char(math.random(0, 255)) .. string.char(math.random(0, 255)) .. string.char(math.random(0, 255)) .. string.char(math.random(0, 255)),
-					Created = socket.gettime()
+					Created = Time
 				}
 			end
 			
-			if not Connection.Ping.Send.Last or Time - Connection.Ping.Send.Last >= Connection.PingSleepTime then
-				-- Check when the last ping sent was
+			if not Connection.Ping.Send.Received then
+				-- If the ping was received there's no need to keep sending it
 				
-				if #Message + #Connection.Ping.Send.Key + 2 < Connection.PacketMaxSize then
-					Message = Message
-						:WriteByte(32)
-						:WriteByte(#Connection.Ping.Send.Key)
-						:WriteString(Connection.Ping.Send.Key)
+				if not Connection.Ping.Send.Last or Time - Connection.Ping.Send.Last >= Connection.PingSleepTime then
+					-- Check when the last ping sent was
 					
-					Connection.Ping.Send.Last = Time
+					if #Message + #Connection.Ping.Send.Key + 2 < Connection.PacketMaxSize then
+						Message = Message
+							:WriteByte(32)
+							:WriteByte(#Connection.Ping.Send.Key)
+							:WriteString(Connection.Ping.Send.Key)
+						
+						Connection.Ping.Send.Last = Time
+					end
 				end
 			end
 			
 			if not Connection:IsFrozen() then
+				-- If the connection is frozen we don't need to waste resources on sending packets that might not be received, otherwise send them
+				
+				for ChannelName, Channel in pairs(Connection.Channel) do
+					-- Check packets from all the channels
+					for ID, Packet in pairs(Channel.Sending.Reliable.Sequenced) do
+						
+						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
+							-- Check that this packet wasn't sent too short ago
+							
+						end
+					end
+				end
 			end
 		
 			if #Message > 0 then
@@ -323,7 +346,7 @@ function TServer:Send()
 				if zlib then
 					ByteModifier = ByteModifier + 2
 					
-					local Success, Memory = pcall(zlib.deflate, Message, {}, "zlib", 9)
+					local Success, Memory = pcall(zlib.deflate, Message, {}, nil, "zlib", 9)
 					if Success then
 						ByteModifier = ByteModifier + 1
 						Message = table.concat(Memory)
