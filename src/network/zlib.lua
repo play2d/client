@@ -3,7 +3,7 @@ local Path = (...):match("(.+)%p")
 local ffi = require'ffi'
 require(Path..".zlib_h")
 
-local C = ffi.load(ffi.os == "Windows" and Path:gsub("%p", "/")..'/z' or "z")
+local C = ffi.load(ffi.os == "Windows" and "src/network/z" or "src/network/libz")
 
 local function version()
 	return ffi.string(C.zlibVersion())

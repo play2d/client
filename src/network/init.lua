@@ -2,10 +2,10 @@ Network = {}
 
 local Path = ...
 require("socket")
-require(Path..".Server")
-require(Path..".Client")
-require(Path..".Packet")
-require(Path..".Channel")
+require(Path..".server")
+require(Path..".client")
+require(Path..".packet")
+require(Path..".channel")
 zlib = require(Path..".zlib")
 
 function string:ReadByte()
