@@ -10,7 +10,7 @@ function Command.Call(Source, ...)
 	if Source.source == "game" then
 		local Path = ...
 		if type(Path) == "string" then
-			config["cl_gui"] = Path
+			config["cl_gui"] = Path:lower()
 		end
 	end
 end
