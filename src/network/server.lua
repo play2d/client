@@ -255,16 +255,25 @@ function TServer:Receive()
 		
 		if Compressed then
 			-- Most clients will have zlib, but php plugins trying to connect probably won't have it.
-			Message = table.concat(zlib.inflate(Message, {}, nil, "zlib"))
+			local Success, Memory = pcall(zlib.inflate, Message, {}, nil, "zlib")
+			if Success then
+				Message = table.concat(Memory)
+			else
+				self:Log("RECEIVED DAMAGED PACKET")
+				Message = nil
+			end
 		end
-		self:ReceiveFrom(Message, IP, Port)
 		
-		local Connection = self:GetConnection(IP, Port)
-		if Connection then
-			-- Some people might use scripts from PHP browsers to do this and they probably won't have ZLIB support
-			Connection.ZLib = ZLibAvailable
+		if Message then
+			self:ReceiveFrom(Message, IP, Port)
+			
+			local Connection = self:GetConnection(IP, Port)
+			if Connection then
+				-- Some people might use scripts from PHP browsers to do this and they probably won't have ZLIB support
+				Connection.ZLib = ZLibAvailable
+			end
+			return true
 		end
-		return true
 	end
 end
 
@@ -277,6 +286,56 @@ function TServer:ReceiveLoop()
 end
 
 function TServer:Send()
+	local Time = socket.gettime()
+	
+	for IP, ConnectionList in pairs(self.Connection) do
+		for Port, Connection in pairs(ConnectionList) do
+			local Message = ""
+			
+			if not Connection.Ping.Send or (Time - Connection.Ping.Send.Created >= Connection.PingTimeAfterLastPing and Connection.Ping.Send.Received) then
+				-- Check if we can make a new ping value
+
+				Connection.Ping.Send = {
+					Key = string.char(math.random(0, 255)) .. string.char(math.random(0, 255)) .. string.char(math.random(0, 255)) .. string.char(math.random(0, 255)),
+					Created = socket.gettime()
+				}
+			end
+			
+			if not Connection.Ping.Send.Last or Time - Connection.Ping.Send.Last >= Connection.PingSleepTime then
+				-- Check when the last ping sent was
+				
+				if #Message + #Connection.Ping.Send.Key + 2 < Connection.PacketMaxSize then
+					Message = Message
+						:WriteByte(32)
+						:WriteByte(#Connection.Ping.Send.Key)
+						:WriteString(Connection.Ping.Send.Key)
+					
+					Connection.Ping.Send.Last = Time
+				end
+			end
+			
+			if not Connection:IsFrozen() then
+			end
+		
+			if #Message > 0 then
+				local ByteModifier = 0
+				
+				if zlib then
+					ByteModifier = ByteModifier + 2
+					
+					local Success, Memory = pcall(zlib.deflate, Message, {}, "zlib", 9)
+					if Success then
+						ByteModifier = ByteModifier + 1
+						Message = table.concat(Memory)
+					else
+						self:Log("FAILED TO DEFLATE PACKET")
+					end
+				end
+				
+				self.Socket:sendto(string.char(ByteModifier) .. Message, IP, Port)
+			end
+		end
+	end
 end
 
 function TServer:Update()

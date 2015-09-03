@@ -1,8 +1,9 @@
 --zlib binding
-local Path = ...
+local Path = (...):match("(.+)%p")
 local ffi = require'ffi'
-require(Path:match("(.+)%p")..".zlib_h")
-local C = ffi.load(Path:match("(.+)%p"):gsub("%p", "/")..'/z')
+require(Path..".zlib_h")
+
+local C = ffi.load(ffi.os == "Windows" and Path:gsub("%p", "/")..'/z' or "z")
 
 local function version()
 	return ffi.string(C.zlibVersion())

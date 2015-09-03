@@ -85,7 +85,7 @@ function VectorMT.__eq(A, B)
 end
 
 function VectorMT:__tostring()
-	return "("..tonumber(self.x)..","..tonumber(self.y)..")"
+	return tonumber(self.x)..", "..tonumber(self.y)
 end
 
 function Vector(x, y)
