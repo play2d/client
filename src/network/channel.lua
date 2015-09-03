@@ -17,6 +17,9 @@ function Network.CreateChannel()
 	return setmetatable(Channel, TChannelMetatable)
 end
 
+function TChannel:PacketAccepted(Packet)
+end
+
 function TChannel:GetNextReceivedPacket()
 	local RS = self.Received.Reliable.Sequenced
 	local RU = self.Received.Reliable.Unsequenced
@@ -117,59 +120,98 @@ function TChannel:GetNextReceivedPacket()
 	end
 end
 
-function TChannel:GetPacket(ID, First, Reliable, Sequenced)
+function TChannel:RemovePacket(ID, Reliable, Sequenced)
+	local Sending = self.Sending
 	if Reliable then
 		if Sequenced then
-			local Packet = self.Received.Reliable.Sequenced[ID]
+			if Sending.Reliable.Sequenced[ID] then
+				Sending.Reliable.Sequenced[ID] = nil
+				return true
+			end
+		else
+			if Sending.Reliable.Unsequenced[ID] then
+				Sending.Reliable.Unsequenced[ID] = nil
+				return true
+			end
+		end
+	elseif Sequenced then
+		if Sending.Unreliable.Sequenced[ID] then
+			Sending.Unreliable.Sequenced[ID] = nil
+			return true
+		end
+	elseif Sending.Unreliable.Unsequenced[ID] then
+		Sending.Unreliable.Unsequenced[ID] = nil
+		return true
+	end
+end
+
+function TChannel:GetPacket(ID, First, Reliable, Sequenced)
+	local Received = self.Received
+	if Reliable then
+		if Sequenced then
+			return Received.Reliable.Sequenced[ID]
+		end
+		return Received.Reliable.Unsequenced[ID]
+	elseif Sequenced then
+		return Received.Unreliable.Sequenced[ID]
+	end
+	return Received.Unreliable.Unsequenced[ID]
+end
+
+function TChannel:GetNewPacket(ID, First, Reliable, Sequenced)
+	local Received = self.Received
+	if Reliable then
+		if Sequenced then
+			local Packet = Received.Reliable.Sequenced[ID]
 			if not Packet then
 				Packet = Network.CreatePacket()
 				Packet.ID = ID
 				Packet.Reliable = true
 				Packet.Sequenced = true
-				self.Received.Reliable.Sequenced[ID] = Packet
+				Received.Reliable.Sequenced[ID] = Packet
 				
 				if First then
-					if not self.Received.Reliable.Sequenced.Current then
-						self.Received.Reliable.Sequenced.Current = Packet
+					if not Received.Reliable.Sequenced.Current then
+						Received.Reliable.Sequenced.Current = Packet
 					end
 				end
 			end
 			return Packet
 		end
-		local Packet = self.Received.Reliable.Unsequenced[ID]
+		local Packet = Received.Reliable.Unsequenced[ID]
 		if not Packet then
 			Packet = Network.CreatePacket()
 			Packet.ID = ID
 			Packet.Reliable = true
-			self.Received.Reliable.Unsequenced[ID] = Packet
+			Received.Reliable.Unsequenced[ID] = Packet
 			if First then
-				if not self.Received.Reliable.Unsequenced.Current then
-					self.Received.Reliable.Unsequenced.Current = Packet
+				if not Received.Reliable.Unsequenced.Current then
+					Received.Reliable.Unsequenced.Current = Packet
 				end
 			end
 		end
 		return Packet
 	elseif Sequenced then
-		local Packet = self.Received.Unreliable.Sequenced[ID]
+		local Packet = Received.Unreliable.Sequenced[ID]
 		if not Packet then
 			Packet = Network.CreatePacket()
 			Packet.ID = ID
 			Packet.Sequenced = true
-			self.Received.Unreliable.Sequenced[ID] = Packet
+			Received.Unreliable.Sequenced[ID] = Packet
 
 			-- No first check here, what we receive will always be the first because it's unreliable
-			if not self.Received.Unreliable.Sequenced.Current then
-				self.Received.Unreliable.Sequenced.Current = Packet
+			if not Received.Unreliable.Sequenced.Current then
+				Received.Unreliable.Sequenced.Current = Packet
 			end
 		end
 		return Packet
 	end
 	
-	local Packet = self.Received.Unreliable.Unsequenced[ID]
+	local Packet = Received.Unreliable.Unsequenced[ID]
 	if not Packet then
 		Packet = Network.CreatePacket()
 		Packet.ID = ID
-		self.Received.Unreliable.Unsequenced[ID] = Packet
+		Received.Unreliable.Unsequenced[ID] = Packet
 	end
 	return Packet
 end

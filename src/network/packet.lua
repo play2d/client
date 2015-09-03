@@ -12,35 +12,47 @@ function Network.CreatePacket()
 	return setmetatable(Packet, TPacketMetatable)
 end
 
-function TPacket:GenerateBuffer()
-	-- Should return: Compressed string, uses zlib, is fragmented
-	
-	-- Check that the size is not higher than self.MaxSize, otherwise split it into fragments of self.MaxSize each one
-	-- Check that zlib compression is available
+function TPacket:GenerateCompression()
+	-- Should return: uses zlib, uses fragmentation
+	if self.Fragment then
+		return self.IsCompressed, true
+	elseif self.Compression then
+		return self.IsCompressed, false
+	end
+
 	if zlib then
+		-- Attempt to compress
 		local Success, Compression = pcall(zlib.deflate, self.Buffer, {}, self.MaxSize, "zlib", 9)
 		if Success then
-			if #Compression > 1 then
-				self.Part = Compression
-				return nil, true, true
+			self.IsCompressed = true
+			
+			local FragmentCount = #Compression
+			if FragmentCount > 1 then
+				-- This packet was fragmented into more than just a piece
+				self.FragmentID = 1
+				self.FragmentCount = FragmentCount
+				self.Fragment = Compression
+				return true, true
 			else
-				return table.concat(Compression), true, false
+				-- Only a single piece was fragmented
+				self.Compression = table.concat(Compression)
+				return true, false
 			end
 		end
 	end
 	
+	-- Failed to compress, check if we can make fragments
 	if #self.Buffer > self.MaxSize then
-		local Compression = {}
-		for i = 1, #self.Buffer, self.MaxSize + 1 do
-			local Part = self.Buffer:sub(i, i + self.MaxSize)
-			
-			table.insert(Compression, Part)
+		local Fragments = {}
+		for i = 1, #self.Buffer, self.MaxSize do
+			table.insert(Fragments, self.Buffer:sub(i, i + self.MaxSize - 1))
 		end
-		self.Part = Compression
-		return nil, false, true
+		self.Fragment = Fragments
+		return false, true
 	end
 	
-	return self.Buffer, false, false
+	self.Compression = self.Buffer
+	return false, false
 end
 
 function TPacket:IsAfter(Packet)
