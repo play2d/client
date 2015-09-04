@@ -337,7 +337,7 @@ function TServer:Send()
 				-- Check if we can make a new ping value
 
 				Connection.Ping.Send = {
-					Key = string.char(math.random(0, 255)) .. string.char(math.random(0, 255)) .. string.char(math.random(0, 255)) .. string.char(math.random(0, 255)),
+					Key = Connection:GeneratePing(),
 					Created = Time
 				}
 			end
@@ -361,12 +361,19 @@ function TServer:Send()
 			
 			if not Connection:IsFrozen() then
 				-- If the connection is frozen we don't need to waste resources on sending packets that might not be received, otherwise send them
-				
+
 				for ChannelName, Channel in pairs(Connection.Channel) do
+					
 					local ChannelLength = #ChannelName
 					
+					-- Send packet replies
+					local Received = Channel.Received
+					
+					-- Send local packets
+					local Sending = Channel.Sending
+					
 					-- Check packets from all the channels
-					for ID, Packet in pairs(Channel.Sending.Reliable.Sequenced) do
+					for ID, Packet in pairs(Sending.Reliable.Sequenced) do
 						
 						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
 							-- Check that this packet wasn't sent too short ago
@@ -379,11 +386,15 @@ function TServer:Send()
 							end
 							
 							if IsFragmented then
+								-- Fragmented packets are a bit different from normal packets
+								
 								local Fragment = Packet.Fragment[Packet.FragmentID]
 								local FragmentLength = #Fragment
 								ByteModifier = ByteModifier + 64
 								
 								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
 									Message = Message
 										:WriteByte(ByteModifier)
 										:WriteByte(ChannelLength)
@@ -400,8 +411,12 @@ function TServer:Send()
 									Packet.FragmentID = next(Packet.Fragment, Packet.FragmentID) or next(Packet.Fragment)
 								end
 							else
+								-- Normal packets are sent completely at once
+								
 								local CompressionLength = #Packet.Compression
 								if #Message + ChannelLength + CompressionLength + 6 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
 									Message = Message
 										:WriteByte(ByteModifier)
 										:WriteByte(ChannelLength)
@@ -416,7 +431,7 @@ function TServer:Send()
 						end
 					end
 					
-					for ID, Packet in pairs(Channel.Sending.Reliable.Unsequenced) do
+					for ID, Packet in pairs(Sending.Reliable.Unsequenced) do
 						
 						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
 							-- Check that this packet wasn't sent too short ago
@@ -429,11 +444,15 @@ function TServer:Send()
 							end
 							
 							if IsFragmented then
+								-- Fragmented packets are a bit different from normal packets
+								
 								local Fragment = Packet.Fragment[Packet.FragmentID]
 								local FragmentLength = #Fragment
 								ByteModifier = ByteModifier + 64
 								
 								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
 									Message = Message
 										:WriteByte(ByteModifier)
 										:WriteByte(ChannelLength)
@@ -450,8 +469,12 @@ function TServer:Send()
 									Packet.FragmentID = next(Packet.Fragment, Packet.FragmentID) or next(Packet.Fragment)
 								end
 							else
+								-- Normal packets are sent completely at once
+								
 								local CompressionLength = #Packet.Compression
 								if #Message + ChannelLength + CompressionLength + 6 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
 									Message = Message
 										:WriteByte(ByteModifier)
 										:WriteByte(ChannelLength)
@@ -466,6 +489,139 @@ function TServer:Send()
 						end
 					end
 					
+					for ID, Packet in pairs(Sending.Unreliable.Sequenced) do
+						
+						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
+							-- Check that this packet wasn't sent too short ago
+							
+							local ByteModifier = 4 -- Sequenced = 4
+							local IsCompressed, IsFragmented = Packet:GenerateCompression()
+							
+							if IsCompressed then
+								ByteModifier = ByteModifier + 128
+							end
+								
+							if IsFragmented then
+								-- Fragmented packets are a bit different from normal packets
+								
+								local FragmentID = Packet.FragmentID
+								local Fragment = Packet.Fragment[FragmentID]
+								local FragmentLength = #Fragment
+								ByteModifier = ByteModifier + 64
+								
+								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
+									Message = Message
+										:WriteByte(ByteModifier)
+										:WriteByte(ChannelLength)
+										:WriteString(ChannelName)
+										:WriteShort(ID)
+										:WriteShort(FragmentLength)
+										:WriteString(Fragment)
+										
+										-- Two extra bytes for fragmented packets.
+										:WriteByte(Packet.FragmentID)
+										:WriteByte(Packet.FragmentCount)
+										
+									Packet.Sent = Time
+									Packet.FragmentID = next(Packet.Fragment, FragmentID)
+									Packet.Fragment[FragmentID] = nil
+									if Packet.FragmentID == nil then
+										Packet.FragmentID = next(Packet.Fragment)
+										if Packet.FragmentID == nil then
+											Sending.Unreliable.Sequenced[ID] = nil
+										end
+									end
+								end
+							else
+								-- Normal packets are sent completely at once
+								
+								local CompressionLength = #Packet.Compression
+								if #Message + ChannelLength + CompressionLength + 6 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
+									Message = Message
+										:WriteByte(ByteModifier)
+										:WriteByte(ChannelLength)
+										:WriteString(ChannelName)
+										:WriteShort(ID)
+										:WriteShort(CompressionLength)
+										:WriteString(Packet.Compression)
+										
+									Packet.Sent = Time
+									Sending.Unreliable.Sequenced[ID] = nil
+								end
+							end
+						end
+					end
+					
+					for ID, Packet in pairs(Sending.Unreliable.Unsequenced) do
+						
+						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
+							-- Check that this packet wasn't sent too short ago
+							
+							local ByteModifier = 0
+							local IsCompressed, IsFragmented = Packet:GenerateCompression()
+							
+							if IsCompressed then
+								ByteModifier = ByteModifier + 128
+							end
+								
+							if IsFragmented then
+								-- Fragmented packets are a bit different from normal packets
+								
+								local FragmentID = Packet.FragmentID
+								local Fragment = Packet.Fragment[FragmentID]
+								local FragmentLength = #Fragment
+								ByteModifier = ByteModifier + 64
+								
+								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
+									Message = Message
+										:WriteByte(ByteModifier)
+										:WriteByte(ChannelLength)
+										:WriteString(ChannelName)
+										:WriteShort(ID)
+										:WriteShort(FragmentLength)
+										:WriteString(Fragment)
+										
+										-- Two extra bytes for fragmented packets.
+										:WriteByte(Packet.FragmentID)
+										:WriteByte(Packet.FragmentCount)
+										
+									Packet.Sent = Time
+									Packet.FragmentID = next(Packet.Fragment, FragmentID)
+									Packet.Fragment[FragmentID] = nil
+									if Packet.FragmentID == nil then
+										Packet.FragmentID = next(Packet.Fragment)
+										if Packet.FragmentID == nil then
+											Sending.Unreliable.Unsequenced[ID] = nil
+										end
+									end
+								end
+							else
+								-- Normal packets are sent completely at once
+								
+								local CompressionLength = #Packet.Compression
+								if #Message + ChannelLength + CompressionLength + 6 < Connection.PacketMaxSize then
+									-- Generate the packet header
+									
+									Message = Message
+										:WriteByte(ByteModifier)
+										:WriteByte(ChannelLength)
+										:WriteString(ChannelName)
+										:WriteShort(ID)
+										:WriteShort(CompressionLength)
+										:WriteString(Packet.Compression)
+										
+									Packet.Sent = Time
+									Sending.Unreliable.Unsequenced[ID] = nil
+								end
+							end
+						end
+					end
 					
 				end
 			end

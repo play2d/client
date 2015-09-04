@@ -16,6 +16,15 @@ function Network.CreateConnection(IP, Port)
 	return setmetatable(Connection, TConnectionMetatable)
 end
 
+function TConnection:GeneratePing()
+	local Length = math.random(3, 8)
+	local Key = ""
+	for i = 1, Length do
+		Key = Key .. string.char(math.random(0, 255))
+	end
+	return Key
+end
+
 function TConnection:GetPing()
 	return self.Ping.Value or 0
 end
