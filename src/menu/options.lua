@@ -35,6 +35,7 @@ function game.SetSpraylogo(Index)
 	end
 	game.Spraylogo = game.Spraylogos[Index]
 	game.ui.Options.Spraylogo.Image = game.Spraylogo[3]
+	game.ui.Options.SpraylogoLabel:SetText(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = game.Spraylogo[2] or ""}))
 end
 
 local function InitializeOptionsMenu()
@@ -142,14 +143,12 @@ local function InitializeOptionsMenu()
 	function game.ui.Options.PrevSpraylogo:OnClick()
 		if game.Spraylogo then
 			game.SetSpraylogo(game.Spraylogo[1] - 1)
-			game.ui.Options.SpraylogoLabel:SetText(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = game.Spraylogo[2] or ""}))
 		end
 	end
 	
 	function game.ui.Options.NextSpraylogo:OnClick()
 		if game.Spraylogo then
 			game.SetSpraylogo(game.Spraylogo[1] + 1)
-			game.ui.Options.SpraylogoLabel:SetText(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = game.Spraylogo[2] or ""}))
 		end
 	end
 	
