@@ -5,7 +5,9 @@ function game.core.LoadLocalHost()
 end
 
 function game.core.UpdateLocalHost()
-	game.Host:Update()
+	if game.Host then
+		game.Host:Update()
+	end
 end
 
 Hook.Add("update", game.core.UpdateLocalHost)
