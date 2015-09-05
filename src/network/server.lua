@@ -4,14 +4,10 @@ TServer.Type = "Server"
 
 function Network.CreateUDPServer(Port)
 	local Socket = socket.udp()
-	if not Socket then
+	if not Socket or not Socket:setsockname("*", Port or 0) then
 		return nil
 	end
 	Socket:settimeout(0)
-	
-	if not Socket:setsockname("*", Port or 0) then
-		return nil
-	end
 	
 	local IP, Port = Socket:getsockname()
 	local Server = {
