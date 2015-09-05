@@ -1,12 +1,14 @@
 local TPacket = {}
 local TPacketMetatable = {__index = TPacket}
 TPacket.Type = "Packet"
+TPacket.TypeID = 0
 TPacket.MaxSize = 500
 TPacket.DistID = 500
 
-function Network.CreatePacket()
+function Network.CreatePacket(TypeID)
 	local Packet = {
 		Buffer = "",
+		TypeID = TypeID,
 		Position = 1,
 	}
 	return setmetatable(Packet, TPacketMetatable)

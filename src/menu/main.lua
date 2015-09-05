@@ -1,5 +1,3 @@
-game.ui = {}
-
 local function HighlightLabel(self)
 	self:SetColor("Text", 255, 255, 255, 255)
 end
@@ -8,7 +6,7 @@ local function NormalizeLabel(self)
 	self:SetColor("Text", 150, 150, 150, 255)
 end
 
-local function InitializeMainMenu()
+function game.ui.InitializeMainMenu()
 	game.ui.Desktop = gui.CreateDesktop(config["cl_gui"], love.graphics.newImage("gfx/splash.png"))
 	
 	game.ui.MainMenu = gui.CreateCanvas(0, 0, game.ui.Desktop:GetWidth(), game.ui.Desktop:GetHeight(), game.ui.Desktop)
@@ -58,7 +56,5 @@ local function InitializeMainMenu()
 	
 	HighlightLabel = nil
 	NormalizeLabel = nil
-	InitializeMainMenu = nil
+	game.ui.InitializeMainMenu = nil
 end
-
-Hook.Add("load", InitializeMainMenu)

@@ -48,5 +48,3 @@ function Commands.Load()
 	end
 	Commands.Load = nil
 end
-
-Hook.Add("load", Commands.Load)

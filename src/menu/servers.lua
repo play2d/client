@@ -3,7 +3,7 @@ function game.ui.OpenServerBrowser()
 	game.ui.ServerBrowser:SetHoverAll()
 end
 
-local function InitializeServersMenu()
+function game.ui.InitializeServersMenu()
 	game.ui.ServerBrowser = gui.CreateWindow(language.get("gui_label_find_servers"), 120, 10, 670, 580, game.ui.Desktop, true)
 	game.ui.ServerBrowser.Hidden = true
 	
@@ -28,7 +28,5 @@ local function InitializeServersMenu()
 	game.ui.ServerBrowserRefreshButton = gui.CreateButton(language.get("gui_browser_refresh"), 120, 550, 100, 20, game.ui.ServerBrowser)
 	
 	game.ui.ServerBrowserConnectButton = gui.CreateButton(language.get("gui_browser_connect"), 555, 550, 100, 20, game.ui.ServerBrowser)
-	InitializeServersMenu = nil
+	game.ui.InitializeServersMenu = nil
 end
-
-Hook.Add("load", InitializeServersMenu)

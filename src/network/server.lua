@@ -3,7 +3,12 @@ local TServerMetatable = {__index = TServer}
 TServer.Type = "Server"
 
 function Network.CreateUDPServer(Port)
-	local Socket = socket.udp(); Socket:settimeout(0)
+	local Socket = socket.udp()
+	if not Socket then
+		return nil
+	end
+	Socket:settimeout(0)
+	
 	if not Socket:setsockname("*", Port or 0) then
 		return nil
 	end
@@ -16,6 +21,13 @@ function Network.CreateUDPServer(Port)
 		Connection = {},
 		Protocol = {},
 	}
+	
+	if game then
+		game.Console.Print("Initialized UDP socket using port "..Port, 0, 255, 0, 255)
+	else
+		print("Initialized UDP socket using port "..Port, 0, 255, 0, 255)
+	end
+	
 	return setmetatable(Server, TServerMetatable)
 end
 
@@ -25,6 +37,36 @@ function TServer:SetProtocol(ID, Receive, Accept, Timeout)
 		Accept = Accept,
 		Timeout = Timeout
 	}
+end
+
+function TServer:PacketReceived(Packet)
+	local Protocol = self.Protocol[Packet.TypeID]
+	if Protocol then
+		local Function = Protocol.Receive
+		if Function then
+			Function(self, Packet)
+		end
+	end
+end
+
+function TServer:PacketAccepted(Packet)
+	local Protocol = self.Protocol[Packet.TypeID]
+	if Protocol then
+		local Function = Protocol.Accept
+		if Function then
+			Function(self, Packet)
+		end
+	end
+end
+
+function TServer:PacketTimeout(Packet)
+	local Protocol = self.Protocol[Packet.TypeID]
+	if Protocol then
+		local Function = Protocol.Timeout
+		if Function then
+			Function(self, Packet)
+		end
+	end
 end
 
 function TServer:GetConnection(IP, Port)
@@ -141,7 +183,7 @@ function TServer:ReceiveFrom(Message, IP, Port)
 									if Packet.FragmentID == nil then
 										Packet.Fragment = nil
 										Packet.FragmentCount = nil
-										Channel:PacketAccepted(Packet)
+										self:PacketAccepted(Packet)
 									end
 								end
 							else
@@ -153,7 +195,7 @@ function TServer:ReceiveFrom(Message, IP, Port)
 					else
 						local Packet = Channel:GetPacket(PacketID)
 						if Packet then
-							Channel:PacketAccepted(Packet)
+							self:PacketAccepted(Packet)
 							Channel:RemovePacket(PacketID, IsReliable, IsSequenced)
 						else
 							self:Log("RECEIVED ATTEMPT TO CLOSE A PACKET THAT DOESN'T EXIST")
@@ -186,7 +228,7 @@ function TServer:ReceiveFrom(Message, IP, Port)
 					-- If the packet length is higher than zero, there's a message
 					PacketData, Message = Message:ReadString(PacketLength)
 				end
-				local Packet = Channel:GetNewPacket(PacketID, IsOpened, IsReliable, IsSequenced)
+				local Packet = Channel:GetNewPacket(PacketID, PacketType, IsOpened, IsReliable, IsSequenced)
 				
 				Packet.Reliable = Reliable
 				Packet.Sequenced = Sequenced
@@ -281,13 +323,13 @@ function TServer:ProcessNextPacket()
 	local Packet = self:GetNextReceivedPacket()
 	if Packet then
 		-- We need some callback functions that will read this packet
-		
+		self:PacketReceived(Packet)
 		return Packet
 	end
 end
 
 function TServer:Receive()
-	local Message, IP, Port = self.Socket:ReceiveFrom()
+	local Message, IP, Port = self.Socket:receivefrom()
 	if Message then
 		local MessageData, Message = Message:ReadByte()
 		

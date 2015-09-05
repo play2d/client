@@ -15,15 +15,15 @@ require("src.commands")
 require("src.config")
 require("src.language")
 require("src.vector")
+require("src.network")
 require("src.core")
 require("src.binds")
 require("src.interface")
-require("src.network")
 
--- We should remove all trace of loading functions
-Hook.Add("load",
-	function ()
-		love.load = nil
-		Hook.Data.load = nil
-	end
-)
+function love.load()
+	Commands.Load()
+	config.load()
+	language.load()
+	game.ui.load()
+	game.core.load()
+end

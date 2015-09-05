@@ -42,7 +42,7 @@ function game.ui.OpenConsole()
 	game.ui.ConsoleInput:SetHoverAll()
 end
 
-local function InitializeConsoleMenu()
+function game.ui.InitializeConsoleMenu()
 	game.ui.Console = gui.CreateWindow(language.get("gui_label_console"), 290, 10, 500, 580, game.ui.Desktop, true)
 	game.ui.Console.Hidden = true
 	
@@ -68,7 +68,5 @@ local function InitializeConsoleMenu()
 	end
 	game.Console.Print("Play2D "..game._VERSION.." ["..game.CODENAME.."] initialized", 0, 200, 0, 255)
 	
-	InitializeConsoleMenu = nil
+	game.ui.InitializeConsoleMenu = nil
 end
-
-Hook.Add("load", InitializeConsoleMenu)

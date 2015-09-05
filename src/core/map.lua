@@ -1,5 +1,3 @@
-local function InitializeMapFormats()
-	InitializeMapFormats = nil
+function game.core.InitializeMapFormats()
+	game.core.InitializeMapFormats = nil
 end
-
-Hook.Add("load", InitializeMapFormats)

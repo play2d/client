@@ -38,7 +38,7 @@ function game.SetSpraylogo(Index)
 	game.ui.Options.SpraylogoLabel:SetText(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = game.Spraylogo[2] or ""}))
 end
 
-local function InitializeOptionsMenu()
+function game.ui.InitializeOptionsMenu()
 	game.ui.Options = {}
 	game.ui.Options.Window = gui.CreateWindow(language.get("gui_label_options"), 120, 10, 670, 580, game.ui.Desktop)
 	game.ui.Options.Window.Hidden = true
@@ -218,7 +218,5 @@ local function InitializeOptionsMenu()
 	end
 	
 	game.ReloadSpraylogos()
-	InitializeOptionsMenu = nil
+	game.ui.InitializeOptionsMenu = nil
 end
-
-Hook.Add("load", InitializeOptionsMenu)

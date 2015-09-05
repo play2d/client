@@ -14,7 +14,6 @@ Hook.Data = {
 	joystickremoved = {},
 	keypressed = {},
 	keyreleased = {},
-	load = {},
 	mousefocus = {},
 	mousemoved = {},
 	mousepressed = {},

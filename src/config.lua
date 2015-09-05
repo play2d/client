@@ -44,5 +44,3 @@ function config.save()
 		File:close()
 	end
 end
-
-Hook.Add("load", config.load)
