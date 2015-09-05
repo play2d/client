@@ -26,30 +26,29 @@ function TChannel:GetNextReceivedPacket()
 	if RS.Current then
 		-- Reliable sequenced
 		
-		if not RS.Current.Processed and RS.Current.Complete then
+		if not RS.Current.Processed then
 			-- The first packet being received will instantly be assigned to RS.Current so we added this to check that it exists and it wasn't processed
-			RS.Current.Processed = true
-			return RS.Current
+			
+			if RS.Current.Complete then
+				-- But it can't be processed if it's incomplete
+				
+				RS[RS.Current.ID] = nil
+				RS.Current.Processed = true
+				return RS.Current
+			end
 		end
 		
 		for ID, Packet in pairs(RS) do
 			if Packet.Complete then
 				-- We must never process packets that are still going to be fragmented
-				
-				if Packet.Processed then
-					-- This case is very rarely going to happen, but I'll add it just in case?
+
+				if Packet:IsRightAfter(RS.Current) then
+					-- New unprocessed current packet, process it
 					RS[ID] = nil
-				else
-					-- Unprocessed packets will be met here
-						if Packet:IsRightAfter(RS.Current) then
-						-- Current packet is already processed so it's just being an annoying memory there, delete it
-						RS[RS.Current.ID] = nil
-						
-						-- New unprocessed current packet, process it
-						RS.Current = Packet
-						Packet.Processed = true
-						return Packet
-					end
+					RS.Current = Packet
+					
+					Packet.Processed = true
+					return Packet
 				end
 			end
 		end
@@ -61,21 +60,9 @@ function TChannel:GetNextReceivedPacket()
 			if Packet.Complete then
 				-- Reliable Unsequenced packets are fragmented too, so check that it's complete
 				
-				if not RU.Current or Packet:IsAfter(RU.Current) then
-					-- Reliable, but unsequenced, which means there could be or not a current packet
-					
-					if Packet:IsRightAfter(RU.Current) then
-						-- It being after the current packet we processed means we can delete the current packet and make this one the new current
-						RU[RU.Current.ID] = nil
-						RU.Current = Packet
-					end
-					
-					if not Packet.Processed then
-						-- In case that the packet that goes after the current packet hasn't been received
-						Packet.Processed = true
-						return Packet
-					end
-				end
+				RU[ID] = nil
+				Packet.Processed = true
+				return Packet
 			end
 		end
 	end
@@ -85,17 +72,23 @@ function TChannel:GetNextReceivedPacket()
 		
 		if not US.Current.Processed then
 			-- The first packet on the channel is always the first current packet, but it is never instantly processed so return it
-			US.Current.Processed = true
-			return US.Current
+			
+			if US.Current.Complete then
+				-- But it can't be processed if it's incomplete
+				
+				US[US.Current.ID] = nil
+				US.Current.Processed = true
+				return US.Current
+			end
 		end
 		
 		for ID, Packet in pairs(US) do
 			if Packet.Complete then
 				-- This is rarely going to happen but the Lua script might be able to send a complete unreliable sequenced packet somehow
+				US[ID] = nil
 				
 				if Packet:IsAfter(US.Current) then
 					-- Since it's unreliable, any packet that goes after this one must be the next current packet
-					US[US.Current.ID] = nil
 					US.Current = Packet
 					
 					-- However we don't want the previous code to return it twice
@@ -109,7 +102,7 @@ function TChannel:GetNextReceivedPacket()
 	for ID, Packet in pairs(UU) do
 		-- Unreliable Unsequenced, always send what you find
 		if Packet.Complete then
-			-- As long as it's complete
+			-- As long as it's complete, rarely going to happen too
 			
 			UU[ID] = nil
 			return Packet
@@ -210,5 +203,49 @@ function TChannel:GetNewPacket(ID, TypeID, First, Reliable, Sequenced)
 		Packet.ID = ID
 		Received.Unreliable.Unsequenced[ID] = Packet
 	end
+	return Packet
+end
+
+function TChannel:CreateNewPacket(TypeID, Reliable, Sequenced)
+	local Sending = self.Sending
+	if Reliable then
+		
+		if Sequenced then
+			local ID = (#Sending.Reliable.Sequenced % 65535) + 1
+			local First = not next(Sending.Reliable.Sequenced)
+			
+			Packet = Network.CreatePacket(TypeID)
+			Packet.ID = ID
+			Packet.Reliable = true
+			Packet.Sequenced = true
+			Packet.First = First
+			Sending.Reliable.Sequenced[ID] = Packet
+			return Packet
+		end
+		
+		local ID = (#Sending.Reliable.Unsequenced % 65535) + 1
+		local First = not next(Sending.Reliable.Unsequenced)
+		
+		Packet = Network.CreatePacket(TypeID)
+		Packet.ID = ID
+		Packet.Reliable = true
+		Packet.First = First
+		Sending.Reliable.Unsequenced[ID] = Packet
+		return Packet
+	elseif Sequenced then
+		local ID = (#Sending.Unreliable.Sequenced % 65535) + 1
+		
+		Packet = Network.CreatePacket(TypeID)
+		Packet.ID = ID
+		Packet.Sequenced = true
+		Sending.Unreliable.Sequenced[ID] = Packet
+		return Packet
+	end
+	
+	local ID = (#Sending.Unreliable.Unsequenced % 65535) + 1
+	
+	Packet = Network.CreatePacket(TypeID)
+	Packet.ID = ID
+	Sending.Unreliable.Unsequenced[ID] = Packet
 	return Packet
 end

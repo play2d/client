@@ -35,6 +35,19 @@ function TServer:SetProtocol(ID, Receive, Accept, Timeout)
 	}
 end
 
+function TServer:NewPacket(TypeID, IP, Port, ChannelName, Reliable, Sequenced)
+	local Connection = self:GetConnection(IP, Port)
+	if not Connection then
+		return nil
+	end
+	
+	local Channel = Connection:GetChannel(ChannelName)
+	if not Channel then
+		return nil
+	end
+	return Channel:CreateNewPacket(TypeID, Reliable, Sequenced)
+end
+
 function TServer:PacketReceived(Packet)
 	local Protocol = self.Protocol[Packet.TypeID]
 	if Protocol then
@@ -228,7 +241,10 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				
 				Packet.Reliable = Reliable
 				Packet.Sequenced = Sequenced
-				Packet.Reply = true
+				
+				if Reliable then
+					Packet.Reply = true
+				end
 				
 				if IsFragment then
 					-- This packet is fragmented into smaller pieces
@@ -419,6 +435,10 @@ function TServer:Send()
 							local ByteModifier = 6 -- Reliable = 2, Sequenced = 4, Reliable + Sequenced = 6
 							local IsCompressed, IsFragmented = Packet:GenerateCompression()
 							
+							if Packet.First then
+								ByteModifier = ByteModifier + 8
+							end
+							
 							if IsCompressed then
 								ByteModifier = ByteModifier + 128
 							end
@@ -476,6 +496,10 @@ function TServer:Send()
 							
 							local ByteModifier = 2 -- Reliable = 2
 							local IsCompressed, IsFragmented = Packet:GenerateCompression()
+							
+							if Packet.First then
+								ByteModifier = ByteModifier + 8
+							end
 							
 							if IsCompressed then
 								ByteModifier = ByteModifier + 128
