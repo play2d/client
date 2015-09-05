@@ -1,6 +1,7 @@
 local TServer = {}
 local TServerMetatable = {__index = TServer}
 TServer.Type = "Server"
+TServer.PacketsPerSecond = 33
 
 function Network.CreateUDPServer(Port)
 	local Socket = socket.udp()
@@ -8,7 +9,7 @@ function Network.CreateUDPServer(Port)
 		return nil
 	end
 	Socket:settimeout(0)
-	
+
 	local IP, Port = Socket:getsockname()
 	local Server = {
 		Socket = Socket,
@@ -16,6 +17,8 @@ function Network.CreateUDPServer(Port)
 		Port = Port,
 		Connection = {},
 		Protocol = {},
+		
+		Sent = socket.gettime()
 	}
 	
 	if game then
@@ -711,5 +714,10 @@ end
 
 function TServer:Update()
 	self:ReceiveLoop()
-	self:Send()
+	
+	local Time = socket.gettime()
+	if Time - self.Sent >= 1000/self.PacketsPerSecond then
+		self:Send()
+		self.Sent = Time
+	end
 end
