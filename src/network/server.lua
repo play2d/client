@@ -5,10 +5,14 @@ TServer.PacketsPerSecond = 33
 
 function Network.CreateUDPServer(Port)
 	local Socket = socket.udp()
-	if not Socket or not Socket:setsockname("*", Port or 0) then
+	if not Socket then
 		return nil
 	end
 	Socket:settimeout(0)
+	
+	if not Socket:setsockname("*", Port or 0) then
+		return nil
+	end
 
 	local IP, Port = Socket:getsockname()
 	local Server = {
@@ -115,7 +119,6 @@ function TServer:ReceiveFrom(Message, IP, Port)
 		local IsCompressed = (Data % 128) == 0
 		
 		local Connection = self:GetConnection(IP, Port)
-		
 		if IsReply then
 			if IsPing then
 				-- If it's a ping reply then compare it
@@ -129,49 +132,29 @@ function TServer:ReceiveFrom(Message, IP, Port)
 						Connection.Ping.Value = (Time - Connection.Ping.Send.Last)/2
 					end
 				end
-			elseif IsClosed then
-				-- The client now knows that the channel is closed
-				
-				local ChannelLength, ChannelName
-				ChannelLength, Message = Message:ReadByte()
-				ChannelName, Message = Message:ReadString(ChannelLength)
-				
-				local Channel = Connection.Channel[ChannelName]
-				if Channel then
-					
-					-- Channel exists
-					if Channel.Closing then
-						Connection.Channel[ChannelName] = nil
-					else
-						self:Log("ATTEMPT TO CLOSE CHANNEL "..Channel.." NO CLOSE REQUEST SENT")
-					end
-				else
-					self:Log("ATTEMPT TO CLOSE CHANNEL "..Channel.." IT DOES NOT EXIST")
-				end
-			elseif IsOpened then 
-				-- The client now knows that the channel is opened
-				local ChannelLength, ChannelName
-				ChannelLength, Message = Message:ReadByte()
-				ChannelName, Message = Message:ReadString(ChannelLength)
-				
-				local Channel = Connection.Channel[ChannelName]
-				if Channel then
-					-- Channel exists
-					if Channel.Closing then
-						self:Log("ATTEMPT TO OPEN A CLOSING CHANNEL "..Channel)
-					else
-						Channel.Open = true
-					end
-				else
-					self:Log("ATTEMPT TO OPEN CHANNEL "..Channel.." NO OPEN REQUEST SENT")
-				end
 			else
 				-- If it's a packet reply then check it
-				local ChannelLength, ChannelName
+				local Channel, ChannelLength, ChannelName
 				ChannelLength, Message = Message:ReadByte()
 				ChannelName, Message = Message:ReadString(ChannelLength)
+				Channel = Connection.Channel[ChannelName]
 				
-				local Channel = Connection.Channel[ChannelName]
+				if IsOpened then 
+					-- The client now knows that the channel is opened
+
+					if Channel then
+						-- Channel exists
+						
+						if Channel.Closing then
+							self:Log("ATTEMPT TO OPEN A CLOSING CHANNEL "..Channel)
+						else
+							Channel.Open = true
+						end
+					else
+						self:Log("ATTEMPT TO OPEN CHANNEL "..Channel.." NO OPEN REQUEST SENT")
+					end
+				end
+
 				if Channel then
 					local PacketID, FragmentID
 					PacketID, Message = Message:ReadShort()
@@ -215,6 +198,22 @@ function TServer:ReceiveFrom(Message, IP, Port)
 					end
 				else
 					self:Log("ATTEMPT TO REMOVE PACKET FROM CHANNEL "..Channel..", PACKET DOES NOT EXIST")
+				end
+				
+				if IsClosed then
+					-- The client now knows that the channel is closed
+
+					if Channel then
+						-- Channel exists
+						
+						if Channel.Closing then
+							Connection.Channel[ChannelName] = nil
+						else
+							self:Log("ATTEMPT TO CLOSE CHANNEL "..Channel.." NO CLOSE REQUEST SENT")
+						end
+					else
+						self:Log("ATTEMPT TO CLOSE CHANNEL "..Channel.." IT DOES NOT EXIST")
+					end
 				end
 			end
 		else
@@ -420,44 +419,99 @@ function TServer:Send()
 				-- If the connection is frozen we don't need to waste resources on sending packets that might not be received, otherwise send them
 
 				for ChannelName, Channel in pairs(Connection.Channel) do
+					-- Check packets from all the channels
 					
 					local ChannelLength = #ChannelName
 					
 					-- Send packet replies
 					local Received = Channel.Received
 					
+					for ID, Packet in pairs(Received.Reliable.Sequenced) do
+						
+						if Packet.Confirm then
+							for Part, _ in pairs(Packet.Confirm) do
+								if #Message + ChannelLength + 5 < Connection.PacketMaxSize then
+									Message = Message
+										:WriteByte(Packet:GetModifier())
+										:WriteByte(ChannelLength)
+										:WriteString(Channel)
+										:WriteShort(ID)
+										:WriteByte(Part)
+									
+									Packet.Confirm[Part] = nil
+								else
+									break
+								end
+							end
+						elseif Packet.Reply then
+							
+							if #Message + ChannelLength + 4 < Connection.PacketMaxSize then
+								Message = Message
+									:WriteByte(Packet:GetModifier())
+									:WriteByte(ChannelLength)
+									:WriteString(Channel)
+									:WriteShort(ID)
+								
+								Packet.Reply = nil
+							else
+								break
+							end
+						end
+					end
+					
+					for ID, Packet in pairs(Received.Reliable.Unsequenced) do
+						
+						if Packet.Confirm then
+							for Part, _ in pairs(Packet.Confirm) do
+								if #Message + ChannelLength + 5 < Connection.PacketMaxSize then
+									Message = Message
+										:WriteByte(Packet:GetModifier())
+										:WriteByte(ChannelLength)
+										:WriteString(Channel)
+										:WriteShort(ID)
+										:WriteByte(Part)
+									
+									Packet.Confirm[Part] = nil
+								else
+									break
+								end
+							end
+						elseif Packet.Reply then
+							
+							if #Message + ChannelLength + 4 < Connection.PacketMaxSize then
+								Message = Message
+									:WriteByte(Packet:GetModifier())
+									:WriteByte(ChannelLength)
+									:WriteString(Channel)
+									:WriteShort(ID)
+								
+								Packet.Reply = nil
+							else
+								break
+							end
+						end
+					end
+					
 					-- Send local packets
 					local Sending = Channel.Sending
-					
-					-- Check packets from all the channels
+
 					for ID, Packet in pairs(Sending.Reliable.Sequenced) do
 						
 						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
 							-- Check that this packet wasn't sent too short ago
 							
-							local ByteModifier = 6 -- Reliable = 2, Sequenced = 4, Reliable + Sequenced = 6
 							local IsCompressed, IsFragmented = Packet:GenerateCompression()
-							
-							if Packet.First then
-								ByteModifier = ByteModifier + 8
-							end
-							
-							if IsCompressed then
-								ByteModifier = ByteModifier + 128
-							end
-							
 							if IsFragmented then
 								-- Fragmented packets are a bit different from normal packets
 								
 								local Fragment = Packet.Fragment[Packet.FragmentID]
 								local FragmentLength = #Fragment
-								ByteModifier = ByteModifier + 64
-								
+
 								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)
@@ -479,7 +533,7 @@ function TServer:Send()
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)
@@ -497,29 +551,18 @@ function TServer:Send()
 						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
 							-- Check that this packet wasn't sent too short ago
 							
-							local ByteModifier = 2 -- Reliable = 2
 							local IsCompressed, IsFragmented = Packet:GenerateCompression()
-							
-							if Packet.First then
-								ByteModifier = ByteModifier + 8
-							end
-							
-							if IsCompressed then
-								ByteModifier = ByteModifier + 128
-							end
-							
 							if IsFragmented then
 								-- Fragmented packets are a bit different from normal packets
 								
 								local Fragment = Packet.Fragment[Packet.FragmentID]
 								local FragmentLength = #Fragment
-								ByteModifier = ByteModifier + 64
 								
 								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)
@@ -541,7 +584,7 @@ function TServer:Send()
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)
@@ -558,27 +601,20 @@ function TServer:Send()
 						
 						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
 							-- Check that this packet wasn't sent too short ago
-							
-							local ByteModifier = 4 -- Sequenced = 4
+
 							local IsCompressed, IsFragmented = Packet:GenerateCompression()
-							
-							if IsCompressed then
-								ByteModifier = ByteModifier + 128
-							end
-								
 							if IsFragmented then
 								-- Fragmented packets are a bit different from normal packets
 								
 								local FragmentID = Packet.FragmentID
 								local Fragment = Packet.Fragment[FragmentID]
 								local FragmentLength = #Fragment
-								ByteModifier = ByteModifier + 64
-								
+
 								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)
@@ -607,7 +643,7 @@ function TServer:Send()
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)
@@ -626,26 +662,19 @@ function TServer:Send()
 						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
 							-- Check that this packet wasn't sent too short ago
 							
-							local ByteModifier = 0
 							local IsCompressed, IsFragmented = Packet:GenerateCompression()
-							
-							if IsCompressed then
-								ByteModifier = ByteModifier + 128
-							end
-								
 							if IsFragmented then
 								-- Fragmented packets are a bit different from normal packets
 								
 								local FragmentID = Packet.FragmentID
 								local Fragment = Packet.Fragment[FragmentID]
 								local FragmentLength = #Fragment
-								ByteModifier = ByteModifier + 64
-								
+
 								if #Message + ChannelLength + FragmentLength + 8 < Connection.PacketMaxSize then
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)
@@ -674,7 +703,7 @@ function TServer:Send()
 									-- Generate the packet header
 									
 									Message = Message
-										:WriteByte(ByteModifier)
+										:WriteByte(Packet:GetModifier())
 										:WriteByte(ChannelLength)
 										:WriteString(ChannelName)
 										:WriteShort(ID)

@@ -57,6 +57,28 @@ function TPacket:GenerateCompression()
 	return false, false
 end
 
+function TPacket:GetModifier()
+	local ByteModifier = 0
+	if self.Reply or Packet.Confirm then
+		ByteModifier = ByteModifier + 1
+	end
+	if self.Reliable then
+		ByteModifier = ByteModifier + 2
+	end
+	if self.Sequenced then
+		ByteModifier = ByteModifier + 4
+	end
+	if self.First then
+		ByteModifier = ByteModifier + 8
+	end
+	if self.Fragment then
+		ByteModifier = ByteModifier + 64
+	end
+	if self.IsCompressed then
+		ByteModifier = ByteModifier + 128
+	end
+end
+
 function TPacket:IsAfter(Packet)
 	if Packet.ID < self.ID then
 		return Packet.ID >= self.ID - TPacket.DistID
