@@ -19,11 +19,9 @@ Using LuaPower's zlib module
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c),
-Holders:
 	2015-2015, Matías "Starkkz" Hermosilla
 	2015-2015, Eero-Antero "tarjoilija" Säisä
 	2015-2015, Kelvin "_Yank" Francisco
-Contributors:
 	2015-2015, Pagyra
 	2015-2015, Dark Soul
 	2015-2015, RYX_Aria
