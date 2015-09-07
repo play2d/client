@@ -1,5 +1,10 @@
 function game.core.LoadLocalHost()
-	game.Host = Network.CreateUDPServer(100)
+	local Host, Error = Network.CreateUDPServer(100)
+	if Host then
+		game.Host = Host
+	else
+		game.Console.Print("Failed to open socket: "..Error, 255, 0, 0, 255)
+	end
 	
 	game.core.LoadLocalHost = nil
 end
