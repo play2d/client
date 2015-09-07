@@ -19,6 +19,7 @@ require("src.network")
 require("src.core")
 require("src.binds")
 require("src.interface")
+require("src.namespaces")
 
 function love.load()
 	Commands.Load()

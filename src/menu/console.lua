@@ -43,6 +43,9 @@ function game.ui.OpenConsole()
 end
 
 function game.ui.InitializeConsoleMenu()
+	if type(config["console_maxlines"]) == "number" then
+		game.Console.MaxLines = config["console_maxlines"]
+	end
 	game.ui.Console = gui.CreateWindow(language.get("gui_label_console"), 290, 10, 500, 580, game.ui.Desktop, true)
 	game.ui.Console.Hidden = true
 	

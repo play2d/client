@@ -25,6 +25,8 @@ function Commands.Load()
 			if love.filesystem.isFile(Path) then
 				local Load, Error = loadfile(Path)
 				if Load then
+					setfenv(Load, Namespace.Commands)
+					
 					local Success, CommandOrError = pcall(Load)
 					if Success then
 						Commands.List[string.lower(Command)] = CommandOrError
