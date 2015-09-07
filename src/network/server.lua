@@ -6,11 +6,13 @@ TServer.PacketsPerSecond = 33
 function Network.CreateUDPServer(Port)
 	local Socket = socket.udp()
 	if not Socket then
+		print("The socket didn't open")
 		return nil
 	end
 	Socket:settimeout(0)
 	
 	if not Socket:setsockname("*", Port or 0) then
+		print("The socket didn't bind")
 		return nil
 	end
 
