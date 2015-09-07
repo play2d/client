@@ -9,7 +9,7 @@ function game.ui.load()
 	game.ui.InitializeMainMenu()
 	game.ui.InitializeConsoleMenu()
 	game.ui.InitializeServersMenu()
-	game.ui.InitializeOptionsMenu()
+	Options.InitializeMenu()
 	
 	game.ui.load = nil
 end

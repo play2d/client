@@ -42,11 +42,13 @@ local function debug_setfenv(Object, Environment)
 end
 
 Namespace.Commands = {
+	-- Very unprotected stuff
 	Hook = Hook,
-	game = game, -- very unprotected
-	language = language,
-	
+	Binds = Binds,
+	game = game,
 	config = config,
+	
+	language = language,
 	table = table,
 	math = math,
 	string = string,

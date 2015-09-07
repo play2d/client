@@ -1,9 +1,11 @@
-game.Binds = {}
+Binds = {}
+Binds.List = {}
 
--- This is not the official list for the binds, the used configuration is stored at config["bind"] on sys/commands/bind.lua
-game.Binds.List = {}
+function Binds.Create(Text, Command)
+	table.insert(Binds.List, {Text, Command})
+end
 
-function game.Binds.Find(Command)
+function Binds.Find(Command)
 	for Key, BoundCommand in pairs(config["bind"]) do
 		if Command == BoundCommand then
 			return Key
@@ -11,24 +13,24 @@ function game.Binds.Find(Command)
 	end
 end
 
-function game.Binds.Reload()
-	game.ui.Options.ControlsList:ClearItems()
-	for _, Pack in pairs(game.Binds.List) do
+function Binds.Reload()
+	Options.Controls.List:ClearItems()
+	for _, Pack in pairs(Binds.List) do
 		local BindFound
 		if config["bind"] then
 			for Key, BoundCommand in pairs(config["bind"]) do
 				if Pack[2] == BoundCommand then
-					game.ui.Options.ControlsList:AddItem(Pack[1], Key)
+					Options.Controls.List:AddItem(Pack[1], Key)
 					BindFound = true
 					break
 				end
 			end
 		end
 		if not BindFound then
-			game.ui.Options.ControlsList:AddItem(Keyword, "")
+			Options.Controls.List:AddItem(Keyword, "")
 		end
 	end
-	if game.ui.Options.ControlsField then
-		game.ui.Options.ControlsField:SetText("")
+	if Options.Controls.Field then
+		Options.Controls.Field:SetText("")
 	end
 end
