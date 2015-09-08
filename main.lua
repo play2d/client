@@ -1,5 +1,5 @@
 game = {
-	_VERSION = "0.0.0.1a",
+	VERSION = "0.0.0.1a",
 	CODENAME = "LuaJIT Rox",
 	DATE = "13/07/2015",
 }

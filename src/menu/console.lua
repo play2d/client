@@ -69,7 +69,7 @@ function Interface.InitializeConsoleMenu()
 		parse(Command)
 		Console.Print("> "..Command)
 	end
-	Console.Print("Play2D "..game._VERSION.." ["..game.CODENAME.."] initialized", 0, 200, 0, 255)
+	Console.Print("Play2D "..game.VERSION.." ["..game.CODENAME.."] initialized", 0, 200, 0, 255)
 	
 	Interface.InitializeConsoleMenu = nil
 end
