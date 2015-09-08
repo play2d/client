@@ -1,7 +1,7 @@
 Interface.Chat = {}
 
 function Interface.Chat.Initialize()
-	Interface.Chat.Panel = gui.CreatePanel(Lang.Get("gui_label_chat"), 120, 20, 600, 190, Interface.MainMenu)
+	Interface.Chat.Panel = gui.CreatePanel(Lang.Get("gui_label_chat"), 115, 400, 600, 190, Interface.MainMenu)
 	Interface.Chat.Panel:SetColor("Text", 200, 200, 200, 200)
 	Interface.Chat.Panel:SetColor("Background", 255, 255, 255, 10)
 	
