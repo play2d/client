@@ -5,7 +5,7 @@ function Core.Network.Load()
 	if Host then
 		Core.Network.Host = Host
 	else
-		game.Console.Print("Failed to open socket: "..Error, 255, 0, 0, 255)
+		Console.Print("Failed to open socket: "..Error, 255, 0, 0, 255)
 	end
 	
 	Core.Network.Load = nil
