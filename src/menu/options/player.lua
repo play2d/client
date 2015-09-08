@@ -69,7 +69,7 @@ function Options.Player.InitializeMenu()
 	
 	function Options.Player.PrevSpraylogo:OnClick()
 		if Options.Player.Spraylogo then
-			Options.SetSpraylogo(Options.Player.Spraylogo.Index - 1)
+			Options.Player.SetSpraylogo(Options.Player.Spraylogo.Index - 1)
 		end
 	end
 	
