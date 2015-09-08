@@ -26,8 +26,8 @@ function Network.CreateUDPServer(Port)
 		Sent = socket.gettime()
 	}
 	
-	if game then
-		game.Console.Print("Initialized UDP socket using port "..Port, 0, 255, 0, 255)
+	if Console then
+		Console.Print("Initialized UDP socket using port "..Port, 0, 255, 0, 255)
 	else
 		print("Initialized UDP socket using port "..Port, 0, 255, 0, 255)
 	end

@@ -11,8 +11,8 @@ function Options.Player.ReloadSpraylogos()
 				local Spraylogo = {Index = Index, File = Item, Image = Image}
 				Options.Player.Spraylogos[Index] = Spraylogo
 				
-				if config["spraylogo"] then
-					if Item == config["spraylogo"] then
+				if Config.CFG["spraylogo"] then
+					if Item == Config.CFG["spraylogo"] then
 						Options.Player.SetSpraylogo(Index)
 					end
 				elseif not Options.Player.Spraylogo then
@@ -35,35 +35,35 @@ function Options.Player.SetSpraylogo(Index)
 		if Spraylogo then
 			Options.Player.Spraylogo = Spraylogo
 			Options.Player.SpraylogoImage.Image = Spraylogo.Image
-			Options.Player.SpraylogoLabel:SetText(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = Spraylogo.File}))
+			Options.Player.SpraylogoLabel:SetText(Lang.Get2("gui_options_player_spraylogo", {SPRAYLOGO = Spraylogo.File}))
 		end
 	end
 end
 
 function Options.Player.Okay()
-	config["name"] = Options.Player.NameField:GetText()
+	Config.CFG["name"] = Options.Player.NameField:GetText()
 	
 	if Options.Player.Spraylogo then
-		config["spraylogo"] = Options.Player.Spraylogo.File
+		Config.CFG["spraylogo"] = Options.Player.Spraylogo.File
 	end
 end
 
 function Options.Player.Cancel()
-	Options.Player.NameField:SetText(config["name"])
+	Options.Player.NameField:SetText(Config.CFG["name"])
 	
 	Options.Player.Spraylogo = nil
 	Options.Player.ReloadSpraylogos()
 end
 
 function Options.Player.InitializeMenu()
-	Options.Panels[1] = gui.CreatePanel(language.get("gui_options_tab_player"), 10, 60, 650, 480, Options.Window)
-	gui.CreateLabel(language.get("gui_options_player_name"), 20, 30, Options.Panels[1])
+	Options.Panels[1] = gui.CreatePanel(Lang.Get("gui_options_tab_player"), 10, 60, 650, 480, Options.Window)
+	gui.CreateLabel(Lang.Get("gui_options_player_name"), 20, 30, Options.Panels[1])
 	
 	Options.Player.NameField = gui.CreateTextfield(20, 50, 200, 20, Options.Panels[1])
-	Options.Player.NameField:SetText(config["name"])
+	Options.Player.NameField:SetText(Config.CFG["name"])
 	
 	Options.Player.SpraylogoImage = gui.CreateImage(nil, 40, 100, 32, 32, Options.Panels[1])
-	Options.Player.SpraylogoLabel = gui.CreateLabel(language.get2("gui_options_player_spraylogo", {SPRAYLOGO = ""}), 20, 80, Options.Panels[1])
+	Options.Player.SpraylogoLabel = gui.CreateLabel(Lang.Get2("gui_options_player_spraylogo", {SPRAYLOGO = ""}), 20, 80, Options.Panels[1])
 	Options.Player.PrevSpraylogo = gui.CreateButton("<", 20, 110, 15, 15, Options.Panels[1])
 	Options.Player.NextSpraylogo = gui.CreateButton(">", 77, 110, 15, 15, Options.Panels[1])
 	

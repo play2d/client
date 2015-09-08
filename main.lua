@@ -23,8 +23,8 @@ require("src.namespaces")
 
 function love.load()
 	Commands.Load()
-	config.load()
-	language.load()
-	game.ui.load()
-	game.core.load()
+	Config.Load()
+	Lang.Load()
+	Interface.Load()
+	Core.Load()
 end

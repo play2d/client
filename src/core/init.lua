@@ -1,11 +1,13 @@
 local Path = ...
 
-game.core = {}
+Core = {}
 
+require(Path..".network")
 require(Path..".map")
-require(Path..".localhost")
 
-function game.core.load()
-	game.core.LoadLocalHost()
-	game.core.InitializeMapFormats()
+function Core.Load()
+	Core.Network.Load()
+	Core.Maps.Load()
+	
+	Core.Load = nil
 end

@@ -1,32 +1,32 @@
-function game.ui.OpenServerBrowser()
-	game.ui.ServerBrowser.Hidden = nil
-	game.ui.ServerBrowser:SetHoverAll()
+function Interface.OpenServerBrowser()
+	Interface.ServerBrowser.Hidden = nil
+	Interface.ServerBrowser:SetHoverAll()
 end
 
-function game.ui.InitializeServersMenu()
-	game.ui.ServerBrowser = gui.CreateWindow(language.get("gui_label_find_servers"), 120, 10, 670, 580, game.ui.Desktop, true)
-	game.ui.ServerBrowser.Hidden = true
+function Interface.InitializeServersMenu()
+	Interface.ServerBrowser = gui.CreateWindow(Lang.Get("gui_label_find_servers"), 120, 10, 670, 580, Interface.Desktop, true)
+	Interface.ServerBrowser.Hidden = true
 	
-	game.ui.ServerBrowserTab = gui.CreateTabber(10, 35, game.ui.ServerBrowser)
-	game.ui.ServerBrowserTab:AddItem(language.get("gui_browser_tab_internet"))
-	game.ui.ServerBrowserTab:AddItem(language.get("gui_browser_tab_official"))
-	game.ui.ServerBrowserTab:AddItem(language.get("gui_browser_tab_lan"))
-	game.ui.ServerBrowserTab:AddItem(language.get("gui_browser_tab_favorites"))
-	game.ui.ServerBrowserTab:AddItem(language.get("gui_browser_tab_history"))
-	game.ui.ServerBrowserTab.Selected = 1
+	Interface.ServerBrowserTab = gui.CreateTabber(10, 35, Interface.ServerBrowser)
+	Interface.ServerBrowserTab:AddItem(Lang.Get("gui_browser_tab_internet"))
+	Interface.ServerBrowserTab:AddItem(Lang.Get("gui_browser_tab_official"))
+	Interface.ServerBrowserTab:AddItem(Lang.Get("gui_browser_tab_lan"))
+	Interface.ServerBrowserTab:AddItem(Lang.Get("gui_browser_tab_favorites"))
+	Interface.ServerBrowserTab:AddItem(Lang.Get("gui_browser_tab_history"))
+	Interface.ServerBrowserTab.Selected = 1
 	
-	game.ui.ServerBrowserList = gui.CreateListview(10, 60, 480, game.ui.ServerBrowser)
-	game.ui.ServerBrowserList:AddColumn(language.get("gui_browser_password"), 30)
-	game.ui.ServerBrowserList:AddColumn(language.get("gui_browser_servername"), 200)
-	game.ui.ServerBrowserList:AddColumn(language.get("gui_browser_gamemode"), 200)
-	game.ui.ServerBrowserList:AddColumn(language.get("gui_browser_map"), 120)
-	game.ui.ServerBrowserList:AddColumn(language.get("gui_browser_players"), 50)
-	game.ui.ServerBrowserList:AddColumn(language.get("gui_browser_ping"), 50)
+	Interface.ServerBrowserList = gui.CreateListview(10, 60, 480, Interface.ServerBrowser)
+	Interface.ServerBrowserList:AddColumn(Lang.Get("gui_browser_password"), 30)
+	Interface.ServerBrowserList:AddColumn(Lang.Get("gui_browser_servername"), 200)
+	Interface.ServerBrowserList:AddColumn(Lang.Get("gui_browser_gamemode"), 200)
+	Interface.ServerBrowserList:AddColumn(Lang.Get("gui_browser_map"), 120)
+	Interface.ServerBrowserList:AddColumn(Lang.Get("gui_browser_players"), 50)
+	Interface.ServerBrowserList:AddColumn(Lang.Get("gui_browser_ping"), 50)
 	
-	game.ui.ServerBrowserFiltersButton = gui.CreateButton(language.get("gui_browser_filter"), 10, 550, 100, 20, game.ui.ServerBrowser)
+	Interface.ServerBrowserFiltersButton = gui.CreateButton(Lang.Get("gui_browser_filter"), 10, 550, 100, 20, Interface.ServerBrowser)
 	
-	game.ui.ServerBrowserRefreshButton = gui.CreateButton(language.get("gui_browser_refresh"), 120, 550, 100, 20, game.ui.ServerBrowser)
+	Interface.ServerBrowserRefreshButton = gui.CreateButton(Lang.Get("gui_browser_refresh"), 120, 550, 100, 20, Interface.ServerBrowser)
 	
-	game.ui.ServerBrowserConnectButton = gui.CreateButton(language.get("gui_browser_connect"), 555, 550, 100, 20, game.ui.ServerBrowser)
-	game.ui.InitializeServersMenu = nil
+	Interface.ServerBrowserConnectButton = gui.CreateButton(Lang.Get("gui_browser_connect"), 555, 550, 100, 20, Interface.ServerBrowser)
+	Interface.InitializeServersMenu = nil
 end

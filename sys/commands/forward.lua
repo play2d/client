@@ -5,7 +5,7 @@ end
 local Command = {}
 
 function Command.LoadLanguage()
-	Binds.Create(language.get("gui_binds_walkforward"), "+forward")
+	Binds.Create(Lang.Get("gui_binds_walkforward"), "+forward")
 end
 
 function Command.Call(Source)

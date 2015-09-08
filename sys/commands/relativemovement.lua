@@ -2,7 +2,7 @@ if not CLIENT then
 	return nil
 end
 
-config["relativemovement"] = 0
+CFG["relativemovement"] = 0
 
 local Command = {
 	Category = "Player"
@@ -11,13 +11,13 @@ local Command = {
 function Command.Call(Source, RelativeMovement)
 	if Source.source == "game" then
 		if type(RelativeMovement) == "number" then
-			config["relativemovement"] = RelativeMovement
+			CFG["relativemovement"] = RelativeMovement
 		end
 	end
 end
 
 function Command.GetSaveString()
-	return "relativemovement " .. config["relativemovement"]
+	return "relativemovement " .. CFG["relativemovement"]
 end
 
 return Command

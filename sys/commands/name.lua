@@ -2,7 +2,7 @@ if not CLIENT then
 	return nil
 end
 
-config["name"] = "Player"
+CFG["name"] = "Player"
 
 local Command = {
 	Category = "Player"
@@ -11,16 +11,16 @@ local Command = {
 function Command.Call(Source, Name)
 	if Source.source == "game" then
 		if type(Name) == "string" then
-			config["name"] = Name
-			if game.ui.Options then
-				game.ui.Options.NameField:SetText(config["name"])
+			CFG["name"] = Name
+			if Options then
+				Options.Player.NameField:SetText(config["name"])
 			end
 		end
 	end
 end
 
 function Command.GetSaveString()
-	return "name " .. config["name"]
+	return "name " .. CFG["name"]
 end
 
 return Command

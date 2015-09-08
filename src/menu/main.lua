@@ -6,55 +6,55 @@ local function NormalizeLabel(self)
 	self:SetColor("Text", 150, 150, 150, 255)
 end
 
-function game.ui.InitializeMainMenu()
-	game.ui.Desktop = gui.CreateDesktop(config["cl_gui"], love.graphics.newImage("gfx/splash.png"))
+function Interface.InitializeMainMenu()
+	Interface.Desktop = gui.CreateDesktop(Config.CFG["cl_gui"], love.graphics.newImage("gfx/splash.png"))
 	
-	game.ui.MainMenu = gui.CreateCanvas(0, 0, game.ui.Desktop:GetWidth(), game.ui.Desktop:GetHeight(), game.ui.Desktop)
+	Interface.MainMenu = gui.CreateCanvas(0, 0, Interface.Desktop:GetWidth(), Interface.Desktop:GetHeight(), Interface.Desktop)
 	
-	game.ui.ConsoleButton = gui.CreateLabel(language.get("gui_label_console"), 20, 200, game.ui.MainMenu)
-	game.ui.ConsoleButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.ConsoleButton.OnClick = game.ui.OpenConsole
-	game.ui.ConsoleButton.MouseEnter = HighlightLabel
-	game.ui.ConsoleButton.MouseExit = NormalizeLabel
+	Interface.ConsoleButton = gui.CreateLabel(Lang.Get("gui_label_console"), 20, 200, Interface.MainMenu)
+	Interface.ConsoleButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.ConsoleButton.OnClick = Interface.OpenConsole
+	Interface.ConsoleButton.MouseEnter = HighlightLabel
+	Interface.ConsoleButton.MouseExit = NormalizeLabel
 	
-	game.ui.QuickMatchButton = gui.CreateLabel(language.get("gui_label_quick_match"), 20, 240, game.ui.MainMenu)
-	game.ui.QuickMatchButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.QuickMatchButton.MouseEnter = HighlightLabel
-	game.ui.QuickMatchButton.MouseExit = NormalizeLabel
+	Interface.QuickMatchButton = gui.CreateLabel(Lang.Get("gui_label_quick_match"), 20, 240, Interface.MainMenu)
+	Interface.QuickMatchButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.QuickMatchButton.MouseEnter = HighlightLabel
+	Interface.QuickMatchButton.MouseExit = NormalizeLabel
 	
-	game.ui.FindServersButton = gui.CreateLabel(language.get("gui_label_find_servers"), 20, 280, game.ui.MainMenu)
-	game.ui.FindServersButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.FindServersButton.OnClick = game.ui.OpenServerBrowser
-	game.ui.FindServersButton.MouseEnter = HighlightLabel
-	game.ui.FindServersButton.MouseExit = NormalizeLabel
+	Interface.FindServersButton = gui.CreateLabel(Lang.Get("gui_label_find_servers"), 20, 280, Interface.MainMenu)
+	Interface.FindServersButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.FindServersButton.OnClick = Interface.OpenServerBrowser
+	Interface.FindServersButton.MouseEnter = HighlightLabel
+	Interface.FindServersButton.MouseExit = NormalizeLabel
 	
-	game.ui.FriendsButton = gui.CreateLabel(language.get("gui_label_friends"), 20, 300, game.ui.MainMenu)
-	game.ui.FriendsButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.FriendsButton.MouseEnter = HighlightLabel
-	game.ui.FriendsButton.MouseExit = NormalizeLabel
+	Interface.FriendsButton = gui.CreateLabel(Lang.Get("gui_label_friends"), 20, 300, Interface.MainMenu)
+	Interface.FriendsButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.FriendsButton.MouseEnter = HighlightLabel
+	Interface.FriendsButton.MouseExit = NormalizeLabel
 	
-	game.ui.ChatButton = gui.CreateLabel(language.get("gui_label_chat"), 20, 320, game.ui.MainMenu)
-	game.ui.ChatButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.ChatButton.MouseEnter = HighlightLabel
-	game.ui.ChatButton.MouseExit = NormalizeLabel
+	Interface.ChatButton = gui.CreateLabel(Lang.Get("gui_label_chat"), 20, 320, Interface.MainMenu)
+	Interface.ChatButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.ChatButton.MouseEnter = HighlightLabel
+	Interface.ChatButton.MouseExit = NormalizeLabel
 	
-	game.ui.OptionsButton = gui.CreateLabel(language.get("gui_label_options"), 20, 360, game.ui.MainMenu)
-	game.ui.OptionsButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.OptionsButton.OnClick = Options.Open
-	game.ui.OptionsButton.MouseEnter = HighlightLabel
-	game.ui.OptionsButton.MouseExit = NormalizeLabel
+	Interface.OptionsButton = gui.CreateLabel(Lang.Get("gui_label_options"), 20, 360, Interface.MainMenu)
+	Interface.OptionsButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.OptionsButton.OnClick = Options.Open
+	Interface.OptionsButton.MouseEnter = HighlightLabel
+	Interface.OptionsButton.MouseExit = NormalizeLabel
 	
-	game.ui.HelpButton = gui.CreateLabel(language.get("gui_label_help"), 20, 380, game.ui.MainMenu)
-	game.ui.HelpButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.HelpButton.MouseEnter = HighlightLabel
-	game.ui.HelpButton.MouseExit = NormalizeLabel
+	Interface.HelpButton = gui.CreateLabel(Lang.Get("gui_label_help"), 20, 380, Interface.MainMenu)
+	Interface.HelpButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.HelpButton.MouseEnter = HighlightLabel
+	Interface.HelpButton.MouseExit = NormalizeLabel
 	
-	game.ui.QuitButton = gui.CreateLabel(language.get("gui_label_quit"), 20, 420, game.ui.MainMenu)
-	game.ui.QuitButton:SetColor("Text", 150, 150, 150, 255)
-	game.ui.QuitButton.MouseEnter = HighlightLabel
-	game.ui.QuitButton.MouseExit = NormalizeLabel
+	Interface.QuitButton = gui.CreateLabel(Lang.Get("gui_label_quit"), 20, 420, Interface.MainMenu)
+	Interface.QuitButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.QuitButton.MouseEnter = HighlightLabel
+	Interface.QuitButton.MouseExit = NormalizeLabel
 	
 	HighlightLabel = nil
 	NormalizeLabel = nil
-	game.ui.InitializeMainMenu = nil
+	Interface.InitializeMainMenu = nil
 end

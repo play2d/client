@@ -9,14 +9,14 @@ local Command = {
 function Command.Call(Source, MaxLines)
 	if Source.source == "game" then
 		if type(MaxLines) == "number" then
-			config["console_maxlines"] = MaxLines
-			game.Console.MaxLines = MaxLines
+			CFG["console_maxlines"] = MaxLines
+			Console.MaxLines = MaxLines
 		end
 	end
 end
 
 function Command.GetSaveString()
-	return "console_maxlines " .. config["console_maxlines"]
+	return "console_maxlines " .. CFG["console_maxlines"]
 end
 
 return Command

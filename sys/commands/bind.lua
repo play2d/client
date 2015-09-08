@@ -2,7 +2,7 @@ if not CLIENT then
 	return nil
 end
 
-config["bind"] = {}
+CFG["bind"] = {}
 
 local Command = {
 	Category = "Binds"
@@ -10,15 +10,15 @@ local Command = {
 
 function Command.Call(Source, Key, Bind)
 	if Source.source == "game" then
-		config["bind"][Key] = Bind
+		CFG["bind"][Key] = Bind
 	end
 end
 
 function Command.GetSaveString()
 	local Binds = ""
-	for Key, Binding in pairs(config["bind"]) do
+	for Key, Binding in pairs(CFG["bind"]) do
 		Binds = Binds .. 'bind "'..Key..'" "'..Binding..'"'
-		if next(config["bind"], Key) then
+		if next(CFG["bind"], Key) then
 			Binds = Binds .. "\n"
 		end
 	end
@@ -26,10 +26,10 @@ function Command.GetSaveString()
 end
 
 function Command.ParsePlus()
-	if game.ui.Desktop.CurrentFirst and game.ui.Desktop.CurrentFirst.Writeable then
+	if Interface.Desktop.CurrentFirst and Interface.Desktop.CurrentFirst.Writeable then
 		return nil
 	end
-	for Key, Binding in pairs(config["bind"]) do
+	for Key, Binding in pairs(CFG["bind"]) do
 		if Binding:sub(1, 1) == "+" then
 			if love.keyboard.isDown(Key) then
 				parse(Binding:sub(2))
@@ -40,10 +40,10 @@ end
 Hook.Add("update", Command.ParsePlus)
 
 function Command.ParseMinus(Key)
-	if game.ui.Desktop.CurrentFirst and game.ui.Desktop.CurrentFirst.Writeable then
+	if Interface.Desktop.CurrentFirst and Interface.Desktop.CurrentFirst.Writeable then
 		return nil
 	end
-	local Binding = config["bind"][Key]
+	local Binding = CFG["bind"][Key]
 	if Binding and Binding:sub(1, 1) == "-" then
 		parse(Binding:sub(2))
 	end
@@ -52,10 +52,10 @@ Hook.Add("keyreleased", Command.ParseMinus)
 
 function Command.ParseNormal(Key, isRepeat)
 	if not isRepeat then
-		if game.ui.Desktop.CurrentFirst and game.ui.Desktop.CurrentFirst.Writeable then
+		if Interface.Desktop.CurrentFirst and Interface.Desktop.CurrentFirst.Writeable then
 			return nil
 		end
-		local Binding = config["bind"][Key]
+		local Binding = CFG["bind"][Key]
 		if Binding then
 			local BindingType = Binding:sub(1, 1)
 			if BindingType ~= "+" and BindingType ~= "-" then

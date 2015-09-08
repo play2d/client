@@ -9,13 +9,13 @@ local Command = {
 function Command.Call(Source, Language)
 	if Source.source == "game" then
 		if type(Language) == "string" then
-			config["cl_lang"] = Language
+			CFG["cl_lang"] = Language
 		end
 	end
 end
 
 function Command.GetSaveString()
-	return "cl_lang " .. config["cl_lang"]
+	return "cl_lang " .. CFG["cl_lang"]
 end
 
 return Command

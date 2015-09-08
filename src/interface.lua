@@ -1,15 +1,15 @@
-game.ui = {}
+Interface = {}
 
 require("src.menu.main")
 require("src.menu.console")
 require("src.menu.servers")
 require("src.menu.options")
 
-function game.ui.load()
-	game.ui.InitializeMainMenu()
-	game.ui.InitializeConsoleMenu()
-	game.ui.InitializeServersMenu()
-	Options.InitializeMenu()
+function Interface.Load()
+	Interface.InitializeMainMenu()
+	Interface.InitializeConsoleMenu()
+	Interface.InitializeServersMenu()
+	Interface.InitializeOptionsMenu()
 	
-	game.ui.load = nil
+	Interface.Load = nil
 end

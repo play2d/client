@@ -9,17 +9,17 @@ local Command = {
 function Command.Call(Source, File)
 	if Source.source == "game" then
 		if type(File) == "string" then
-			config["spraylogo"] = File
+			CFG["spraylogo"] = File
 
-			if game.ui.Options then
-				game.ReloadSpraylogos()
+			if Options then
+				Options.Player.ReloadSpraylogos()
 			end
 		end
 	end
 end
 
 function Command.GetSaveString()
-	return "spraylogo " .. config["spraylogo"]
+	return "spraylogo " .. CFG["spraylogo"]
 end
 
 return Command

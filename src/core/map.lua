@@ -1,3 +1,5 @@
-function game.core.InitializeMapFormats()
-	game.core.InitializeMapFormats = nil
+Core.Maps = {}
+
+function Core.Maps.Load()
+	Core.Maps.Load = nil
 end

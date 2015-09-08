@@ -6,7 +6,7 @@ function Binds.Create(Text, Command)
 end
 
 function Binds.Find(Command)
-	for Key, BoundCommand in pairs(config["bind"]) do
+	for Key, BoundCommand in pairs(Config.CFG["bind"]) do
 		if Command == BoundCommand then
 			return Key
 		end
@@ -17,8 +17,8 @@ function Binds.Reload()
 	Options.Controls.List:ClearItems()
 	for _, Pack in pairs(Binds.List) do
 		local BindFound
-		if config["bind"] then
-			for Key, BoundCommand in pairs(config["bind"]) do
+		if Config.CFG["bind"] then
+			for Key, BoundCommand in pairs(Config.CFG["bind"]) do
 				if Pack[2] == BoundCommand then
 					Options.Controls.List:AddItem(Pack[1], Key)
 					BindFound = true

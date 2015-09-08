@@ -1,6 +1,7 @@
-config = {}
+Config = {}
+Config.CFG = {}
 
-function config.load()
+function Config.Load()
 	local File = io.open("sys/client.cfg", "r")
 	if File then
 		for Command in File:lines() do
@@ -10,10 +11,10 @@ function config.load()
 		end
 		File:close()
 	end
-	config.load = nil
+	Config.Load = nil
 end
 
-function config.save()
+function Config.Save()
 	local File = io.open("sys/client.cfg", "w")
 	if File then
 		local CommandCategories = {}

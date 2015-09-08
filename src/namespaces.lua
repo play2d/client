@@ -43,12 +43,14 @@ end
 
 Namespace.Commands = {
 	-- Very unprotected stuff
-	Hook = Hook,
 	Binds = Binds,
+	Console = Console,
+	Hook = Hook,
+	Interface = Interface,
 	game = game,
-	config = config,
+	CFG = Config.CFG,
 	
-	language = language,
+	Lang = Lang,
 	table = table,
 	math = math,
 	string = string,
