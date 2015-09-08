@@ -18,7 +18,7 @@ function Lang.List()
 	for _, File in pairs(love.filesystem.getDirectoryItems("sys/language")) do
 		if love.filesystem.isFile("sys/language/"..File) then
 			local Language = string.match(File, "(.+)%p[%a+]")
-			if #Lang > 0 then
+			if #Language > 0 then
 				table.insert(List, Language)
 			end
 		end

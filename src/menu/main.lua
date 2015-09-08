@@ -51,6 +51,7 @@ function Interface.InitializeMainMenu()
 	
 	Interface.QuitButton = gui.CreateLabel(Lang.Get("gui_label_quit"), 20, 420, Interface.MainMenu)
 	Interface.QuitButton:SetColor("Text", 150, 150, 150, 255)
+	Interface.QuitButton.OnClick = Interface.Quit.Open
 	Interface.QuitButton.MouseEnter = HighlightLabel
 	Interface.QuitButton.MouseExit = NormalizeLabel
 	

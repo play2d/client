@@ -41,3 +41,6 @@ gui_options_controls_apply = Apply
 gui_options_game_language = Language
 gui_binds_walkforward = Walk forward
 gui_binds_walkback = Walk back
+gui_quit_message = Are you really sure that you want to quit?
+gui_quit_yes = Yes, Quit!
+gui_quit_no = No

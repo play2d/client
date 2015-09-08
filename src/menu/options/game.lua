@@ -9,7 +9,7 @@ end
 
 function Options.Game.Cancel()
 	Options.Game.LanguageBox:ClearItems()
-	for Index, Item in pairs(language.list()) do
+	for Index, Item in pairs(Lang.List()) do
 		Options.Game.LanguageBox:SetItem(Index, Item)
 		if Config.CFG["cl_lang"] and Config.CFG["cl_lang"] == Item then
 			Options.Game.LanguageBox:Select(Index)
