@@ -2,6 +2,8 @@ Console = {}
 Console.Line = {}
 Console.MaxLines = 300
 
+Interface.Console = {}
+
 function Console.Print(Text, R, G, B, A)
 	if Text then
 		local Text = tostring(Text)
@@ -37,12 +39,12 @@ function Console.Print(Text, R, G, B, A)
 	end
 end
 
-function Interface.OpenConsole()
+function Interface.Console.Open()
 	Interface.Console.Hidden = nil
 	Interface.ConsoleInput:SetHoverAll()
 end
 
-function Interface.InitializeConsoleMenu()
+function Interface.Console.Initialize()
 	if type(Config.CFG["console_maxlines"]) == "number" then
 		Console.MaxLines = Config.CFG["console_maxlines"]
 	end
@@ -50,7 +52,7 @@ function Interface.InitializeConsoleMenu()
 	Interface.Console.Hidden = true
 	
 	Interface.ConsoleSend = gui.CreateButton(Lang.Get("gui_label_send"), 390, 550, 100, 20, Interface.Console)
-	function Interface.ConsoleSend:OnClick()
+	function Interface.ConsoleSend:OnDrop()
 		local Command = Interface.ConsoleInput:GetText()
 		Interface.ConsoleInput:SetText("")
 		Interface.ConsoleInput:SetHoverAll()
@@ -71,5 +73,5 @@ function Interface.InitializeConsoleMenu()
 	end
 	Console.Print("Play2D "..game.VERSION.." ["..game.CODENAME.."] initialized", 0, 200, 0, 255)
 	
-	Interface.InitializeConsoleMenu = nil
+	Interface.Console.Initialize = nil
 end

@@ -1,3 +1,24 @@
+local Path = ...
+
+Interface = {}
+
+function Interface.Load()
+	Interface.Initialize()
+	Interface.Console.Initialize()
+	Interface.Servers.Initialize()
+	Interface.Chat.Initialize()
+	Interface.Options.Initialize()
+	Interface.Quit.Initialize()
+	
+	Interface.Load = nil
+end
+
+require(Path..".console")
+require(Path..".servers")
+require(Path..".chat")
+require(Path..".options")
+require(Path..".quit")
+
 local function HighlightLabel(self)
 	self:SetColor("Text", 255, 255, 255, 255)
 end
@@ -6,14 +27,14 @@ local function NormalizeLabel(self)
 	self:SetColor("Text", 150, 150, 150, 255)
 end
 
-function Interface.InitializeMainMenu()
+function Interface.Initialize()
 	Interface.Desktop = gui.CreateDesktop(Config.CFG["cl_gui"], love.graphics.newImage("gfx/splash.png"))
 	
 	Interface.MainMenu = gui.CreateCanvas(0, 0, Interface.Desktop:GetWidth(), Interface.Desktop:GetHeight(), Interface.Desktop)
 	
 	Interface.ConsoleButton = gui.CreateLabel(Lang.Get("gui_label_console"), 20, 200, Interface.MainMenu)
 	Interface.ConsoleButton:SetColor("Text", 150, 150, 150, 255)
-	Interface.ConsoleButton.OnClick = Interface.OpenConsole
+	Interface.ConsoleButton.OnDrop = Interface.Console.Open
 	Interface.ConsoleButton.MouseEnter = HighlightLabel
 	Interface.ConsoleButton.MouseExit = NormalizeLabel
 	
@@ -24,7 +45,7 @@ function Interface.InitializeMainMenu()
 	
 	Interface.FindServersButton = gui.CreateLabel(Lang.Get("gui_label_find_servers"), 20, 280, Interface.MainMenu)
 	Interface.FindServersButton:SetColor("Text", 150, 150, 150, 255)
-	Interface.FindServersButton.OnClick = Interface.OpenServerBrowser
+	Interface.FindServersButton.OnDrop = Interface.Servers.Open
 	Interface.FindServersButton.MouseEnter = HighlightLabel
 	Interface.FindServersButton.MouseExit = NormalizeLabel
 	
@@ -33,14 +54,9 @@ function Interface.InitializeMainMenu()
 	Interface.FriendsButton.MouseEnter = HighlightLabel
 	Interface.FriendsButton.MouseExit = NormalizeLabel
 	
-	Interface.ChatButton = gui.CreateLabel(Lang.Get("gui_label_chat"), 20, 320, Interface.MainMenu)
-	Interface.ChatButton:SetColor("Text", 150, 150, 150, 255)
-	Interface.ChatButton.MouseEnter = HighlightLabel
-	Interface.ChatButton.MouseExit = NormalizeLabel
-	
 	Interface.OptionsButton = gui.CreateLabel(Lang.Get("gui_label_options"), 20, 360, Interface.MainMenu)
 	Interface.OptionsButton:SetColor("Text", 150, 150, 150, 255)
-	Interface.OptionsButton.OnClick = Options.Open
+	Interface.OptionsButton.OnDrop = Interface.Options.Open
 	Interface.OptionsButton.MouseEnter = HighlightLabel
 	Interface.OptionsButton.MouseExit = NormalizeLabel
 	
@@ -51,7 +67,7 @@ function Interface.InitializeMainMenu()
 	
 	Interface.QuitButton = gui.CreateLabel(Lang.Get("gui_label_quit"), 20, 420, Interface.MainMenu)
 	Interface.QuitButton:SetColor("Text", 150, 150, 150, 255)
-	Interface.QuitButton.OnClick = Interface.Quit.Open
+	Interface.QuitButton.OnDrop = Interface.Quit.Open
 	Interface.QuitButton.MouseEnter = HighlightLabel
 	Interface.QuitButton.MouseExit = NormalizeLabel
 	

@@ -49,6 +49,7 @@ Namespace.Commands = {
 	Interface = Interface,
 	game = game,
 	CFG = Config.CFG,
+	parse = parse,
 	
 	Lang = Lang,
 	table = table,

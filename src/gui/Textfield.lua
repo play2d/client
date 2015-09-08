@@ -353,6 +353,7 @@ function TTextfield:Render(dt)
 		local Theme = self:GetTheme()
 		local Font = self:GetFont()
 		local TextY = (Height - Font:getHeight())/2
+		local First = self:IsFirst()
 
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)
 		love.graphics.setColor(unpack(Theme.Border))
@@ -368,15 +369,15 @@ function TTextfield:Render(dt)
 		end
 		love.graphics.setScissor(x, y, Width, Height)
 		love.graphics.setFont(Font)
-		if #self.Text > 0 then
+		if #self.Text > 0 or First then
 			love.graphics.setColor(unpack(Theme.Text))
 			love.graphics.print(Text, x - self.TextOffset, y + TextY)
 		else
 			love.graphics.setColor(unpack(Theme.HintText))
-			love.graphics.print(self.HintText, x, y + TextY)
+			love.graphics.print(self.HintText, x + 2.5, y + TextY)
 		end
 
-		if not self.Disabled and self:IsFirst() then
+		if not self.Disabled and First then
 			if love.timer.getTime() - self.Timer > 0.5 then
 				self.Tick = not self.Tick
 				self.Timer = love.timer.getTime()

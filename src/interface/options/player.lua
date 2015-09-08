@@ -67,13 +67,13 @@ function Options.Player.InitializeMenu()
 	Options.Player.PrevSpraylogo = gui.CreateButton("<", 20, 110, 15, 15, Options.Panels[1])
 	Options.Player.NextSpraylogo = gui.CreateButton(">", 77, 110, 15, 15, Options.Panels[1])
 	
-	function Options.Player.PrevSpraylogo:OnClick()
+	function Options.Player.PrevSpraylogo:OnDrop()
 		if Options.Player.Spraylogo then
 			Options.Player.SetSpraylogo(Options.Player.Spraylogo.Index - 1)
 		end
 	end
 	
-	function Options.Player.NextSpraylogo:OnClick()
+	function Options.Player.NextSpraylogo:OnDrop()
 		if Options.Player.Spraylogo then
 			Options.Player.SetSpraylogo(Options.Player.Spraylogo.Index + 1)
 		end

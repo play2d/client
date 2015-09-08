@@ -1,5 +1,6 @@
 local Path = ...
 
+Interface.Options = {}
 Options = {}
 
 require(Path..".player")
@@ -10,11 +11,11 @@ require(Path..".sound")
 require(Path..".net")
 require(Path..".more")
 
-function Options.Open()
+function Interface.Options.Open()
 	Options.Window.Hidden = nil
 end
 
-function Interface.InitializeOptionsMenu()
+function Interface.Options.Initialize()
 	Options.Window = gui.CreateWindow(Lang.Get("gui_label_options"), 120, 10, 670, 580, Interface.Desktop)
 	Options.Window.Hidden = true
 	
@@ -28,7 +29,7 @@ function Interface.InitializeOptionsMenu()
 	Options.Tab:AddItem(Lang.Get("gui_options_tab_more"))
 	
 	Options.Okay = gui.CreateButton(Lang.Get("gui_label_okay"), 450, 550, 100, 20, Options.Window)
-	function Options.Okay:OnClick()
+	function Options.Okay:OnDrop()
 		Options.Player.Okay()
 		Options.Controls.Okay()
 		Options.Game.Okay()
@@ -40,7 +41,7 @@ function Interface.InitializeOptionsMenu()
 	end
 	
 	Options.Cancel = gui.CreateButton(Lang.Get("gui_label_cancel"), 560, 550, 100, 20, Options.Window)
-	function Options.Cancel:OnClick()
+	function Options.Cancel:OnDrop()
 		Options.Player.Cancel()
 		Options.Controls.Cancel()
 		Options.Game.Cancel()
@@ -74,5 +75,5 @@ function Interface.InitializeOptionsMenu()
 		Options.Panels[i].Hidden = true
 	end
 
-	Options.InitializeMenu = nil
+	Interface.Options.Initialize = nil
 end

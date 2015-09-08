@@ -1,7 +1,6 @@
 Hook = {}
 Hook.Data = {
 	draw = {},
---	errhand = {},				-- I disabled this so we can see errors while developing
 	focus = {},
 	gamepadaxis = {},
 	gamepadpressed = {},
@@ -18,7 +17,6 @@ Hook.Data = {
 	mousemoved = {},
 	mousepressed = {},
 	mousereleased = {},
-	quit = {},
 	resize = {},
 	textinput = {},
 	threaderror = {},

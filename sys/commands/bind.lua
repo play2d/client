@@ -26,9 +26,13 @@ function Command.GetSaveString()
 end
 
 function Command.ParsePlus()
-	if Interface.Desktop.CurrentFirst and Interface.Desktop.CurrentFirst.Writeable then
-		return nil
+	local First = Interface.Desktop.CurrentFirst
+	if First then
+		if First.Writeable and not First.Disabled then
+			return nil
+		end
 	end
+	
 	for Key, Binding in pairs(CFG["bind"]) do
 		if Binding:sub(1, 1) == "+" then
 			if love.keyboard.isDown(Key) then
@@ -40,9 +44,13 @@ end
 Hook.Add("update", Command.ParsePlus)
 
 function Command.ParseMinus(Key)
-	if Interface.Desktop.CurrentFirst and Interface.Desktop.CurrentFirst.Writeable then
-		return nil
+	local First = Interface.Desktop.CurrentFirst
+	if First then
+		if First.Writeable and not First.Disabled then
+			return nil
+		end
 	end
+	
 	local Binding = CFG["bind"][Key]
 	if Binding and Binding:sub(1, 1) == "-" then
 		parse(Binding:sub(2))
@@ -52,9 +60,13 @@ Hook.Add("keyreleased", Command.ParseMinus)
 
 function Command.ParseNormal(Key, isRepeat)
 	if not isRepeat then
-		if Interface.Desktop.CurrentFirst and Interface.Desktop.CurrentFirst.Writeable then
-			return nil
+		local First = Interface.Desktop.CurrentFirst
+		if First then
+			if First.Writeable and not First.Disabled then
+				return nil
+			end
 		end
+		
 		local Binding = CFG["bind"][Key]
 		if Binding then
 			local BindingType = Binding:sub(1, 1)

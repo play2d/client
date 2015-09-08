@@ -61,7 +61,7 @@ function Options.Controls.InitializeMenu()
 	Options.Controls.Field = gui.CreateTextfield(140, 450, 200, 20, Options.Panels[2])
 	Options.Controls.ApplyButton = gui.CreateButton(Lang.Get("gui_options_controls_apply"), 350, 450, 100, 20, Options.Panels[2])
 	
-	function Options.Controls.ApplyButton:OnClick()
+	function Options.Controls.ApplyButton:OnDrop()
 		local BindID = Options.Controls.List.Selected
 		local BindPack = Binds.List[BindID]
 		if BindPack and BindPack[2] then

@@ -1,9 +1,11 @@
-function Interface.OpenServerBrowser()
+Interface.Servers = {}
+
+function Interface.Servers.Open()
 	Interface.ServerBrowser.Hidden = nil
 	Interface.ServerBrowser:SetHoverAll()
 end
 
-function Interface.InitializeServersMenu()
+function Interface.Servers.Initialize()
 	Interface.ServerBrowser = gui.CreateWindow(Lang.Get("gui_label_find_servers"), 120, 10, 670, 580, Interface.Desktop, true)
 	Interface.ServerBrowser.Hidden = true
 	
@@ -28,5 +30,5 @@ function Interface.InitializeServersMenu()
 	Interface.ServerBrowserRefreshButton = gui.CreateButton(Lang.Get("gui_browser_refresh"), 120, 550, 100, 20, Interface.ServerBrowser)
 	
 	Interface.ServerBrowserConnectButton = gui.CreateButton(Lang.Get("gui_browser_connect"), 555, 550, 100, 20, Interface.ServerBrowser)
-	Interface.InitializeServersMenu = nil
+	Interface.Servers.Initialize = nil
 end
