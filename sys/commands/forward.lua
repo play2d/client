@@ -9,7 +9,6 @@ function Command.LoadLanguage()
 end
 
 function Command.Call(Source)
-	print("Call!")
 end
 
 return Command

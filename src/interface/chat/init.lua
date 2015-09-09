@@ -19,6 +19,7 @@ function Interface.Chat.Initialize()
 	Interface.Chat.Area.Disabled = true
 	
 	Interface.Chat.UserList = gui.CreateListbox(470, 20, 120, 130, Interface.Chat.Panel)
+	Interface.Chat.UserList:SetColor("Text", 50, 150, 150, 150)
 	Interface.Chat.UserList:SetColor("Background", 150, 150, 150, 50)
 	
 	Interface.Chat.Input = gui.CreateTextfield(10, 160, 480, 20, Interface.Chat.Panel, "Write a text here")
@@ -78,6 +79,29 @@ function Chat.SendChat(Message)
 	Chat.Send("PRIVMSG "..Chat.Channel.." : "..Message)
 end
 
+function Chat.SortNames(NameA, NameB)
+	if NameA:sub(1, 1) == "@" and NameB:sub(1, 1) ~= "@" then
+		return true
+	elseif NameA:sub(1, 1) ~= "@" and NameB:sub(1, 1) == "@" then
+		return false
+	elseif NameA:sub(1, 1) == "@" and NameB:sub(1, 1) == "@" then
+		local LowestLength = math.min(#NameA, #NameB)
+		for i = 2, LowestLength do
+			if NameA:byte(i) < NameB:byte(i) then
+				return true
+			end
+		end
+		return true
+	end
+	local LowestLength = math.min(#NameA, #NameB)
+	for i = 1, LowestLength do
+		if NameA:byte(i) < NameB:byte(i) then
+			return true
+		end
+	end
+	return true
+end
+
 function Chat.Update()
 	if Chat.Socket then
 		local Message, Error = Chat.Socket:receive("*l")
@@ -128,7 +152,7 @@ function Chat.Update()
 		Ar[4] = Message:find(" ")
 		local Command = ""
 		if Ar[4] then
-			Command = Message:sub(Ar[2] + 1)
+			Command = Message:sub(Ar[4] + 1)
 		end
 		
 		Ar[5] = Command:find(" ")
@@ -140,28 +164,38 @@ function Chat.Update()
 		if Def:find("PRIVMSG") then
 			if ChatMessage:sub(1, 7) == "ACTION" then
 				Interface.Chat.Print(Nick.." "..ChatMessage:sub(9), 255, 50, 255, 255)
-			else
+			elseif #Nick > 0 then
 				Interface.Chat.Print(Nick..": "..ChatMessage, 255, 255, 255, 255)
+			else
+				Interface.Chat.Print(ChatMessage, 50, 200, 50, 255)
 			end
-			return nil
 		elseif Def:find("NOTICE") then
 			Interface.Chat.Print("* "..Nick.." Notice: "..ChatMessage)
-			return nil
 		elseif Command:sub(1, 4) == "JOIN" then
 			Interface.Chat.Print(Nick.." has joined to the IRC channel", 200, 200, 50, 255)
-			return nil
 		elseif Command:sub(1, 4) == "PART" then
 			Interface.Chat.Print(Nick.." has left the IRC channel", 200, 50, 50, 255)
-			return nil
 		elseif Command:sub(1, 4) == "QUIT" then
 			Interface.Chat.Print(Nick.." has left the IRC channel", 200, 50, 50, 255)
-			return nil
 		elseif Command:sub(1, 4) == "MODE" then
 			Interface.Chat.Print(Nick.." sets mode: "..Comp, 50, 50, 200, 255)
-			return nil
+		elseif Command:match("(%d+)") == "353" then
+			Comp = Comp:sub(Comp:find(":") + 1)
+			
+			local NamesList = {}
+			for _, Name in pairs(Comp:split()) do
+				table.insert(NamesList, Name)
+			end
+			table.sort(NamesList, Chat.SortNames)
+			
+			Interface.Chat.UserList:ClearItems()
+			for _, Name in pairs(NamesList) do
+				Interface.Chat.UserList:AddItem(Name)
+			end
 		elseif ChatMessage == "End of /MOTD command." then
 			Chat.InChat = true
 			Chat.Send("JOIN "..Chat.Channel)
+			Chat.Send("NAMES "..Chat.Channel)
 		end
 	end
 end
@@ -189,7 +223,7 @@ function Chat.Connect()
 		Chat.Socket:settimeout(0)
 		Chat.Nick = Config.CFG["name"]
 		
-		Chat.Send("USER "..game.VERSION.." 127.0.0.1 "..Chat.IP.." :Play2D")
+		Chat.Send("USER "..game.VERSION:gsub("%p", "").." 127.0.0.1 "..Chat.IP.." :Play2D")
 		Chat.Send("NICK "..Chat.Nick)
 		Chat.Send("PONG ")
 	end
