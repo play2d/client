@@ -28,7 +28,7 @@ function Console.Print(Text, R, G, B, A)
 		end
 		local ConsoleText = table.concat(Console.Line, "\n")
 		if R or G or B or A then
-			Interface.ConsoleOutput:SetFormat(#ConsoleText + 1, #Text + 1, Interface.ConsoleOutput:GetFont(), R or 255, G or 255, B or 255, A or 255)
+			Interface.ConsoleOutput:SetFormat(#ConsoleText + 1, #Text, Interface.ConsoleOutput:GetFont(), R or 255, G or 255, B or 255, A or 255)
 		end
 		table.insert(Console.Line, Text)
 		if #ConsoleText > 0 then

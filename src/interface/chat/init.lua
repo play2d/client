@@ -58,7 +58,7 @@ function Interface.Chat.Print(Text, R, G, B, A)
 		end
 		local ChatText = table.concat(Interface.Chat.Line, "\n")
 		if R or G or B or A then
-			Interface.Chat.Area:SetFormat(#ChatText + 1, #Text + 1, Interface.Chat.Area:GetFont(), R or 255, G or 255, B or 255, A or 255)
+			Interface.Chat.Area:SetFormat(#ChatText + 1, #Text, Interface.Chat.Area:GetFont(), R or 255, G or 255, B or 255, A or 255)
 		end
 		
 		table.insert(Interface.Chat.Line, Text)

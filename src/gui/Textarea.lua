@@ -211,7 +211,7 @@ function TTextarea:EachFormat()
 				Format.LineBreak = nil
 			end
 				
-			if Format.Start + Format.Length - 1 >= #self.Text then
+			if Format.Start + Format.Length >= #self.Text then
 				-- The last format returned all we had left, what are you expecting for?
 				return nil
 			end
@@ -220,7 +220,7 @@ function TTextarea:EachFormat()
 			if NextFormat == nil then
 				-- Yea we sent the last format, but we didn't send everything
 				DefaultFormat.Start = Format.Start + Format.Length
-				DefaultFormat.Length = math.max(#self.Text - DefaultFormat.Start + 1, 0)
+				DefaultFormat.Length = math.max(#self.Text - DefaultFormat.Start + 2, 0)
 				Format = DefaultFormat
 				Format.First = nil
 			elseif NextFormat.Start == Format.Start + Format.Length or Format == DefaultFormat then
@@ -231,7 +231,7 @@ function TTextarea:EachFormat()
 			else
 				-- So, there's a string that is not formatted between the last format and the next one
 				DefaultFormat.Start = Format.Start + Format.Length
-				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start - 1
+				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start
 				Format = DefaultFormat
 				Format.First = nil
 			end
@@ -261,7 +261,7 @@ function TTextarea:EachFormat()
 		end
 		
 		-- This part splits the text into lines, and returns the first line
-		local Text = self.Text:sub(Format.Start, Format.Start + Format.Length - 1)
+		local Text = self.Text:sub(Format.Start, Format.Start + Format.Length)
 		Format.TextArray = {}
 		repeat
 			local Match, Position = Text:match("([^\n]*)()")
