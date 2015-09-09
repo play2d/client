@@ -38,7 +38,7 @@ function Interface.Initialize()
 	Interface.ConsoleButton.MouseEnter = HighlightLabel
 	Interface.ConsoleButton.MouseExit = NormalizeLabel
 	
-	Interface.QuickMatchButton = gui.CreateLabel(Lang.Get("gui_label_quick_match"), 20, 240, Interface.MainMenu)
+	Interface.QuickMatchButton = gui.CreateLabel(Lang.Get("gui_label_quick_match"), 20, 260, Interface.MainMenu)
 	Interface.QuickMatchButton:SetColor("Text", 150, 150, 150, 255)
 	Interface.QuickMatchButton.MouseEnter = HighlightLabel
 	Interface.QuickMatchButton.MouseExit = NormalizeLabel

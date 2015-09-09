@@ -278,7 +278,7 @@ function gui.TGadget:MouseClicked(x, y)
 	if not self.Disabled and not self.Hidden then
 		self.Dropped = nil
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
-		self:SetHoverAll()
+		self:Focus()
 		self:OnClick(self.Grabbed.x, self.Grabbed.y)
 		if self.Context then
 			self.Context.Hidden = true
@@ -293,7 +293,7 @@ function gui.TGadget:MouseRightClicked(x, y)
 		local Position = {x = x - self:x(), y = y - self:y()}
 		if self.Context then
 			self.Context.Hidden = nil
-			self.Context:SetHoverAll()
+			self.Context:Focus()
 			self.Context:SetPosition(Position.x, Position.y)
 		end
 		self:OnRightClick(Position.x, Position.y)
@@ -380,7 +380,7 @@ function gui.TGadget:SetHover()
 end
 
 -- Description: Sets this gadget on top of every gadget
-function gui.TGadget:SetHoverAll()
+function gui.TGadget:Focus()
 	if not self.Hidden then
 		if self.Parent then
 			if self.Parent.GadgetsOrder then
@@ -398,7 +398,7 @@ function gui.TGadget:SetHoverAll()
 					self.Parent.Context.Hidden = true
 				end
 			end
-			self.Parent:SetHoverAll()
+			self.Parent:Focus()
 		end
 	end
 end

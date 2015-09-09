@@ -41,7 +41,7 @@ end
 
 function Interface.Console.Open()
 	Interface.Console.Hidden = nil
-	Interface.ConsoleInput:SetHoverAll()
+	Interface.ConsoleInput:Focus()
 end
 
 function Interface.Console.Initialize()

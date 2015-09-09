@@ -282,7 +282,8 @@ function TTextarea:Render(dt)
 		
 		love.graphics.setScissor(x, y, Width, Height)
 		love.graphics.setColor(unpack(Theme.SliderArea))
-		love.graphics.rectangle("fill", x, y, Width, Height)
+		love.graphics.rectangle("fill", x + Width - 15, y, 15, Height)
+		love.graphics.rectangle("fill", x, y + Height - 15, Width - 15, 15)
 		
 		love.graphics.setColor(unpack(Theme.Border))
 		love.graphics.rectangle("line", x, y, Width, Height)

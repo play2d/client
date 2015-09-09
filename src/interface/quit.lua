@@ -2,6 +2,7 @@ Interface.Quit = {}
 
 function Interface.Quit.Open()
 	Interface.Quit.Window.Hidden = false
+	Interface.Quit.Window:Focus()
 end
 
 function Interface.Quit.Initialize()

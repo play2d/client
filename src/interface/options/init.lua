@@ -13,6 +13,7 @@ require(Path..".more")
 
 function Interface.Options.Open()
 	Options.Window.Hidden = nil
+	Options.Window:Focus()
 end
 
 function Interface.Options.Initialize()
