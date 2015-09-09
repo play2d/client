@@ -275,11 +275,13 @@ end
 
 -- Description: Do not use
 function gui.TGadget:MouseClicked(x, y)
-	if not self.Disabled and not self.Hidden then
+	if not self.Hidden then
 		self.Dropped = nil
 		self.Grabbed = {x = x - self:x(), y = y - self:y()}
 		self:Focus()
-		self:OnClick(self.Grabbed.x, self.Grabbed.y)
+		if not self.Disabled then
+			self:OnClick(self.Grabbed.x, self.Grabbed.y)
+		end
 		if self.Context then
 			self.Context.Hidden = true
 		end

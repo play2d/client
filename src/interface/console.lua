@@ -55,7 +55,7 @@ function Interface.Console.Initialize()
 	function Interface.ConsoleSend:OnDrop()
 		local Command = Interface.ConsoleInput:GetText()
 		Interface.ConsoleInput:SetText("")
-		Interface.ConsoleInput:SetHoverAll()
+		Interface.ConsoleInput:Focus()
 		parse(Command)
 		Console.Print("> "..Command)
 	end

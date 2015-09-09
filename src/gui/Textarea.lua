@@ -174,6 +174,10 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 	self:CalculateLines()
 end
 
+function TTextarea:Copy()
+	return ""
+end
+
 -- This function is magic, it iterates through formats/non-formatted text/line breaks
 function TTextarea:EachFormat()
 	local DefaultFormat = {
