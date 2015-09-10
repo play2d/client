@@ -37,7 +37,6 @@ end
 
 function Interface.Chat.Print(Text, R, G, B, A)
 	if Text then
-		local Text = tostring(Text)
 		if #Interface.Chat.Line >= Interface.Chat.MaxLines then
 			for Index, Format in pairs(Interface.Chat.Area.Format) do
 				Format.Start = Format.Start - #Interface.Chat.Line[1] - 1
@@ -57,6 +56,7 @@ function Interface.Chat.Print(Text, R, G, B, A)
 			end
 			Interface.Chat.Line = Lines
 		end
+		
 		local ChatText = table.concat(Interface.Chat.Line, "\n")
 		if R or G or B or A then
 			Interface.Chat.Area:SetFormat(#ChatText + 1, #Text, Interface.Chat.Area:GetFont(), R or 255, G or 255, B or 255, A or 255)
@@ -163,11 +163,11 @@ function Chat.Update()
 		
 		if Def:find("PRIVMSG") then
 			if ChatMessage:sub(1, 7) == "ACTION" then
-				Interface.Chat.Print(Nick.." "..ChatMessage:sub(9), 255, 50, 255, 255)
+				Interface.Chat.Print(Nick.." "..ChatMessage:sub(9))
 			elseif #Nick > 0 then
-				Interface.Chat.Print(Nick..": "..ChatMessage, 255, 255, 255, 255)
+				Interface.Chat.Print(Nick..": "..ChatMessage)
 			else
-				Interface.Chat.Print(ChatMessage, 50, 200, 50, 255)
+				Interface.Chat.Print(ChatMessage)
 			end
 		elseif Def:find("NOTICE") then
 			Interface.Chat.Print("* "..Nick.." Notice: "..ChatMessage)

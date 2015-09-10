@@ -143,21 +143,31 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 		FormatI = NextI
 		Format = NextFormat
 	until true
-	if Format and Format.Start + Format.Length > Start then
-		-- Reduce the length of the previous format
-		Format.Length = Start - Format.Start
-	end
-	FormatI, Format = next(self.Format, FormatI)
-	if Format and Format.Start < Start + Length then
-		-- Reduce the length of the next format
-		Format.Length = Format.Start + Format.Length - (Start + Length)
-		-- Increase the position of the next format
-		Format.Start = Start + Length
-		self.Format[FormatI] = nil
-		if Format.Length > 0 then
-			table.insert(self.Format, Format)
+	
+	if Format then
+		if Format.Start + Format.Length > Start then
+			-- Reduce the length of the previous format
+			Format.Length = Start - Format.Start
 		end
 	end
+	
+	FormatI, Format = next(self.Format, FormatI)
+	if Format then
+		if Format.Start > Start and Format.Start < Start + Length then
+			-- Reduce the length of the next format
+			Format.Length = Format.Start + Format.Length - (Start + Length + 1)
+			-- Increase the position of the next format
+			Format.Start = Start + Length + 1
+			if Format.Length <= 0 then
+				self.Format[FormatI] = nil
+			end
+			
+			if self == Interface.Chat.Area then
+				print(Format.Start)
+			end
+		end
+	end
+	
 	table.insert(self.Format,
 		{
 			Start = Start,
@@ -166,11 +176,13 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 			Color = {R, G, B, A}
 		}
 	)
+
 	table.sort(self.Format,
 		function (A, B)
 			return A.Start < B.Start
 		end
 	)
+	
 	self:CalculateLines()
 end
 
@@ -219,19 +231,19 @@ function TTextarea:EachFormat()
 			local NextIndex, NextFormat = next(self.Format, Index)
 			if NextFormat == nil then
 				-- Yea we sent the last format, but we didn't send everything
-				DefaultFormat.Start = Format.Start + Format.Length
-				DefaultFormat.Length = math.max(#self.Text - DefaultFormat.Start + 2, 0)
+				DefaultFormat.Start = Format.Start + Format.Length + 1
+				DefaultFormat.Length = math.max(#self.Text - DefaultFormat.Start, 0)
 				Format = DefaultFormat
 				Format.First = nil
-			elseif NextFormat.Start == Format.Start + Format.Length or Format == DefaultFormat then
+			elseif NextFormat.Start == Format.Start + Format.Length + 1 or Format == DefaultFormat then
 				-- Oh, it looks like the next format starts just after this one ends, let's just send it
 				Index = NextIndex
 				Format = NextFormat
 				Format.First = nil
 			else
 				-- So, there's a string that is not formatted between the last format and the next one
-				DefaultFormat.Start = Format.Start + Format.Length
-				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start
+				DefaultFormat.Start = Format.Start + Format.Length + 1
+				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start - 1
 				Format = DefaultFormat
 				Format.First = nil
 			end
