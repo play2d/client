@@ -59,7 +59,11 @@ function Interface.Chat.Print(Text, R, G, B, A)
 		
 		local ChatText = table.concat(Interface.Chat.Line, "\n")
 		if R or G or B or A then
-			Interface.Chat.Area:SetFormat(#ChatText + 1, #Text, Interface.Chat.Area:GetFont(), R or 255, G or 255, B or 255, A or 255)
+			if #ChatText > 0 then
+				Interface.Chat.Area:SetFormat(#ChatText + 1, #Text + 1, Interface.Chat.Area:GetFont(), R or 255, G or 255, B or 255, A or 255)
+			else
+				Interface.Chat.Area:SetFormat(1, #Text, Interface.Chat.Area:GetFont(), R or 255, G or 255, B or 255, A or 255)
+			end
 		end
 		
 		table.insert(Interface.Chat.Line, Text)
@@ -67,6 +71,10 @@ function Interface.Chat.Print(Text, R, G, B, A)
 			Interface.Chat.Area:SetText(ChatText .. "\n" .. Text)
 		else
 			Interface.Chat.Area:SetText(Text)
+		end
+		
+		if not Interface.Chat.Area.Slider.Vertical.Hidden and not Interface.Chat.Area.Slider.Vertical.Grabbed then
+			Interface.Chat.Area.Slider.Vertical.Value = Interface.Chat.Area.Slider.Vertical.Values.Max
 		end
 	end
 end

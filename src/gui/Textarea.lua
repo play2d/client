@@ -161,10 +161,6 @@ function TTextarea:SetFormat(Start, Length, Font, R, G, B, A)
 			if Format.Length <= 0 then
 				self.Format[FormatI] = nil
 			end
-			
-			if self == Interface.Chat.Area then
-				print(Format.Start)
-			end
 		end
 	end
 	
@@ -203,26 +199,28 @@ function TTextarea:EachFormat()
 			return nil
 		end
 		if Format then
-			local NextLine = next(Format.TextArray, Format.TextIndex)
-			if NextLine then
-				-- This part iterates to the next line break
-				Line = Line + 1
-				
-				Format.TextArray[Format.TextIndex] = nil
-				Format.TextIndex = NextLine
-				Format.Text = Format.TextArray[NextLine]
-				Format.Width = Format.Font:getWidth(Format.Text)
-				Format.Height = Format.Font:getHeight()
-				Format.LineBreak = true
-				Format.Line = Line
-				Format.First = nil
-				
-				-- Next line exists, push!
-				return Format
-			else
-				Format.LineBreak = nil
+			if Format.TextArray then
+				local NextLine = next(Format.TextArray, Format.TextIndex)
+				if NextLine then
+					-- This part iterates to the next line break
+					Line = Line + 1
+					
+					Format.TextArray[Format.TextIndex] = nil
+					Format.TextIndex = NextLine
+					Format.Text = Format.TextArray[NextLine]
+					Format.Width = Format.Font:getWidth(Format.Text)
+					Format.Height = Format.Font:getHeight()
+					Format.LineBreak = true
+					Format.Line = Line
+					Format.First = nil
+					
+					-- Next line exists, push!
+					return Format
+				else
+					Format.LineBreak = nil
+				end
 			end
-				
+			
 			if Format.Start + Format.Length >= #self.Text then
 				-- The last format returned all we had left, what are you expecting for?
 				return nil
@@ -231,8 +229,8 @@ function TTextarea:EachFormat()
 			local NextIndex, NextFormat = next(self.Format, Index)
 			if NextFormat == nil then
 				-- Yea we sent the last format, but we didn't send everything
-				DefaultFormat.Start = Format.Start + Format.Length + 1
-				DefaultFormat.Length = math.max(#self.Text - DefaultFormat.Start, 0)
+				DefaultFormat.Start = Format.Start + Format.Length
+				DefaultFormat.Length = math.max(#self.Text - DefaultFormat.Start + 1, 0)
 				Format = DefaultFormat
 				Format.First = nil
 			elseif NextFormat.Start == Format.Start + Format.Length + 1 or Format == DefaultFormat then
@@ -242,8 +240,8 @@ function TTextarea:EachFormat()
 				Format.First = nil
 			else
 				-- So, there's a string that is not formatted between the last format and the next one
-				DefaultFormat.Start = Format.Start + Format.Length + 1
-				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start - 1
+				DefaultFormat.Start = Format.Start + Format.Length
+				DefaultFormat.Length = NextFormat.Start - DefaultFormat.Start
 				Format = DefaultFormat
 				Format.First = nil
 			end
@@ -273,17 +271,32 @@ function TTextarea:EachFormat()
 		end
 		
 		-- This part splits the text into lines, and returns the first line
-		local Text = self.Text:sub(Format.Start, Format.Start + Format.Length)
-		Format.TextArray = {}
-		repeat
-			local Match, Position = Text:match("([^\n]*)()")
-			table.insert(Format.TextArray, Match)
-			Text = Text:sub(Position + 1)
-		until #Text == 0
-		Format.TextIndex, Format.Text = next(Format.TextArray)
-		Format.Width = Format.Font:getWidth(Format.Text)
+		local Text = self.Text:sub(Format.Start, Format.Start + Format.Length - 1)
+		
+		if Text:find("\n") then
+			Format.TextArray = {}
+			
+			local LineBreak
+			repeat
+				local Match, Position = Text:match("([^\n]*)()")
+				if Match == 1 then
+					LineBreak = true
+					Line = Line + 1
+				end
+				table.insert(Format.TextArray, Match)
+				Text = Text:sub(Position + 1)
+			until #Text == 0
+			
+			Format.TextIndex, Format.Text = next(Format.TextArray)
+			Format.Width = Format.Font:getWidth(Format.Text)
+			Format.Line = Line
+			Format.LineBreak = LineBreak
+		else
+			Format.Text = Text
+			Format.Width = Format.Font:getWidth(Text)
+			Format.Line = Line
+		end
 		Format.Height = Format.Font:getHeight()
-		Format.Line = Line
 		
 		-- Format complete! push!!
 		return Format
