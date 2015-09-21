@@ -39,6 +39,7 @@ gui_options_controls_control = Control
 gui_options_controls_bind = Bind
 gui_options_controls_apply = Apply
 gui_options_game_language = Language
+gui_options_graphics_guithemepath = Path to interface theme
 gui_binds_walkforward = Walk forward
 gui_binds_walkback = Walk back
 gui_quit_message = Are you really sure that you want to quit?

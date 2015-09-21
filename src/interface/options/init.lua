@@ -34,6 +34,7 @@ function Interface.Options.Initialize()
 		Options.Player.Okay()
 		Options.Controls.Okay()
 		Options.Game.Okay()
+		Options.Graphics.Okay()
 		
 		Options.Window.Hidden = true
 		
@@ -46,6 +47,7 @@ function Interface.Options.Initialize()
 		Options.Player.Cancel()
 		Options.Controls.Cancel()
 		Options.Game.Cancel()
+		Options.Graphics.Cancel()
 		
 		Options.Window.Hidden = true
 	end
@@ -59,9 +61,7 @@ function Interface.Options.Initialize()
 	Options.Player.InitializeMenu()
 	Options.Controls.InitializeMenu()
 	Options.Game.InitializeMenu()
-	
-	-- Graphics panel
-	Options.Panels[4] = gui.CreatePanel(Lang.Get("gui_options_tab_graphics"), 10, 60, 650, 480, Options.Window)
+	Options.Graphics.InitializeMenu()
 	
 	-- Sound panel
 	Options.Panels[5] = gui.CreatePanel(Lang.Get("gui_options_tab_sound"), 10, 60, 650, 480, Options.Window)

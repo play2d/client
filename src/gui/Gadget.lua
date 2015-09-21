@@ -542,3 +542,31 @@ function gui.TGadget:GetTheme()
 	end
 	return self.Theme[self.Type]
 end
+
+function gui.TGadget:LoadTheme(Path)
+	local ThemeEnvironment = {love = love}
+	local Success, Function = pcall(loadfile, Path)
+	if Success then
+		setfenv(Function, ThemeEnvironment)
+		local Success, Function = pcall(Function)
+		if Success then
+			return self:SetTheme(ThemeEnvironment)
+		end
+		return false, Function
+	end
+	return false, Function
+end
+
+function gui.TGadget:SetTheme(Theme)
+	if type(Theme) == "table" then
+		self.Theme = Theme
+		
+		if self.Gadgets then
+			for ID, Gadget in pairs(self.Gadgets) do
+				Gadget:SetTheme(Theme)
+			end
+		end
+		return true
+	end
+	return false, "invalid theme"
+end

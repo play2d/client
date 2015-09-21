@@ -19,8 +19,8 @@ function TDesktop:Init(ThemePath, Splash)
 	self.Size = {Width = love.graphics.getWidth(), Height = love.graphics.getHeight()}
 	self.LastMouseMovement = love.timer.getTime()
 	self.FirstHoverMouseMovement = love.timer.getTime()
-	self.Theme = {love = love}
 	self.Splash = Splash
+	self:LoadTheme(ThemePath)
 
 	if Hook then
 		Hook.Add("draw", function(dt) self:Render(dt * 1000) end)
@@ -32,9 +32,6 @@ function TDesktop:Init(ThemePath, Splash)
 		Hook.Add("textinput", function(text) self:textinput(text) end)
 	end
 
-	local f = assert(loadfile(ThemePath))
-	setfenv(f, self.Theme)
-	f()
 	return self
 end
 

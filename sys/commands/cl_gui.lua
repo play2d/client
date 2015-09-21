@@ -10,7 +10,12 @@ function Command.Call(Source, ...)
 	if Source.source == "game" then
 		local Path = ...
 		if type(Path) == "string" then
-			CFG["cl_gui"] = Path:lower()
+			Path = Path:lower()
+			CFG["cl_gui"] = Path
+			
+			if Options then
+				Options.Graphics.GUITheme:SetText(Path)
+			end
 		end
 	end
 end
