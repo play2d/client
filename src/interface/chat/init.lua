@@ -37,7 +37,7 @@ function Interface.Chat.Initialize()
 		Interface.Chat.Input:SetText("")
 		Interface.Chat.Input:Focus()
 
-		if IRC.InChat then
+		if Chat.InChat then
 			Chat.SendChat(Message)
 			Interface.Chat.Print(Chat.Nick..": "..Message)
 		end
@@ -49,7 +49,7 @@ function Interface.Chat.Initialize()
 		Interface.Chat.Input:SetText("")
 		Interface.Chat.Input:Focus()
 
-		if IRC.InChat then
+		if Chat.InChat then
 			Chat.SendChat(Message)
 			Interface.Chat.Print(Chat.Nick..": "..Message)
 		end
