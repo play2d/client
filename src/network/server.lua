@@ -11,7 +11,7 @@ function Network.CreateUDPServer(Port)
 
 	local Bind, Error = Socket:setsockname("*", Port or 0)
 	if not Bind then
-		return nil, "Error"
+		return nil, Error
 	end
 	Socket:settimeout(0)
 
