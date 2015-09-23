@@ -37,8 +37,10 @@ function Interface.Chat.Initialize()
 		Interface.Chat.Input:SetText("")
 		Interface.Chat.Input:Focus()
 
-		Chat.SendChat(Message)
-		Interface.Chat.Print(Chat.Nick..": "..Message)
+		if IRC.InChat then
+			Chat.SendChat(Message)
+			Interface.Chat.Print(Chat.Nick..": "..Message)
+		end
 	end
 
 	-- when user hits enter
@@ -47,8 +49,10 @@ function Interface.Chat.Initialize()
 		Interface.Chat.Input:SetText("")
 		Interface.Chat.Input:Focus()
 
-		Chat.SendChat(Message)
-		Interface.Chat.Print(Chat.Nick..": "..Message)
+		if IRC.InChat then
+			Chat.SendChat(Message)
+			Interface.Chat.Print(Chat.Nick..": "..Message)
+		end
 	end
 
 	Interface.Chat.Initialize = nil
@@ -201,6 +205,16 @@ function Chat.Update()
 			Interface.Chat.Print("* "..Nick.." Notice: "..ChatMessage)
 		elseif Command:sub(1, 4) == "JOIN" then
 			Interface.Chat.Print(Nick.." has joined to the IRC channel", 200, 200, 50, 255)
+			
+			if Chat.List then
+				table.insert(Chat.List, Nick)
+				table.sort(Chat.List, Chat.SortNames)
+				
+				Interface.Chat.UserList:ClearItems()
+				for _, Name in pairs(Chat.List) do
+					Interface.Chat.UserList:AddItem(Name)
+				end
+			end
 		elseif Command:sub(1, 4) == "PART" then
 			Interface.Chat.Print(Nick.." has left the IRC channel", 200, 50, 50, 255)
 		elseif Command:sub(1, 4) == "QUIT" then
@@ -210,14 +224,14 @@ function Chat.Update()
 		elseif Command:match("(%d+)") == "353" then
 			Comp = Comp:sub(Comp:find(":") + 1)
 			
-			local NamesList = {}
+			Chat.List = {}
 			for _, Name in pairs(Comp:split()) do
-				table.insert(NamesList, Name)
+				table.insert(Chat.List, Name)
 			end
-			table.sort(NamesList, Chat.SortNames)
+			table.sort(Chat.List, Chat.SortNames)
 			
 			Interface.Chat.UserList:ClearItems()
-			for _, Name in pairs(NamesList) do
+			for _, Name in pairs(Chat.List) do
 				Interface.Chat.UserList:AddItem(Name)
 			end
 		elseif ChatMessage == "End of /MOTD command." then
