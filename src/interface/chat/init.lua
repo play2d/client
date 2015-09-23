@@ -31,6 +31,26 @@ function Interface.Chat.Initialize()
 	Interface.Chat.Send:SetColor("Top", 200, 200, 200, 100)
 	Interface.Chat.Send:SetColor("Bottom", 150, 150, 150, 100)
 
+	-- when user clicks the send button
+	function Interface.Chat.Send:OnDrop()
+		local Message = Interface.Chat.Input:GetText()
+		Interface.Chat.Input:SetText("")
+		Interface.Chat.Input:Focus()
+
+		Chat.SendChat(Message)
+		Interface.Chat.Print(Chat.Nick..": "..Message)
+	end
+
+	-- when user hits enter
+	function Interface.Chat.Input:Send()
+		local Message = Interface.Chat.Input:GetText()
+		Interface.Chat.Input:SetText("")
+		Interface.Chat.Input:Focus()
+
+		Chat.SendChat(Message)
+		Interface.Chat.Print(Chat.Nick..": "..Message)
+	end
+
 	Interface.Chat.Initialize = nil
 	Chat.Connect()
 end
