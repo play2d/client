@@ -2,7 +2,19 @@ Config = {}
 Config.CFG = {}
 
 function Config.Load()
-	local File = io.open("sys/client.cfg", "r")
+	-- load default configuration
+	local File = io.open("sys/default.cfg", "r")
+	if File then
+		for Command in File:lines() do
+			if Command:sub(1, 2) ~= "//" then
+				parse(Command)
+			end
+		end
+		File:close()
+	end
+
+	-- load user configuration
+	File = io.open("sys/client.cfg", "r")
 	if File then
 		for Command in File:lines() do
 			if Command:sub(1, 2) ~= "//" then
