@@ -1,7 +1,7 @@
 Core.Network = {}
 
 function Core.Network.Load()
-	local Host, Error = Network.CreateUDPServer(100)
+	local Host, Error = Network.CreateUDPServer(0)
 	if Host then
 		Core.Network.Host = Host
 	else
