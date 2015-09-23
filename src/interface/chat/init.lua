@@ -112,26 +112,7 @@ function Chat.SendChat(Message)
 end
 
 function Chat.SortNames(NameA, NameB)
-	if NameA:sub(1, 1) == "@" and NameB:sub(1, 1) ~= "@" then
-		return true
-	elseif NameA:sub(1, 1) ~= "@" and NameB:sub(1, 1) == "@" then
-		return false
-	elseif NameA:sub(1, 1) == "@" and NameB:sub(1, 1) == "@" then
-		local LowestLength = math.min(#NameA, #NameB)
-		for i = 2, LowestLength do
-			if NameA:byte(i) < NameB:byte(i) then
-				return true
-			end
-		end
-		return true
-	end
-	local LowestLength = math.min(#NameA, #NameB)
-	for i = 1, LowestLength do
-		if NameA:byte(i) < NameB:byte(i) then
-			return true
-		end
-	end
-	return true
+	return string.lower(NameA) < string.lower(NameB)
 end
 
 function Chat.Update()
