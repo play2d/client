@@ -25,28 +25,31 @@ function TChannel:GetNextReceivedPacket()
 	
 	if RS.Current then
 		-- Reliable sequenced
-		
+
 		if not RS.Current.Processed then
 			-- The first packet being received will instantly be assigned to RS.Current so we added this to check that it exists and it wasn't processed
 			
 			if RS.Current.Complete then
 				-- But it can't be processed if it's incomplete
 				
-				RS[RS.Current.ID] = nil
 				RS.Current.Processed = true
 				return RS.Current
 			end
 		end
 		
 		for ID, Packet in pairs(RS) do
-			if Packet.Complete then
+			if Packet.Complete and not Packet.Processed then
 				-- We must never process packets that are still going to be fragmented
 
 				if Packet:IsRightAfter(RS.Current) then
 					-- New unprocessed current packet, process it
-					RS[ID] = nil
-					RS.Current = Packet
+					if RS.Current.Reply or RS.Current.Confirm then
+						break
+					end
 					
+					RS[RS.Current.ID] = nil
+					RS.Current = Packet
+						
 					Packet.Processed = true
 					return Packet
 				end
@@ -56,11 +59,27 @@ function TChannel:GetNextReceivedPacket()
 	
 	if RU.Current then
 		-- Reliable Unsequenced
+		if not RU.Current.Processed then
+			
+			if RU.Current.Complete then
+				
+				RU.Current.Processed = true
+				return RU.Current
+			end
+		end
+		
 		for ID, Packet in pairs(RU) do
-			if Packet.Complete then
+			if Packet.Complete and not Packet.Processed then
 				-- Reliable Unsequenced packets are fragmented too, so check that it's complete
 				
-				RU[ID] = nil
+				if Packet:IsRightAfter(RU.Current) then
+					if RU.Current.Reply or RU.Current.Confirm then
+						break
+					end
+					RU[RU.Current.ID] = nil
+					RU.Current = Packet
+				end
+				
 				Packet.Processed = true
 				return Packet
 			end
@@ -83,7 +102,7 @@ function TChannel:GetNextReceivedPacket()
 		end
 		
 		for ID, Packet in pairs(US) do
-			if Packet.Complete then
+			if Packet.Complete and not Packet.Processed then
 				-- This is rarely going to happen but the Lua script might be able to send a complete unreliable sequenced packet somehow
 				US[ID] = nil
 				
@@ -101,7 +120,7 @@ function TChannel:GetNextReceivedPacket()
 	
 	for ID, Packet in pairs(UU) do
 		-- Unreliable Unsequenced, always send what you find
-		if Packet.Complete then
+		if Packet.Complete and not Packet.Processed then
 			-- As long as it's complete, rarely going to happen too
 			
 			UU[ID] = nil
@@ -135,7 +154,7 @@ function TChannel:RemovePacket(ID, Reliable, Sequenced)
 	end
 end
 
-function TChannel:GetPacket(ID, First, Reliable, Sequenced)
+function TChannel:GetPacket(ID, Reliable, Sequenced)
 	local Received = self.Received
 	if Reliable then
 		if Sequenced then
@@ -204,6 +223,19 @@ function TChannel:GetNewPacket(ID, TypeID, First, Reliable, Sequenced)
 		Received.Unreliable.Unsequenced[ID] = Packet
 	end
 	return Packet
+end
+
+function TChannel:GetCreatedPacket(ID, Reliable, Sequenced)
+	local Sending = self.Sending
+	if Reliable then
+		if Sequenced then
+			return Sending.Reliable.Sequenced[ID]
+		end
+		return Sending.Reliable.Unsequenced[ID]
+	elseif Sequenced then
+		return Sending.Unreliable.Sequenced[ID]
+	end
+	return Sending.Unreliable.Unsequenced[ID]
 end
 
 function TChannel:CreateNewPacket(TypeID, Reliable, Sequenced)

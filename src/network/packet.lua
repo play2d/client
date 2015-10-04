@@ -1,15 +1,15 @@
 local TPacket = {}
 local TPacketMetatable = {__index = TPacket}
+TPacket.Position = 1
 TPacket.Type = "Packet"
 TPacket.TypeID = 0
-TPacket.MaxSize = 500
-TPacket.DistID = 500
+TPacket.MaxSize = 800
+TPacket.DistID = 5000
 
 function Network.CreatePacket(TypeID)
 	local Packet = {
 		Buffer = "",
 		TypeID = TypeID,
-		Position = 1,
 	}
 	return setmetatable(Packet, TPacketMetatable)
 end
@@ -21,25 +21,31 @@ function TPacket:GenerateCompression()
 	elseif self.Compression then
 		return self.IsCompressed, false
 	end
+	
+	if #self.Buffer == 0 then
+		self.Compression = ""
+		self.IsCompressed = nil
+		return false, false
+	end
 
 	if zlib then
 		-- Attempt to compress
-		local Success, Compression = pcall(zlib.deflate, self.Buffer, {}, self.MaxSize, "zlib", 9)
+		local Success, Compression = pcall(zlib.deflate, self.Buffer, {}, nil, "zlib", 9)
 		if Success then
 			self.IsCompressed = true
-			
-			local FragmentCount = #Compression
-			if FragmentCount > 1 then
-				-- This packet was fragmented into more than just a piece
-				self.FragmentID = 1
-				self.FragmentCount = FragmentCount
-				self.Fragment = Compression
+			Compression = table.concat(Compression)
+
+			if #Compression > self.MaxSize then
+				local Fragments = {}
+				for i = 1, #Compression, self.MaxSize do
+					table.insert(Fragments, Compression:sub(i, i + self.MaxSize - 1))
+				end
+				self.Fragment = Fragments
+				self.FragmentCount = #Fragments
 				return true, true
-			else
-				-- Only a single piece was fragmented
-				self.Compression = table.concat(Compression)
-				return true, false
 			end
+			self.Compression = Compression
+			return true, false
 		end
 	end
 	
@@ -50,6 +56,7 @@ function TPacket:GenerateCompression()
 			table.insert(Fragments, self.Buffer:sub(i, i + self.MaxSize - 1))
 		end
 		self.Fragment = Fragments
+		self.FragmentCount = #Fragments
 		return false, true
 	end
 	
@@ -59,7 +66,7 @@ end
 
 function TPacket:GetModifier()
 	local ByteModifier = 0
-	if self.Reply or Packet.Confirm then
+	if self.Reply or self.Confirm then
 		ByteModifier = ByteModifier + 1
 	end
 	if self.Reliable then
@@ -71,12 +78,13 @@ function TPacket:GetModifier()
 	if self.First then
 		ByteModifier = ByteModifier + 8
 	end
-	if self.Fragment then
+	if self.Fragment or self.Confirm then
 		ByteModifier = ByteModifier + 64
 	end
 	if self.IsCompressed then
 		ByteModifier = ByteModifier + 128
 	end
+	return ByteModifier
 end
 
 function TPacket:IsAfter(Packet)

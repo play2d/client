@@ -6,7 +6,7 @@ function Interface.Load()
 	Interface.Initialize()
 	Interface.Console.Initialize()
 	Interface.Servers.Initialize()
-	Interface.Chat.Initialize()
+	--Interface.Chat.Initialize()
 	Interface.Options.Initialize()
 	Interface.Quit.Initialize()
 	
@@ -15,7 +15,7 @@ end
 
 require(Path..".console")
 require(Path..".servers")
-require(Path..".chat")
+--require(Path..".chat")
 require(Path..".options")
 require(Path..".quit")
 
