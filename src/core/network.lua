@@ -11,6 +11,12 @@ function Core.Network.Load()
 	Core.Network.Load = nil
 end
 
+function Core.Network.Send()
+	for i = 1, 50000 do
+		Core.Network.Host:NewPacket(1, "127.0.0.1", 15849, "Test", true, true)
+	end
+end
+
 function Core.Network.Update()
 	if Core.Network.Host then
 		Core.Network.Host:Update()

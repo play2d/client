@@ -95,7 +95,7 @@ function TPacket:IsAfter(Packet)
 end
 
 function TPacket:IsRightAfter(Packet)
-	if (Packet.ID + 1) % 65536 == self.ID then
+	if (Packet.ID % 65535) + 1 == self.ID then
 		return true
 	end
 end

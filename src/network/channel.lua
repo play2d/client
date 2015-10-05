@@ -240,44 +240,62 @@ end
 
 function TChannel:CreateNewPacket(TypeID, Reliable, Sequenced)
 	local Sending = self.Sending
+	local Packet = Network.CreatePacket(TypeID)
 	if Reliable then
-		
+		Packet.Reliable = true
+
 		if Sequenced then
-			local ID = (#Sending.Reliable.Sequenced % 65535) + 1
-			local First = not next(Sending.Reliable.Sequenced)
-			
-			Packet = Network.CreatePacket(TypeID)
-			Packet.ID = ID
-			Packet.Reliable = true
 			Packet.Sequenced = true
-			Packet.First = First
-			Sending.Reliable.Sequenced[ID] = Packet
+			
+			if Sending.Reliable.Sequenced.Current == nil then
+				Sending.Reliable.Sequenced.Current = Packet
+				Packet.ID = 1
+				Packet.First = true
+			else
+				Packet.ID = (Sending.Reliable.Sequenced.Current.ID % 65535) + 1
+				Sending.Reliable.Sequenced.Current = Packet
+			end
+			
+			Sending.Reliable.Sequenced[Packet.ID] = Packet
 			return Packet
 		end
+
+		if Sending.Reliable.Unsequenced.Current == nil then
+			Sending.Reliable.Unsequenced.Current = Packet
+			Packet.ID = 1
+			Packet.First = true
+		else
+			Packet.ID = (Sending.Reliable.Unsequenced.Current.ID % 65535) + 1
+			Sending.Reliable.Unsequenced.Current = Packet
+		end
 		
-		local ID = (#Sending.Reliable.Unsequenced % 65535) + 1
-		local First = not next(Sending.Reliable.Unsequenced)
-		
-		Packet = Network.CreatePacket(TypeID)
-		Packet.ID = ID
-		Packet.Reliable = true
-		Packet.First = First
-		Sending.Reliable.Unsequenced[ID] = Packet
+		Sending.Reliable.Unsequenced[Packet.ID] = Packet
 		return Packet
 	elseif Sequenced then
-		local ID = (#Sending.Unreliable.Sequenced % 65535) + 1
-		
-		Packet = Network.CreatePacket(TypeID)
-		Packet.ID = ID
 		Packet.Sequenced = true
-		Sending.Unreliable.Sequenced[ID] = Packet
+		
+		if Sending.Unreliable.Sequenced.Current == nil then
+			Sending.Unreliable.Sequenced.Current = Packet
+			Packet.ID = 1
+			Packet.First = true
+		else
+			Packet.ID = (Sending.Unreliable.Sequenced.Current.ID % 65535) + 1
+			Sending.Unreliable.Sequenced.Current = Packet
+		end
+		
+		Sending.Unreliable.Sequenced[Packet.ID] = Packet
 		return Packet
 	end
-	
-	local ID = (#Sending.Unreliable.Unsequenced % 65535) + 1
-	
-	Packet = Network.CreatePacket(TypeID)
-	Packet.ID = ID
-	Sending.Unreliable.Unsequenced[ID] = Packet
+
+	if Sending.Unreliable.Unsequenced.Current == nil then
+		Sending.Unreliable.Unsequenced.Current = Packet
+		Packet.ID = 1
+		Packet.First = true
+	else
+		Packet.ID = (Sending.Unreliable.Unsequenced.Current.ID % 65535) + 1
+		Sending.Unreliable.Unsequenced.Current = Packet
+	end
+
+	Sending.Unreliable.Unsequenced[Packet.ID] = Packet
 	return Packet
 end

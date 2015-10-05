@@ -156,14 +156,16 @@ function TServer:ReceiveFrom(Message, IP, Port)
 					end
 				end
 
+				local PacketID, FragmentID
+				PacketID, Message = Message:ReadShort()
+				
+				if IsFragment then
+					FragmentID, Message = Message:ReadByte()
+				end
+				
 				if Channel then
-					local PacketID, FragmentID
-					PacketID, Message = Message:ReadShort()
-					
 					if IsFragment then
 						-- It looks like they're trying to delete a fragment of this packet, let's just do it
-						FragmentID, Message = Message:ReadByte()
-						
 						local Packet = Channel:GetCreatedPacket(PacketID, IsReliable, IsSequenced)
 						if Packet then
 							-- Make it check that the packet exists or the program could crash

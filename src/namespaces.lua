@@ -50,6 +50,7 @@ Namespace.Commands = {
 	game = game,
 	CFG = Config.CFG,
 	parse = parse,
+	loadstring = loadstring,
 	
 	Lang = Lang,
 	table = table,

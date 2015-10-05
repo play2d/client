@@ -5,7 +5,7 @@ TConnection.PingSleepTime = 500
 TConnection.PingTimeAfterLastPing = 5000
 TConnection.PingTimeBeforeFreeze = 2000
 TConnection.PingTimeBeforeDisconnect = 40000
-TConnection.PacketMaxSize = 1000
+TConnection.PacketMaxSize = 5000
 TConnection.PacketMaxDelay = 500
 
 function Network.CreateConnection(IP, Port)
@@ -58,6 +58,7 @@ end
 function TConnection:GetChannel(Name)
 	return self.Channel[Name] or self:CreateChannel(Name)
 end
+
 function TConnection:CloseChannel(Name)
 	self.Channel[Name] = nil
 end
