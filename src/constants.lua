@@ -1,6 +1,7 @@
 CONST = {}
 
 CONST.NET = {}
+CONST.NET.SERVERINFO = 1
 
 CONST.GAME = {}
 
