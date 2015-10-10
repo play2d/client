@@ -9,7 +9,7 @@ function Core.Network.Load()
 	if Host then
 		Core.Network.Host = Host
 		
-		Host:SetProtocol(CONST.NET.SERVERLIST, Core.Network.ServerInfo, Core.Network.ServerInfoPong)
+		Host:SetProtocol(CONST.NET.SERVERINFO, Core.Network.ServerInfo, Core.Network.ServerInfoPong)
 	else
 		Console.Print("Failed to open socket: "..Error, 255, 0, 0, 255)
 	end

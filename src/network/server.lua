@@ -53,7 +53,12 @@ function TServer:NewPacket(TypeID, IP, Port, ChannelName, Reliable, Sequenced)
 	if not Channel then
 		return nil
 	end
-	return Channel:CreateNewPacket(TypeID, Reliable, Sequenced)
+	
+	local Packet = Channel:CreateNewPacket(TypeID, Reliable, Sequenced)
+	if Packet then
+		Packet.Connection = Connection
+	end
+	return Packet
 end
 
 function TServer:PacketReceived(Packet)
@@ -253,6 +258,7 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				Packet.First = IsOpened
 				Packet.Reliable = IsReliable
 				Packet.Sequenced = IsSequenced
+				Packet.Connection = Connection
 				
 				if IsReliable then
 					Packet.Reply = true
@@ -776,7 +782,29 @@ function TServer:Send()
 				end
 			end
 		
-			if #Message > 0 then
+			if Connection:IsDisconnected() then
+				for ChannelName, Channel in pairs(Connection.Channel) do
+					local Sending = Channel.Sending
+					
+					for ID, Packet in pairs(Sending.Reliable.Sequenced) do
+						self:PacketTimeout(Packet)
+					end
+					
+					for ID, Packet in pairs(Sending.Reliable.Unsequenced) do
+						self:PacketTimeout(Packet)
+					end
+					
+					for ID, Packet in pairs(Sending.Unreliable.Sequenced) do
+						self:PacketTimeout(Packet)
+					end
+					
+					for ID, Packet in pairs(Sending.Unreliable.Unsequenced) do
+						self:PacketTimeout(Packet)
+					end
+					Connection.Channel[ChannelName] = nil
+				end
+				self.ConnectionList[Port] = nil
+			elseif #Message > 0 then
 				local ByteModifier = 0
 				
 				if zlib then
@@ -793,6 +821,10 @@ function TServer:Send()
 				
 				self.Socket:sendto(string.char(ByteModifier) .. Message, IP, Port)
 			end
+		end
+		
+		if not next(ConnectionList) then
+			self.Connection[IP] = nil
 		end
 	end
 end

@@ -32,12 +32,18 @@ end
 function TConnection:IsFrozen()
 	if not self.Ping.Send then
 		return false
-	end
-	
-	-- If a ping was received, the connection is obviously not frozen
-	if not self.Ping.Send.Received then
+	elseif not self.Ping.Send.Received then
 		-- When it has taken more than (self.PingTimeBeforeFreeze) to be received, the connection will be frozen so network is not wasted
-		return socket.gettime() * 1000 - self.Ping.Send.Created >= self.PingTimeBeforeFreeze
+		return socket.gettime() * 1000 - self.Ping.Send.Created > self.PingTimeBeforeFreeze
+	end
+	return false
+end
+
+function TConnection:IsDisconnected()
+	if not self.Ping.Send then
+		return false
+	elseif not self.Ping.Send.Received then
+		return socket.gettime() * 1000 - self.Ping.Send.Created > self.PingTimeBeforeDisconnect
 	end
 	return false
 end
