@@ -22,7 +22,7 @@ Copyright (c),
 	2015-2015, Matías "Starkkz" Hermosilla
 	2015-2015, Eero-Antero "tarjoilija" Säisä
 	2015-2015, Kelvin "_Yank" Francisco
-	2015-2015, Pagyra
+	2015-2015, Feodor "Pagyra" Vladimirovich 
 	2015-2015, Dark Soul
 	2015-2015, RYX_Aria
 All rights reserved.
