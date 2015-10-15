@@ -5,7 +5,7 @@ end
 local Command = {}
 
 function Command.Call()
-	game.ui.OpenServerBrowser()
+	Interface.Servers.Open()
 end
 
 return Command

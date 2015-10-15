@@ -108,9 +108,8 @@ end
 
 function TServer:ReceiveFrom(Message, IP, Port)
 	local Time = socket.gettime() * 1000
-	local Packets = {}
-	local DeleteRequests = {}
-	local Channels = {}
+	local Connection = self:GetConnection(IP, Port)
+	
 	repeat
 		local Data
 		Data, Message = Message:ReadByte()
@@ -124,7 +123,6 @@ function TServer:ReceiveFrom(Message, IP, Port)
 		local IsReliable = Data >= 2; Data = Data % 2
 		local IsReply = Data >= 1
 		
-		local Connection = self:GetConnection(IP, Port)
 		if IsReply then
 			if IsPing then
 				-- If it's a ping reply then compare it
@@ -145,71 +143,73 @@ function TServer:ReceiveFrom(Message, IP, Port)
 				ChannelName, Message = Message:ReadString(ChannelLength)
 				Channel = Connection.Channel[ChannelName]
 				
-				if IsOpened then 
-					-- The client now knows that the channel is opened
+				if not IsClosed then
+					
+					if IsOpened then 
+						-- The client now knows that the channel is opened
 
-					if Channel then
-						-- Channel exists
-						
-						if Channel.Closing then
-							self:Log("ATTEMPT TO OPEN A CLOSING CHANNEL "..Channel)
-						else
-							Channel.Open = true
-						end
-					else
-						self:Log("ATTEMPT TO OPEN CHANNEL "..ChannelName.." NO OPEN REQUEST SENT")
-					end
-				end
-
-				local PacketID, FragmentID
-				PacketID, Message = Message:ReadShort()
-				
-				if IsFragment then
-					FragmentID, Message = Message:ReadByte()
-				end
-				
-				if Channel then
-					if IsFragment then
-						-- It looks like they're trying to delete a fragment of this packet, let's just do it
-						local Packet = Channel:GetCreatedPacket(PacketID, IsReliable, IsSequenced)
-						if Packet then
-							-- Make it check that the packet exists or the program could crash
+						if Channel then
+							-- Channel exists
 							
-							if Packet.Fragment then
-								if Packet.FragmentID == FragmentID then
-									Packet.FragmentID = next(Packet.Fragment, FragmentID)
-								end
-								
-								Packet.Fragment[FragmentID] = nil
-								if Packet.FragmentID == nil then
-									Packet.FragmentID = next(Packet.Fragment)
-									if Packet.FragmentID == nil then
-										Packet.Fragment = nil
-										Packet.FragmentCount = nil
-										self:PacketAccepted(Packet)
-										Channel:RemovePacket(PacketID, IsReliable, IsSequenced)
-									end
-								end
+							if Channel.Closing then
+								self:Log("ATTEMPT TO OPEN A CLOSING CHANNEL "..Channel)
 							else
-								self:Log("RECEIVED ATTEMPT TO DELETE A PACKET FRAGMENT FROM A PACKET THAT DOESN'T EXIST (#"..PacketID..")")
+								Channel.Open = true
 							end
 						else
-							self:Log("RECEIVED ATTEMPT TO DELETE A FRAGMENTED PACKET THAT DOESN'T EXIST (#"..PacketID..")")
-						end
-					else
-						local Packet = Channel:GetCreatedPacket(PacketID, IsReliable, IsSequenced)
-						if Packet then
-							self:PacketAccepted(Packet)
-							Channel:RemovePacket(PacketID, IsReliable, IsSequenced)
-						else
-							self:Log("RECEIVED ATTEMPT TO CLOSE A PACKET THAT DOESN'T EXIST (#"..PacketID..")")
+							self:Log("ATTEMPT TO OPEN CHANNEL "..ChannelName.." NO OPEN REQUEST SENT")
 						end
 					end
-				else
-					self:Log("ATTEMPT TO REMOVE PACKET FROM CHANNEL "..ChannelName..", PACKET DOES NOT EXIST (#"..PacketID..")")
-				end
+
+					local PacketID, FragmentID
+					PacketID, Message = Message:ReadShort()
+					
+					if IsFragment then
+						FragmentID, Message = Message:ReadByte()
+					end
+					
+					if Channel then
+						if IsFragment then
+							-- It looks like they're trying to delete a fragment of this packet, let's just do it
+							local Packet = Channel:GetCreatedPacket(PacketID, IsReliable, IsSequenced)
+							if Packet then
+								-- Make it check that the packet exists or the program could crash
+								
+								if Packet.Fragment then
+									if Packet.FragmentID == FragmentID then
+										Packet.FragmentID = next(Packet.Fragment, FragmentID)
+									end
+									
+									Packet.Fragment[FragmentID] = nil
+									if Packet.FragmentID == nil then
+										Packet.FragmentID = next(Packet.Fragment)
+										if Packet.FragmentID == nil then
+											Packet.Fragment = nil
+											Packet.FragmentCount = nil
+											self:PacketAccepted(Packet)
+											Channel:RemovePacket(PacketID, IsReliable, IsSequenced)
+										end
+									end
+								else
+									self:Log("RECEIVED ATTEMPT TO DELETE A PACKET FRAGMENT FROM A PACKET THAT DOESN'T EXIST (#"..PacketID..")")
+								end
+							else
+								self:Log("RECEIVED ATTEMPT TO DELETE A FRAGMENTED PACKET THAT DOESN'T EXIST (#"..PacketID..")")
+							end
+						else
+							local Packet = Channel:GetCreatedPacket(PacketID, IsReliable, IsSequenced)
+							if Packet then
+								self:PacketAccepted(Packet)
+								Channel:RemovePacket(PacketID, IsReliable, IsSequenced)
+							else
+								self:Log("RECEIVED ATTEMPT TO CLOSE A PACKET THAT DOESN'T EXIST (#"..PacketID..")")
+							end
+						end
+					else
+						self:Log("ATTEMPT TO REMOVE PACKET FROM CHANNEL "..ChannelName..", PACKET DOES NOT EXIST (#"..PacketID..")")
+					end
 				
-				if IsClosed then
+				else
 					-- The client now knows that the channel is closed
 
 					if Channel then
@@ -236,6 +236,15 @@ function TServer:ReceiveFrom(Message, IP, Port)
 					Key = Ping,
 					When = Time,
 				}
+			elseif IsClosing then
+				local ChannelLength, ChannelName
+				ChannelLength, Message = Message:ReadByte()
+				ChannelName, Message = Message:ReadString(ChannelLength)
+				
+				local Channel = Connection:GetChannel(ChannelName)
+				if Channel then
+					Channel.ConfirmClosing = true
+				end
 			else
 				-- If it's a packet then process it
 				local ChannelLength, ChannelName
@@ -342,6 +351,13 @@ function TServer:ReceiveFrom(Message, IP, Port)
 			end
 		end
 	until #Message == 0
+	
+	if not next(Connection.Channels) then
+		local ConnectionList = self.Connection[IP]
+		if ConnectionList then
+			ConnectionList[Port] = nil
+		end
+	end
 end
 
 function TServer:GetNextReceivedPacket()
@@ -450,6 +466,8 @@ function TServer:Send()
 			
 			if not Connection:IsFrozen() then
 				-- If the connection is frozen we don't need to waste resources on sending packets that might not be received, otherwise send them
+				
+				local ChannelEmpty = true
 
 				for ChannelName, Channel in pairs(Connection.Channel) do
 					-- Check packets from all the channels
@@ -477,6 +495,7 @@ function TServer:Send()
 											Packet.Reply = nil
 										end
 									else
+										ChannelEmpty = nil
 										break
 									end
 								end
@@ -490,6 +509,7 @@ function TServer:Send()
 									
 									Packet.Reply = nil
 								else
+									ChannelEmpty = nil
 									break
 								end
 							end
@@ -514,6 +534,7 @@ function TServer:Send()
 											Packet.Reply = nil
 										end
 									else
+										ChannelEmpty = nil
 										break
 									end
 								end
@@ -528,6 +549,7 @@ function TServer:Send()
 									
 									Packet.Reply = nil
 								else
+									ChannelEmpty = nil
 									break
 								end
 							end
@@ -539,7 +561,7 @@ function TServer:Send()
 
 					for ID, Packet in pairs(Sending.Reliable.Sequenced) do
 						if type(ID) == "number" then
-							if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
+							if not Packet.Sent or Time - Packet.Sent >= Connection:PacketResendDelay() then
 								-- Check that this packet wasn't sent too short ago
 								
 								local IsCompressed, IsFragmented = Packet:GenerateCompression()
@@ -572,6 +594,8 @@ function TServer:Send()
 											
 										Packet.Sent = Time
 										Packet.FragmentID = next(Packet.Fragment, Packet.FragmentID) or next(Packet.Fragment)
+									else
+										ChannelEmpty = nil
 									end
 								else
 									-- Normal packets are sent completely at once
@@ -590,6 +614,8 @@ function TServer:Send()
 											:WriteString(Packet.Compression)
 											
 										Packet.Sent = Time
+									else
+										ChannelEmpty = nil
 									end
 								end
 							end
@@ -598,7 +624,7 @@ function TServer:Send()
 					
 					for ID, Packet in pairs(Sending.Reliable.Unsequenced) do
 						if type(ID) == "number" then
-							if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
+							if not Packet.Sent or Time - Packet.Sent >= Connection:PacketResendDelay() then
 								-- Check that this packet wasn't sent too short ago
 								
 								local IsCompressed, IsFragmented = Packet:GenerateCompression()
@@ -630,6 +656,8 @@ function TServer:Send()
 											
 										Packet.Sent = Time
 										Packet.FragmentID = next(Packet.Fragment, Packet.FragmentID) or next(Packet.Fragment)
+									else
+										ChannelEmpty = nil
 									end
 								else
 									-- Normal packets are sent completely at once
@@ -648,6 +676,8 @@ function TServer:Send()
 											:WriteString(Packet.Compression)
 											
 										Packet.Sent = Time
+									else
+										ChannelEmpty = nil
 									end
 								end
 							end
@@ -656,7 +686,7 @@ function TServer:Send()
 					
 					for ID, Packet in pairs(Sending.Unreliable.Sequenced) do
 						if type(ID) == "number" then
-							if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
+							if not Packet.Sent or Time - Packet.Sent >= Connection:PacketResendDelay() then
 								-- Check that this packet wasn't sent too short ago
 
 								local IsCompressed, IsFragmented = Packet:GenerateCompression()
@@ -692,6 +722,8 @@ function TServer:Send()
 												Sending.Unreliable.Sequenced[ID] = nil
 											end
 										end
+									else
+										ChannelEmpty = nil
 									end
 								else
 									-- Normal packets are sent completely at once
@@ -711,6 +743,8 @@ function TServer:Send()
 											
 										Packet.Sent = Time
 										Sending.Unreliable.Sequenced[ID] = nil
+									else
+										ChannelEmpty = nil
 									end
 								end
 							end
@@ -719,7 +753,7 @@ function TServer:Send()
 					
 					for ID, Packet in pairs(Sending.Unreliable.Unsequenced) do
 						
-						if not Packet.Sent or Time - Packet.Sent >= Connection.PacketMaxDelay then
+						if not Packet.Sent or Time - Packet.Sent >= Connection:PacketResendDelay() then
 							-- Check that this packet wasn't sent too short ago
 							
 							local IsCompressed, IsFragmented = Packet:GenerateCompression()
@@ -755,6 +789,8 @@ function TServer:Send()
 											Sending.Unreliable.Unsequenced[ID] = nil
 										end
 									end
+								else
+									ChannelEmpty = nil
 								end
 							else
 								-- Normal packets are sent completely at once
@@ -774,11 +810,35 @@ function TServer:Send()
 										
 									Packet.Sent = Time
 									Sending.Unreliable.Unsequenced[ID] = nil
+								else
+									ChannelEmpty = nil
 								end
 							end
 						end
 					end
 					
+					if ChannelEmpty then
+						if Channel.ConfirmClosing then
+							if #Message + ChannelLength + 1 < Connection.PacketMaxSize then
+								Message = Message
+									:WriteByte(17)
+									:WriteByte(ChannelLength)
+									:WriteString(ChannelName)
+									
+								Channel.ConfirmClosing = nil
+								Connection.Channel[ChannelName] = nil
+							end
+						end
+						
+						if Channel.Closing then
+							if #Message + ChannelLength + 1 < Connection.PacketMaxSize then
+								Message = Message
+									:WriteByte(16)
+									:WriteByte(ChannelLength)
+									:WriteString(ChannelName)
+							end
+						end
+					end
 				end
 			end
 		

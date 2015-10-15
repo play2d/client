@@ -5,7 +5,7 @@ end
 local Command = {}
 
 function Command.Call()
-	game.ui.OpenOptionsMenu()
+	Interface.Options.Open()
 end
 
 return Command

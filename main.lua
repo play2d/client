@@ -7,6 +7,10 @@ CLIENT = true
 
 ffi = require("ffi")
 require("src.hook")
+
+Hook.Create("draw")
+Hook.Create("update")
+
 require("src.console")
 require("src.string")
 require("src.gui")
@@ -20,6 +24,19 @@ require("src.core")
 require("src.binds")
 require("src.interface")
 require("src.namespaces")
+
+function love.draw(dt)
+	Hook.Call("draw", dt)
+	
+	-- Interface is always at top of everything
+	Interface.Render(dt)
+end
+
+function love.update(dt)
+	Interface.Update(dt)
+	
+	Hook.Call("update", dt)
+end
 
 function love.load()
 	Commands.Load()

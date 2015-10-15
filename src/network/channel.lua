@@ -239,6 +239,10 @@ function TChannel:GetCreatedPacket(ID, Reliable, Sequenced)
 end
 
 function TChannel:CreateNewPacket(TypeID, Reliable, Sequenced)
+	if self.Closing or self.ConfirmClosing then
+		return nil
+	end
+	
 	local Sending = self.Sending
 	local Packet = Network.CreatePacket(TypeID)
 	if Reliable then

@@ -11,9 +11,9 @@ function Command.Call(Source, ...)
 		local Path = ...
 		if type(Path) == "string" then
 			Path = Path:lower()
-			CFG["cl_gui"] = Path
+			Config.CFG["cl_gui"] = Path
 			
-			if Options then
+			if Options and Options.Panels then
 				Options.Graphics.GUITheme:SetText(Path)
 			end
 		end
@@ -21,7 +21,7 @@ function Command.Call(Source, ...)
 end
 
 function Command.GetSaveString()
-	return "cl_gui " .. CFG["cl_gui"]
+	return "cl_gui " .. Config.CFG["cl_gui"]
 end
 
 return Command

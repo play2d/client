@@ -13,6 +13,14 @@ function Interface.Load()
 	Interface.Load = nil
 end
 
+function Interface.Update(dt)
+	Interface.Desktop:Update(dt * 1000)
+end
+
+function Interface.Render(dt)
+	Interface.Desktop:Render(dt * 1000)
+end
+
 require(Path..".console")
 require(Path..".servers")
 --require(Path..".chat")

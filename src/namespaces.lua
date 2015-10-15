@@ -43,14 +43,11 @@ end
 
 Namespace.Commands = {
 	-- Very unprotected stuff
-	Binds = Binds,
 	Console = Console,
 	Hook = Hook,
 	Interface = Interface,
-	game = game,
 	CFG = Config.CFG,
 	parse = parse,
-	loadstring = loadstring,
 	
 	Lang = Lang,
 	table = table,
@@ -91,22 +88,7 @@ Namespace.Commands = {
 	type = type,
 	unpack = unpack,
 	xpcall = xpcall,
+	
 	CLIENT = true,
 }
 Namespace.Commands._G = Commands
-
-function Namespace.CreateEnvironment()
-	return {
-		table = table,
-		math = math,
-		string = string,
-		io = io,
-		love = love,
-		debug = {
-			getfenv = debug_getfenv,
-			setfenv = debug_setfenv,
-		},
-		getfenv = _getfenv,
-		setfenv = _setfenv,
-	}
-end

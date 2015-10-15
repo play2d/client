@@ -25,6 +25,13 @@ function TConnection:GeneratePing()
 	return Key
 end
 
+function TConnection:PacketResendDelay()
+	if self.Ping.Value then
+		return math.min(self.Ping.Value + 10, self.PacketMaxDelay)
+	end
+	return self.PacketMaxDelay
+end
+
 function TConnection:GetPing()
 	return self.Ping.Value or 0
 end
@@ -66,7 +73,10 @@ function TConnection:GetChannel(Name)
 end
 
 function TConnection:CloseChannel(Name)
-	self.Channel[Name] = nil
+	local Channel = self.Channel[Name]
+	if Channel then
+		Channel.Closing = true
+	end
 end
 
 function TConnection:GetNextReceivedPacket()

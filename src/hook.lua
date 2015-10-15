@@ -1,6 +1,5 @@
 Hook = {}
 Hook.Data = {
-	draw = {},
 	focus = {},
 	gamepadaxis = {},
 	gamepadpressed = {},
@@ -23,7 +22,6 @@ Hook.Data = {
 	touchmoved = {},
 	touchpressed = {},
 	touchreleased = {},
-	update = {},
 	visible = {},
 	wheelmoved = {},
 }

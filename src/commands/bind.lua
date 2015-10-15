@@ -2,23 +2,23 @@ if not CLIENT then
 	return nil
 end
 
-CFG["bind"] = {}
-
 local Command = {
 	Category = "Binds"
 }
 
+Config.CFG["bind"] = {}
+
 function Command.Call(Source, Key, Bind)
 	if Source.source == "game" then
-		CFG["bind"][Key] = Bind
+		Config.CFG["bind"][Key] = Bind
 	end
 end
 
 function Command.GetSaveString()
 	local Binds = ""
-	for Key, Binding in pairs(CFG["bind"]) do
+	for Key, Binding in pairs(Config.CFG["bind"]) do
 		Binds = Binds .. 'bind "'..Key..'" "'..Binding..'"'
-		if next(CFG["bind"], Key) then
+		if next(Config.CFG["bind"], Key) then
 			Binds = Binds .. "\n"
 		end
 	end
@@ -33,7 +33,7 @@ function Command.ParsePlus()
 		end
 	end
 	
-	for Key, Binding in pairs(CFG["bind"]) do
+	for Key, Binding in pairs(Config.CFG["bind"]) do
 		if Binding:sub(1, 1) == "+" then
 			if love.keyboard.isDown(Key) then
 				parse(Binding:sub(2))
@@ -51,7 +51,7 @@ function Command.ParseMinus(Key)
 		end
 	end
 	
-	local Binding = CFG["bind"][Key]
+	local Binding = Config.CFG["bind"][Key]
 	if Binding and Binding:sub(1, 1) == "-" then
 		parse(Binding:sub(2))
 	end
@@ -67,7 +67,7 @@ function Command.ParseNormal(Key, isRepeat)
 			end
 		end
 		
-		local Binding = CFG["bind"][Key]
+		local Binding = Config.CFG["bind"][Key]
 		if Binding then
 			local BindingType = Binding:sub(1, 1)
 			if BindingType ~= "+" and BindingType ~= "-" then

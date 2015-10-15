@@ -2,7 +2,7 @@ if not CLIENT then
 	return nil
 end
 
-CFG["name"] = "Player"
+Config.CFG["name"] = "Player"
 
 local Command = {
 	Category = "Player"
@@ -11,8 +11,9 @@ local Command = {
 function Command.Call(Source, Name)
 	if Source.source == "game" then
 		if type(Name) == "string" then
-			CFG["name"] = Name
-			if Options then
+			Config.CFG["name"] = Name
+			
+			if Options and Options.Panels then
 				Options.Player.NameField:SetText(config["name"])
 			end
 		end
@@ -20,7 +21,7 @@ function Command.Call(Source, Name)
 end
 
 function Command.GetSaveString()
-	return "name " .. CFG["name"]
+	return "name " .. Config.CFG["name"]
 end
 
 return Command

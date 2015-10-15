@@ -23,8 +23,6 @@ function TDesktop:Init(ThemePath, Splash)
 	self:LoadTheme(ThemePath)
 
 	if Hook then
-		Hook.Add("draw", function(dt) self:Render(dt * 1000) end)
-		Hook.Add("update", function(dt) self:Update(dt * 1000) end)
 		Hook.Add("mousepressed", function(x, y, button) self:mousepressed(x, y, button) end)
 		Hook.Add("mousereleased", function(x, y, button) self:mousereleased(x, y, button) end)
 		Hook.Add("mousemoved", function(x, y, dx, dy) self:mousemoved(x, y, dx, dy) end)
