@@ -8,3 +8,15 @@ function string.split(String, Delimiter)
 	end
 	return Parts, Positions
 end
+
+function string:ReadByte()
+	return self:byte(), self:sub(2)
+end
+
+function string:ReadShort()
+	return self:byte() + self:byte(2) * 256, self:sub(3)
+end
+
+function string:ReadInt()
+	return self:byte() + self:byte(2) * 256 + self:byte(3) * 65536 + self:byte(4) * 16777216, self:sub(5)
+end

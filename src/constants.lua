@@ -12,8 +12,6 @@ CONST = {
 		SERVERINFO = 1;
 	},
 
-	GAME = {},
-
 	STATE = {
 		DESKTOP = 0;
 		LOADING = 1;
