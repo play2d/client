@@ -22,21 +22,22 @@ require("src.core")
 require("src.binds")
 require("src.interface")
 require("src.namespaces")
+require("src.microphone")
 
 function love.draw(dt)
 	Hook.Call("draw", dt)
-	
+
 	-- Interface is always at top of everything
 	Interface.Render(dt)
 end
 
 function love.update(dt)
 	Interface.Update(dt)
-	
+
 	Hook.Call("update", dt)
 end
 
-function love.load()
+function love.load(arg)
 	Commands.Load()
 	Config.Load()
 	Lang.Load()
