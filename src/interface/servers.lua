@@ -1,8 +1,46 @@
-Interface.Servers = {}
+Interface.Servers = {
+	ServerList = {},
+	Request = {}
+}
 
 function Interface.Servers.Open()
 	Interface.Servers.Window.Hidden = nil
 	Interface.Servers.Window:Focus()
+end
+
+function Interface.Servers.AddServer(ServerData)
+	if type(ServerData) == "table" then
+		for _, Server in pairs(Interface.Servers.ServerList) do
+			if Server.Address == ServerData.Address then
+				return nil
+			end
+		end
+		table.insert(Interface.Servers.ServerList, ServerData)
+		Interface.Servers.UpdateList()
+	end
+end
+
+function Interface.Servers.UpdateList()
+	table.sort(Interface.Servers.ServerList,
+		function (ServerA, ServerB)
+			return ServerA.Ping < ServerB.Ping
+		end
+	)
+	
+	Interface.Servers.List:ClearItems()
+	for _, Server in pairs(Interface.Servers.ServerList) do
+		Interface.Servers.List:AddItem(Server.Password and "Yes" or "No", Server.Name, Server.Mode, Server.Map, Server.Players.."/"..Server.MaxPlayers, Server.Ping)
+	end
+end
+
+function Interface.Servers.Refresh()
+	for _, Address in pairs(Cache.List) do
+		Peer = Core.Network.Host:connect(Address, CONST.NET.CHANNELS.MAX)
+		Interface.Servers.Request[Address] = true
+	end
+	
+	Interface.Servers.ServerList = {}
+	Interface.Servers.List:ClearItems()
 end
 
 function Interface.Servers.Initialize()
@@ -28,7 +66,28 @@ function Interface.Servers.Initialize()
 	Interface.Servers.FiltersButton = gui.CreateButton(Lang.Get("gui_browser_filter"), 10, 550, 100, 20, Interface.Servers.Window)
 	
 	Interface.Servers.RefreshButton = gui.CreateButton(Lang.Get("gui_browser_refresh"), 120, 550, 100, 20, Interface.Servers.Window)
+	Interface.Servers.RefreshButton.OnClick = Interface.Servers.Refresh
 	
 	Interface.Servers.ConnectButton = gui.CreateButton(Lang.Get("gui_browser_connect"), 555, 550, 100, 20, Interface.Servers.Window)
 	Interface.Servers.Initialize = nil
 end
+
+Hook.Add("ENetConnect",
+	function (Peer)
+		local Address = tostring(Peer)
+		if Interface.Servers.Request[Address] then
+			Interface.Servers.Request[Address] = nil
+			
+			local Request = ("")
+				:WriteShort(CONST.NET.SERVERINFO)
+			
+			Peer:send(Request, CONST.NET.CHANNELS.UNCONNECTED, "reliable")
+		end
+	end
+)
+
+Hook.Add("ENetDisconnect",
+	function (Peer)
+		Interface.Servers.Request[tostring(Peer)] = nil
+	end
+)

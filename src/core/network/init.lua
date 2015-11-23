@@ -13,9 +13,10 @@ Hook.Create("ENetDisconnect")
 
 -- Server/Client messages
 require(Path..".serverinfo")
+require(Path..".micrecord")
 
 function Network.Load()
-	local Host = enet.host_create("localhost:0", 256, 0, CONST.NET.CHANNELS.MAX)
+	local Host = enet.host_create("localhost:9553", 512, CONST.NET.CHANNELS.MAX)
 	if Host then
 		Console.Print("Initialized UDP socket "..Host:get_socket_address(), 0, 255, 0, 255)
 		Network.Host = Host
@@ -28,7 +29,7 @@ end
 
 function Network.Update()
 	if Network.Host then
-		local Event = Network.Host:service()
+		local Event = Network.Host:service(1)
 		while Event do
 			if Event.type == "receive" then
 				local Message = Event.data

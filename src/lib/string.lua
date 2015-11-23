@@ -18,7 +18,7 @@ function string:ReadShort()
 end
 
 function string:ReadInt24()
-	return self:byte(1) + self:byte(2) * 256 + self:byte(3) * (256^2)
+	return self:byte(1) + self:byte(2) * 256 + self:byte(3) * (256^2), self:sub(4)
 end
 
 function string:ReadInt()
@@ -38,25 +38,28 @@ function string:ReadLine()
 end
 
 function string:WriteByte(n)
-	return self .. string.char(n)
+	return self .. string.char(math.floor(n))
 end
 
 function string:WriteShort(n)
-	local n1 = (n % 256)
-	return self .. string.char(n1) .. string.char((n - n1)/256)
+	local n = math.floor(n + 0.5)
+	local n1 = (n % 256); n = (n - n1)/256
+	return self .. string.char(n1) .. string.char(n % 256)
 end
 
 function string:WriteInt24(n)
+	local n = math.floor(n + 0.5)
 	local n1 = (n % 256); n = (n - n1)/256
-	local n2 = (n % 256)
-	return self .. string.char(n1) .. string.char(n2) .. string.char((n - n2)/256)
+	local n2 = (n % 256); n = (n - n2)/256
+	return self .. string.char(n1) .. string.char(n2) .. string.char(n % 256)
 end
 
 function string:WriteInt(n)
+	local n = math.floor(n + 0.5)
 	local n1 = (n % 256); n = (n - n1)/256
 	local n2 = (n % 256); n = (n - n2)/256
-	local n3 = (n % 256)
-	return self .. string.char(n1) .. string.char(n2) .. string.char(n3) .. string.char((n - n3)/256)
+	local n3 = (n % 256); n = (n - n3)/256
+	return self .. string.char(n1) .. string.char(n2) .. string.char(n3) .. string.char(n % 256)
 end
 
 function string:WriteString(String)

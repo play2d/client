@@ -1,6 +1,5 @@
 Cache = {
 	List = {},
-	Request = {},
 }
 
 function Cache.Load()
@@ -14,11 +13,7 @@ function Cache.Load()
 			end
 		end
 		File:close()
-		
-		for _, Address in pairs(Cache.List) do
-			Peer = Core.Network.Host:connect(Address, CONST.NET.CHANNELS.MAX)
-			Cache.Request[Peer] = true
-		end
+		Interface.Servers.Refresh()
 	end
 end
 
@@ -30,19 +25,3 @@ function Cache.Save()
 		File:close()
 	end
 end
-
-function Cache.Connect(Peer)
-	Cache.Request[Peer] = nil
-	
-	local Request = ("")
-		:WriteShort(CONST.NET.SERVERINFO)
-	
-	Peer:send(Request, CONST.NET.CHANNELS.UNCONNECTED, "reliable")
-end
-
-function Cache.Disconnect(Peer)
-	Cache.Request[Peer] = nil
-end
-
-Hook.Add("ENetConnect", Cache.Connect)
-Hook.Add("ENetDisconnect", Cache.Disconnect)
