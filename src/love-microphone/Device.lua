@@ -5,8 +5,9 @@
 	Holds methods for the Device class to be used by the love-microphone core.
 ]]
 
+local Path = (...):gsub(".Device", "")
 local ffi = require("ffi")
-local al = require("love-microphone.openal")
+local al = require(Path..".openal")
 
 local Device = {}
 local formats = {

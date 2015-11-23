@@ -7,8 +7,9 @@
 	most methods except queue and new.
 ]]
 
+local Path = (...):gsub(".QueueableSource", "")
 local ffi = require("ffi")
-local al = require("love-microphone.openal")
+local al = require(Path..".openal")
 
 local QueueableSource = {}
 local typecheck = {

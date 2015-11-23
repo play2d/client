@@ -5,10 +5,11 @@
 	Main file for love-microphone, creates the microphone namespace.
 ]]
 
+local Path = ...
 local ffi = require("ffi")
-local al = require("love-microphone.openal")
-local Device = require("love-microphone.Device")
-local QueueableSource = require("love-microphone.QueueableSource")
+local al = require(Path..".openal")
+local Device = require(Path..".Device")
+local QueueableSource = require(Path..".QueueableSource")
 
 local microphone = {
 	_devices = {}

@@ -22,7 +22,6 @@ require("src.core")
 require("src.binds")
 require("src.interface")
 require("src.namespaces")
-require("src.microphone")
 
 function love.draw(dt)
 	Hook.Call("draw", dt)
@@ -33,6 +32,7 @@ end
 
 function love.update(dt)
 	Interface.Update(dt)
+	Core.Update(dt)
 
 	Hook.Call("update", dt)
 end
