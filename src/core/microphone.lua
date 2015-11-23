@@ -12,10 +12,13 @@ function Microphone.Load()
 end
 
 function Microphone.Update()
+	-- This is only called when holding the record key
 	Microphone.Device:poll()
 end
 
 function Microphone.RecordData(Device, SoundData)
+	-- This function is automatically called when the microphone records something
+	-- SoundData is a SoundData type, see https://love2d.org/wiki/SoundData
 	Microphone.Source:queue(SoundData)
 	Microphone.Source:play()
 end

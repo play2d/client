@@ -26,17 +26,15 @@ end
 
 function coro:newfenv()
 	local Env = {}
-
+	
 	Env._G = Env
 	Env._VERSION = _VERSION
 	Env.assert = assert
 	Env.collectgarbage = collectgarbage
-	--Env.dofile = dofile
 	Env.error = error
 	Env.getfenv = getfenv
-	--Env.getmetatable = getmetatable
+	Env.getmetatable = getmetatable
 	Env.ipairs = ipairs
-	--Env.module = module
 	Env.next = next
 	Env.pairs = pairs
 	Env.pcall = pcall
@@ -44,7 +42,6 @@ function coro:newfenv()
 	Env.rawequal = rawequal
 	Env.rawget = rawget
 	Env.rawset = rawset
-	Env.require = require
 	Env.select = select
 	Env.setmetatable = setmetatable
 	Env.tonumber = tonumber
@@ -52,7 +49,25 @@ function coro:newfenv()
 	Env.type = type
 	Env.unpack = unpack
 	Env.xpcall = xpcall
-
+	
+	function Env.require(mod)
+		local PackageTable = package
+		package = Env.package
+		local Success, Error = pcall(require, mod)
+		package = PackageTable
+		if Success then
+			Env[mod] = Error
+			return Error
+		end
+		return Success, Error
+	end
+	
+	function Env.dofile(Path)
+		local Function = assert(loadfile(Path))
+		setfenv(Function, Env)
+		return Function()
+	end
+	
 	function Env.getfenv(f)
 		local Env = getfenv(f)
 		if Env == _G then
@@ -60,7 +75,7 @@ function coro:newfenv()
 		end
 		return Env
 	end
-
+	
 	function Env.setfenv(f, e)
 		local Env = getfenv(f)
 		if Env == _G then
@@ -68,7 +83,7 @@ function coro:newfenv()
 		end
 		return setfenv(f, e)
 	end
-
+	
 	function Env.load(func, chunkname)
 		local Load, Error = load(func, chunkname)
 		if Load then
@@ -77,7 +92,7 @@ function coro:newfenv()
 		end
 		return Load, Error
 	end
-
+	
 	function Env.loadfile(filename)
 		local Load, Error = loadfile(filename)
 		if Load then
@@ -86,7 +101,7 @@ function coro:newfenv()
 		end
 		return Load, Error
 	end
-
+	
 	function Env.loadstring(str, chunkname)
 		local Load, Error = loadstring(str, chunkname)
 		if Load then
@@ -95,13 +110,13 @@ function coro:newfenv()
 		end
 		return Load, Error
 	end
-
+	
 	Env.coroutine = {}
 	Env.coroutine.create = coroutine.create
 	Env.coroutine.resume = coroutine.resume
 	Env.coroutine.status = coroutine.status
 	Env.coroutine.wrap = coroutine.wrap
-
+	
 	function Env.coroutine.running()
 		local Coroutine = coroutine.running()
 		if Coroutine == State.Lua.Coroutine then
@@ -109,14 +124,14 @@ function coro:newfenv()
 		end
 		return Coroutine
 	end
-
+	
 	function Env.coroutine.yield(...)
 		local Coroutine = coroutine.running()
 		if Coroutine ~= State.Lua.Coroutine then
 			return coroutine.yield(...)
 		end
 	end
-
+	
 	Env.debug = {}
 	Env.debug.gethook = debug.gethook
 	Env.debug.getinfo = debug.getinfo
@@ -130,7 +145,7 @@ function coro:newfenv()
 	Env.debug.setmetatable = debug.setmetatable
 	Env.debug.setupvalue = debug.setupvalue
 	Env.debug.traceback = debug.traceback
-
+	
 	function Env.debug.getfenv(obj)
 		local Env = debug.getfenv(obj)
 		if Env == _G then
@@ -138,7 +153,7 @@ function coro:newfenv()
 		end
 		return Env
 	end
-
+	
 	Env.io = {}
 	Env.io.close = io.close
 	Env.io.flush = io.flush
@@ -154,7 +169,7 @@ function coro:newfenv()
 	Env.io.tmpfile = io.tmpfile
 	Env.io.type = io.type
 	Env.io.write = io.write
-
+	
 	Env.math = {}
 	Env.math.abs = math.abs
 	Env.math.acos = math.acos
@@ -186,7 +201,7 @@ function coro:newfenv()
 	Env.math.sqrt = math.sqrt
 	Env.math.tan = math.tan
 	Env.math.tanh = math.tanh
-
+	
 	Env.os = {}
 	Env.os.clock = os.clock
 	Env.os.date = os.date
@@ -200,16 +215,16 @@ function coro:newfenv()
 	Env.os.time = os.time
 	Env.os.tmpname = os.tmpname
 	Env.os.name = jit.os
-
+	
 	Env.package = {}
 	Env.package.cpath = Env.package.cpath
-	Env.package.loaded = {}
-	Env.package.loaders = {}
+	Env.package.loaded = setmetatable({}, {__index = package.loaded})
+	Env.package.loaders = setmetatable({}, {__index = package.loaders})
 	Env.package.loadlib = Env.package.loadlib
 	Env.package.path = Env.package.path
-	Env.package.preload = {}
+	Env.package.preload = setmetatable({}, {__index = package.preload})
 	Env.package.seeall = Env.package.seall
-
+	
 	Env.string = {}
 	Env.string.byte = string.byte
 	Env.string.char = string.char
@@ -225,19 +240,23 @@ function coro:newfenv()
 	Env.string.reverse = string.reverse
 	Env.string.sub = string.sub
 	Env.string.upper = string.upper
-
+	
 	local StringMetatable = getmetatable("")
 	setmetatable(StringMetatable.__index, {__index = Env.string})
-
+	
 	Env.table = {}
 	Env.table.concat = table.concat
 	Env.table.insert = table.insert
 	Env.table.maxn = table.maxn
 	Env.table.remove = table.remove
 	Env.table.sort = table.sort
-
+	
+	Env.json = {}
+	Env.json.encode = json.encode
+	Env.json.decode = json.decode
+	
 	self:setfenv(Env)
-
+	
 	return Env
 end
 
@@ -257,11 +276,11 @@ function coro:dostring(str, ...)
 		local Results = {coroutine.resume(self.Coroutine)}
 		self.Function = nil
 		self.Arguments = nil
-
+		
 		if not Results[1] then
 			return false, Results[2]
 		end
-
+		
 		local Return = {}
 		for Key, Value in next, Results, 2 do
 			table.insert(Return, Value)
@@ -283,11 +302,11 @@ function coro:dofile(path, ...)
 		local Results = {coroutine.resume(self.Coroutine)}
 		self.Function = nil
 		self.Arguments = nil
-
+		
 		if not Results[1] then
 			return false, Results[2]
 		end
-
+		
 		local Return = {}
 		for Key, Value in next, Results, 2 do
 			table.insert(Return, Value)
@@ -295,6 +314,29 @@ function coro:dofile(path, ...)
 		return true, unpack(Return)
 	end
 	return false, "input a valid path"
+end
+
+function coro:pcall(f, ...)
+	if type(f) == "function" then
+		self.Function = f
+		self.Arguments = {...}
+		
+		local Results = {coroutine.resume(self.Coroutine)}
+		self.Function = nil
+		self.Arguments = nil
+		
+		if not self.Results[1] then
+			return false, Results[2]
+		end
+		
+		local Return = {}
+		for Key, Value in next, Results, 2 do
+			table.insert(Return, Value)
+		end
+		
+		return true, unpack(Return)
+	end
+	return false, "input a valid function"
 end
 
 function coro:status()

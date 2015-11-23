@@ -5,6 +5,15 @@ Core.Network = {
 local Path = ...
 local Network = Core.Network
 
+-- Hooks
+Hook.Create("ENetConnect")
+Hook.Create("ENetDisconnect")
+
+-- Master server messages
+
+-- Server/Client messages
+require(Path..".serverinfo")
+
 function Network.Load()
 	local Host = enet.host_create("localhost:0", 256, 0, CONST.NET.CHANNELS.MAX)
 	if Host then
@@ -21,8 +30,6 @@ function Network.Update()
 	if Network.Host then
 		local Event = Network.Host:service()
 		while Event do
-			Event = Network.Host:service()
-			
 			if Event.type == "receive" then
 				local Message = Event.data
 				local PacketType
@@ -30,13 +37,15 @@ function Network.Update()
 				PacketType, Message = Message:ReadShort()
 				local Function = Network.Protocol[PacketType]
 				if Function then
-					Function(event.peer, Message)
+					Function(Event.peer, Message)
 				end
+			elseif Event.type == "connect" then
+				Hook.Call("ENetConnect", Event.peer)
+			elseif Event.type == "disconnect" then
+				Hook.Call("ENetDisconnect", Event.peer)
 			end
+			Event = Network.Host:service()
 		end
-		
 		Network.Host:flush()
 	end
 end
-
-Hook.Add("update", Network.Update)
