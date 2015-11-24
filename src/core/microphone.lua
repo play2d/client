@@ -11,7 +11,7 @@ function Microphone.Load()
 	Microphone.Device:start()
 	
 	Microphone.Server = enet.host_create("localhost:0", 256, 0, 1)
-	Microphone.Peer = Microphone.Server:connect("localhost:9553", 10)
+	--Microphone.Peer = Microphone.Server:connect("localhost:9553", 10)
 end
 
 function Microphone.Update()
@@ -36,6 +36,6 @@ function Microphone.RecordData(Device, SoundData)
 		MicRecordMessage = MicRecordMessage:WriteInt(UInt)
 	end
 
-	Microphone.Peer:send(MicRecordMessage, 1, "reliable")
+	--Microphone.Peer:send(MicRecordMessage, 1, "reliable")
 end
 

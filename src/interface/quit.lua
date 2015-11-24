@@ -6,7 +6,7 @@ function Interface.Quit.Open()
 end
 
 function Interface.Quit.Initialize()
-	Interface.Quit.Window = gui.CreateWindow(Lang.Get("gui_label_quit"), Interface.Desktop:GetWidth()/2 - 150, Interface.Desktop:GetHeight()/2 - 50, 300, 100, Interface.Desktop)
+	Interface.Quit.Window = gui.CreateWindow(Lang.Get("gui_label_quit"), Interface.Desktop:GetWidth()/2 - 150, Interface.Desktop:GetHeight()/2 - 50, 300, 100, Interface.MainMenu)
 	Interface.Quit.Window.Hidden = true
 	
 	Interface.Quit.Label = gui.CreateLabel(Lang.Get("gui_quit_message"), 15, 35, Interface.Quit.Window)

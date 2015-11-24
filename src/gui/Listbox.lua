@@ -2,6 +2,7 @@ local TListbox = {}
 local TListboxMetatable = {__index = TListbox}
 TListbox.Type = "Listbox"
 TListbox.ItemCount = 0
+TListbox.Selected = 0
 setmetatable(TListbox, gui.TGadgetMetatable)
 
 function gui.CreateListbox(x, y, Width, Height, Parent)

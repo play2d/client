@@ -5,6 +5,7 @@ Core = {}
 require(Path..".network")
 require(Path..".map")
 require(Path..".microphone")
+require(Path..".state")
 
 function Core.Load()
 	Core.Network.Load()

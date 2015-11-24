@@ -1,3 +1,6 @@
+gui_connecting_window = Connecting
+gui_connecting_error = Connection error
+gui_connecting_password = Please enter the correct password
 gui_label_chat = Chat
 gui_label_console = Console
 gui_label_find_servers = Find Servers

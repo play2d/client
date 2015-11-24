@@ -44,7 +44,7 @@ function Interface.Servers.Refresh()
 end
 
 function Interface.Servers.Initialize()
-	Interface.Servers.Window = gui.CreateWindow(Lang.Get("gui_label_find_servers"), 120, 10, 670, 580, Interface.Desktop, true)
+	Interface.Servers.Window = gui.CreateWindow(Lang.Get("gui_label_find_servers"), 120, 10, 670, 580, Interface.MainMenu, true)
 	Interface.Servers.Window.Hidden = true
 	
 	Interface.Servers.Tab = gui.CreateTabber(10, 35, Interface.Servers.Window)
@@ -69,6 +69,7 @@ function Interface.Servers.Initialize()
 	Interface.Servers.RefreshButton.OnClick = Interface.Servers.Refresh
 	
 	Interface.Servers.ConnectButton = gui.CreateButton(Lang.Get("gui_browser_connect"), 555, 550, 100, 20, Interface.Servers.Window)
+	Interface.Servers.ConnectButton.OnClick = Interface.Connecting.Connect
 	Interface.Servers.Initialize = nil
 end
 
