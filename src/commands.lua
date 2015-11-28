@@ -17,13 +17,12 @@ function Commands.Load()
 	end
 	setmetatable(Commands.FunctionList, FunctionListMetatable)
 
-	local Files = love.filesystem.getDirectoryItems("sys/commands")
-	for _, File in pairs(Files) do
+	for File in lfs.dir("sys/commands") do
 		if File:sub(-4) == ".lua" then
 			
 			local Command = string.match(File, "([%a|%_]+)%p(%a+)")
 			local Path = "sys/commands/"..File
-			if love.filesystem.isFile(Path) then
+			if lfs.attributes(Path, "mode") then
 				local Load, Error = loadfile(Path)
 				if Load then
 					setfenv(Load, Namespace.Commands)
@@ -41,8 +40,7 @@ function Commands.Load()
 		end
 	end
 	
-	local Files = love.filesystem.getDirectoryItems("src/commands")
-	for _, File in pairs(Files) do
+	for _, File in pairs(love.filesystem.getDirectoryItems("src/commands")) do
 		if File:sub(-4) == ".lua" then
 			
 			local Command = string.match(File, "([%a|%_]+)%p(%a+)")

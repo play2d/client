@@ -21,10 +21,10 @@ function Options.Graphics.InitializeMenu()
 	Options.Graphics.GUITheme = gui.CreateCombofield(20, 50, 300, 20, Options.Panels[4])
 	Options.Graphics.GUITheme:SetText(Config.CFG["cl_gui"])
 	
-	for _, File in pairs(love.filesystem.getDirectoryItems("gfx/gui")) do
-		if love.filesystem.isDirectory("gfx/gui/"..File) then
+	for File in lfs.dir("gfx/gui") do
+		if lfs.attributes("gfx/gui/"..File, "mode") == "file" then
 			local ScriptFile = "gfx/gui/"..File.."/main.lua"
-			if love.filesystem.isFile(ScriptFile) then
+			if lfs.attributes(ScriptFile, "mode") == "file" then
 				Options.Graphics.GUITheme:AddItem(ScriptFile)
 			end
 		end

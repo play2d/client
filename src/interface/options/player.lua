@@ -2,8 +2,8 @@ Options.Player = {}
 
 function Options.Player.ReloadSpraylogos()
 	Options.Player.Spraylogos = {}
-	for _, Item in pairs(love.filesystem.getDirectoryItems("logos")) do
-		if love.filesystem.isFile("logos/"..Item) then
+	for Item in lfs.dir("logos") do
+		if lfs.attributes("logos/"..Item, "mode") == "file" then
 			
 			local Image = love.graphics.newImage("logos/"..Item)
 			if Image then

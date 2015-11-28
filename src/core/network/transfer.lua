@@ -20,7 +20,7 @@ Core.Network.Protocol[CONST.NET.SERVERTRANSFER] = function (Peer, Message)
 				
 				if Find and Find == 1 then
 					Filter = true
-				elseif love.filesystem.isFile(FilePath) and FileType ~= "lua" then
+				elseif lfs.attributes(FilePath, "mode") == "file" and FileType ~= "lua" then
 					Filter = true
 				elseif not table.find(Core.Transfer.Formats, FileType) then
 					Filter = true

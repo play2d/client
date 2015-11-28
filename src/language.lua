@@ -15,8 +15,8 @@ end
 
 function Lang.List()
 	local List = {}
-	for _, File in pairs(love.filesystem.getDirectoryItems("sys/language")) do
-		if love.filesystem.isFile("sys/language/"..File) then
+	for File in lfs.dir("sys/language") do
+		if lfs.attributes("sys/language/"..File, "mode") == "file" then
 			local Language = string.match(File, "(.+)%p[%a+]")
 			if #Language > 0 then
 				table.insert(List, Language)
@@ -29,7 +29,7 @@ end
 function Lang.Load()
 	local Language = Config.CFG["cl_lang"] or ""
 	if #Language > 0 then
-		local File = love.filesystem.newFile("sys/language/"..Language..".txt", "r")
+		local File = io.open("sys/language/"..Language..".txt", "r")
 		if File then
 			for Line in File:lines() do
 				local Key, Value = Line:match("^%s*(.-)%s*=%s*(.-)%s*$")
