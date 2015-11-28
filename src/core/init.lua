@@ -10,6 +10,7 @@ require(Path..".state")
 function Core.Load()
 	Core.Network.Load()
 	Core.Microphone.Load()
+	Core.Transfer.Load()
 	
 	Core.Load = nil
 end

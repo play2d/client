@@ -25,3 +25,11 @@ function table.count(t)
 	end
 	return Count
 end
+
+function table.find(t, v)
+	for Key, Value in pairs(t) do
+		if Value == v then
+			return Key
+		end
+	end
+end

@@ -1,6 +1,10 @@
 gui_connecting_window = Connecting
 gui_connecting_error = Connection error
 gui_connecting_password = Please enter the correct password
+gui_connecting_files = Downloading files
+gui_connecting_file = Current file: $FILENAME, $PERCENT%
+gui_connecting_state = Receiving game state
+gui_connecting_opening = Opening connection
 gui_label_chat = Chat
 gui_label_console = Console
 gui_label_find_servers = Find Servers

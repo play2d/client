@@ -1,12 +1,27 @@
 function string.split(String, Delimiter)
-	local Parts = {}
-	local Positions = {}
-	local Delimiter = Delimiter or "%s"
-	for Part, Position in string.gmatch(String, "([^"..Delimiter.."]+)()") do
-		table.insert(Parts, Part)
-		table.insert(Positions, Position)
+	if type(String) == "string" then
+		local Parts = {}
+		local Positions = {}
+		local Delimiter = type(Delimiter) == "string" and Delimiter or "%s"
+		for Part, Position in string.gmatch(String, "([^"..Delimiter.."]+)()") do
+			table.insert(Parts, Part)
+			table.insert(Positions, Position)
+		end
+		return Parts, Positions
 	end
-	return Parts, Positions
+end
+
+function string.findany(String, Table)
+	if type(String) == "string" then
+		for k, Str in pairs(Table) do
+			if type(Str) == "string" then
+				local Find = string.find(String, Str)
+				if Find then
+					return Find, Str
+				end
+			end
+		end
+	end
 end
 
 function string:ReadByte()

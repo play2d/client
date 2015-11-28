@@ -74,9 +74,7 @@ Core.Network.Protocol[CONST.NET.PLAYERCONNECT] = function (Peer, Message)
 			
 			Core.Connect.Request = nil
 		elseif Response == CONST.NET.CONMSG.ACCEPTED then
-			-- Create a new state
-			
-			Interface.Connecting.Window:Show()
+			Interface.Connecting.Label:Hide()
 			Interface.Connecting.ErrorWindow:Hide()
 		end
 	end
@@ -85,6 +83,7 @@ end
 Core.Connect = {}
 
 function Core.Connect.ConnectTo(Address)
+	Core.Connect.Stage = nil
 	Core.Connect.Request = Core.Network.Host:connect(Address, CONST.NET.CHANNELS.MAX)
 end
 
@@ -95,6 +94,7 @@ function Core.Connect.Cancel()
 		end
 	end
 	
+	Core.Connect.Stage = nil
 	Core.Connect.Request = nil
 	Interface.Connecting.Cancel()
 end
