@@ -21,18 +21,30 @@ This way is universal and the process is the same for all operating systems.
 # <a name="compiling"></a>Compiling into a binary executable
 To compile the code into a binary executable you'll first need to pack the code into a .love as explained earlier and...
 
-[Windows]
+Windows:
 1. Open cmd as administrator
+
 2. Get the path where LÖVE2D is installed to, in most of the cases, C:\Program Files\LOVE\
-3. Run the following command to create the executable (it joins LÖVE's executable and the .love packed code) ```copy /b path\to\love.exe+packedGame.love exeBinaryGame.exe```
+
+3. Run the following command to create the executable (it joins LÖVE's executable and the .love packed code) 
+```copy /b path\to\love.exe+packedGame.love exeBinaryGame.exe```
+
 4. Copy the .dll libraries from LÖVE directory to the new executable directory
+
 5. Launch the compiled executable
 
-[Linux]
+Linux:
 1. Get the path where LÖVE2D's binary is installed to, in most of the cases, /usr/bin/love
-2. Run the following command to create the executable (it joins löve's binary and the .love packed code) ```cat /path/to/love packedGame.love > exeBinaryGame```
-3. Mark the file as an executable (give it execute permissions through chmod command): ```chmod a+x ./exeBinaryGame```
-4. Launch the compiled executable: ```./exeBinaryGame```
+
+2. Run the following command to create the executable (it joins löve's binary and the .love packed code) 
+```cat /path/to/love packedGame.love > exeBinaryGame```
+
+3. Mark the file as an executable (give it execute permissions through chmod command): 
+```chmod a+x ./exeBinaryGame```
+
+4. Launch the compiled executable: 
+```./exeBinaryGame```
+
 (Note that the compiled executable will not be universal, while it may work on your machine it may not work on others, there's some factors that it will rely on (CPU architecture, distribution, etc))
 
 ----------------------------------------------------------------------------------------------------
