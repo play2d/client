@@ -21,7 +21,8 @@ This way is universal and the process is the same for all operating systems.
 # <a name="compiling"></a>Compiling into a binary executable
 To compile the code into a binary executable you'll first need to pack the code into a .love as explained earlier and...
 
-Windows:
+* Windows
+
 1. Open cmd as administrator
 
 2. Get the path where LÖVE2D is installed to, in most of the cases, C:\Program Files\LOVE\
@@ -33,7 +34,8 @@ Windows:
 
 5. Launch the compiled executable
 
-Linux:
+* Linux
+
 1. Get the path where LÖVE2D's binary is installed to, in most of the cases, /usr/bin/love
 
 2. Run the following command to create the executable (it joins löve's binary and the .love packed code) 
