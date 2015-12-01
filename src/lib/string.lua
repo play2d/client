@@ -77,6 +77,55 @@ function string:WriteInt(n)
 	return self .. string.char(n1) .. string.char(n2) .. string.char(n3) .. string.char(n % 256)
 end
 
+function string:WriteNumber(n)
+	-- 1 bit = sign of n
+	-- 11 bit = exponent of n
+	-- 52 bit = fraction of n
+	-- n = sign * fraction * 2 ^ (exponent of n - 1023)
+end
+
+function string:WriteFloat(n)
+	local Integer = math.floor(n)
+	local Fraction = n - Integer
+	
+	self = self:WriteInt(Integer)
+	for ByteID = 1, 4 do
+		local Byte = 0
+		for BitID = 1, 8 do
+			Fraction = Fraction * 2
+			if Fraction >= 1 then
+				Fraction = Fraction - 1
+				Byte = Byte + 2 ^ (BitID - 1)
+			end
+		end
+		self = self:WriteByte(Byte)
+	end
+	
+	return self
+end
+
+function string:ReadFloat()
+	local Integer, self = self:ReadInt()
+	local Fraction = 0
+	
+	for ByteID = 1, 4 do
+		local Byte
+		
+		Byte, self = self:ReadByte()
+		for BitID = 8, 1, -1 do
+			Fraction = Fraction / 2
+			
+			local Bit = 2 ^ (BitID - 1)
+			if Byte >= Bit then
+				Byte = Byte - Bit
+				Fraction = Fraction + Bit
+			end
+		end
+	end
+	
+	return Integer + Fraction
+end
+
 function string:WriteString(String)
 	return self .. String
 end
@@ -84,3 +133,6 @@ end
 function string:WriteLine(Line)
 	return self .. Line .. "\n"
 end
+
+local s = (""):WriteFloat(math.pi)
+print(s:ReadFloat())

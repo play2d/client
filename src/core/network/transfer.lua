@@ -1,6 +1,4 @@
-Core.Transfer = {}
-Core.Transfer.Formats = {}
-Core.Transfer.ProtectedFolders = {}
+local Transfer = Core.Transfer
 
 Core.Network.Protocol[CONST.NET.SERVERTRANSFER] = function (Peer, Message)
 	if Peer == Core.Connect.Request then
@@ -13,21 +11,14 @@ Core.Network.Protocol[CONST.NET.SERVERTRANSFER] = function (Peer, Message)
 				:WriteByte(CONST.NET.STAGE.CONNECTING)
 			
 			while #Message > 0 do
-				local FilePath; FilePath, Message = Message:ReadLine()
-				local _, FileType = FilePath:match("(.+)%p([%w|%_|%d]+)")
-				local Find = FilePath:findany(Core.Transfer.ProtectedFolders)
-				local Filter
+				local FilePath, FileSize, FileMD5Hash
 				
-				if Find and Find == 1 then
-					Filter = true
-				elseif lfs.attributes(FilePath, "mode") == "file" and FileType ~= "lua" then
-					Filter = true
-				elseif not table.find(Core.Transfer.Formats, FileType) then
-					Filter = true
-				end
+				FilePath, Message = Message:ReadLine()
+				FileSize, Message = Message:ReadInt()
+				FileMD5Hash, Message = Message:ReadLine()
 				
-				if not Filter then
-					Response = Response:WriteLine(FilePath)
+				if Transfer.Filter(FilePath, nil, nil) then
+					Response = Response:WriteLine(FilePath, FileSize, FileMD5Hash)
 				end
 			end
 			
@@ -38,7 +29,7 @@ Core.Network.Protocol[CONST.NET.SERVERTRANSFER] = function (Peer, Message)
 		elseif Stage == CONST.NET.STAGE.GETFILENAME then
 			local FilePath, Message = Message:ReadLine()
 			local FileSize, Message = Message:ReadInt()
-			local Find = FilePath:findany(Core.Transfer.ProtectedFolders)
+			local FileMD5Hash, Message = Message:ReadLine()
 			
 			if Core.Transfer.File then
 				Core.Transfer.File:close()
@@ -47,9 +38,7 @@ Core.Network.Protocol[CONST.NET.SERVERTRANSFER] = function (Peer, Message)
 				Core.Transfer.FileSize = nil
 			end
 			
-			if Find and Find == 1 then
-				return nil
-			elseif not table.find(Core.Transfer.Formats, FileType) then
+			if not Transfer.Filter(FilePath, FileSize, FileMD5Hash) then
 				return nil
 			end
 			
@@ -82,25 +71,4 @@ Core.Network.Protocol[CONST.NET.SERVERTRANSFER] = function (Peer, Message)
 			Interface.Connecting.State:Show()
 		end
 	end
-end
-
-function Core.Transfer.Load()
-	local File = io.open("sys/core/transferformats.lst", "rb")
-	if File then
-		local Content = File:read("*a")
-		if #Content > 0 then
-			Core.Transfer.Formats = json.decode(Content)
-		end
-		File:close()
-	end
-	
-	local File = io.open("sys/core/transferprotfolders.lst", "rb")
-	if File then
-		local Content = File:read("*a")
-		if #Content > 0 then
-			Core.Transfer.Formats = json.decode(Content)
-		end
-		File:close()
-	end
-	Core.Transfer.Load = nil
 end

@@ -119,7 +119,7 @@ function coro:newfenv()
 	
 	function Env.coroutine.running()
 		local Coroutine = coroutine.running()
-		if Coroutine == State.Lua.Coroutine then
+		if Coroutine == self.Coroutine then
 			return nil
 		end
 		return Coroutine
@@ -127,7 +127,7 @@ function coro:newfenv()
 	
 	function Env.coroutine.yield(...)
 		local Coroutine = coroutine.running()
-		if Coroutine ~= State.Lua.Coroutine then
+		if Coroutine ~= self.Coroutine then
 			return coroutine.yield(...)
 		end
 	end

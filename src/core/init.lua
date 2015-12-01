@@ -2,6 +2,7 @@ local Path = ...
 
 Core = {}
 
+require(Path..".transfer")
 require(Path..".network")
 require(Path..".map")
 require(Path..".microphone")
