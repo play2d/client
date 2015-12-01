@@ -59,7 +59,7 @@ function string:ReadNumber()
 	
 	local Exponent = 0
 	for BitID = 1, 11 do
-		if BitArray[BitID + 1] then
+		if BitArray[BitID] then
 			Exponent = Exponent + 2 ^ (BitID - 1)
 		end
 	end
@@ -151,7 +151,7 @@ function string:WriteNumber(n)
 		local Bit = 2 ^ (BitID - 1)
 		if Exponent >= Bit then
 			Exponent = Exponent - Bit
-			BitArray[BitID + 1] = true
+			BitArray[BitID] = true
 		end
 	end
 	
