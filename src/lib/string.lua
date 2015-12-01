@@ -65,8 +65,8 @@ function string:ReadNumber()
 	end
 	
 	local Fraction = 0
-	for BitID = 1, 51 do
-		if BitArray[BitID + 12] then
+	for BitID = 1, 52 do
+		if BitArray[BitID + 11] then
 			Fraction = Fraction + (1/2) ^ (BitID - 1)
 		end
 	end
@@ -155,10 +155,10 @@ function string:WriteNumber(n)
 		end
 	end
 	
-	for BitID = 1, 51 do
+	for BitID = 1, 52 do
 		if Fraction >= 1 then
 			Fraction = Fraction - 1
-			BitArray[BitID + 12] = true
+			BitArray[BitID + 11] = true
 		end
 		Fraction = Fraction * 2
 	end
