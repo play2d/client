@@ -92,15 +92,14 @@ function string:WriteFloat(n)
 	for ByteID = 1, 4 do
 		local Byte = 0
 		for BitID = 1, 8 do
-			Fraction = Fraction * 2
 			if Fraction >= 1 then
 				Fraction = Fraction - 1
 				Byte = Byte + 2 ^ (BitID - 1)
 			end
+			Fraction = Fraction * 2
 		end
 		self = self:WriteByte(Byte)
 	end
-	
 	return self
 end
 
@@ -109,21 +108,18 @@ function string:ReadFloat()
 	local Fraction = 0
 	
 	for ByteID = 1, 4 do
-		local Byte
+		local ByteMult, Byte = 256 ^ (ByteID - 1)
 		
 		Byte, self = self:ReadByte()
 		for BitID = 8, 1, -1 do
-			Fraction = Fraction / 2
-			
 			local Bit = 2 ^ (BitID - 1)
 			if Byte >= Bit then
 				Byte = Byte - Bit
-				Fraction = Fraction + Bit
+				Fraction = Fraction + (1/Bit) * (1/ByteMult)
 			end
 		end
 	end
-	
-	return Integer + Fraction
+	return Integer + Fraction, self:sub(9)
 end
 
 function string:WriteString(String)
@@ -133,6 +129,3 @@ end
 function string:WriteLine(Line)
 	return self .. Line .. "\n"
 end
-
-local s = (""):WriteFloat(math.pi)
-print(s:ReadFloat())

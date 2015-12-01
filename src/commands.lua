@@ -46,10 +46,10 @@ function Commands.Load()
 			local Command = string.match(File, "([%a|%_]+)%p(%a+)")
 			local Path = "src/commands/"..File
 			if love.filesystem.isFile(Path) then
-				local Load, Error = loadfile(Path)
+				local Load, ErrorOrFunction = pcall(love.filesystem.load, Path)
 				if Load then
 					
-					local Success, CommandOrError = pcall(Load)
+					local Success, CommandOrError = pcall(ErrorOrFunction)
 					if Success then
 						Commands.List[string.lower(Command)] = CommandOrError
 					else
