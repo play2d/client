@@ -11,7 +11,6 @@ function Microphone.Load()
 	Microphone.Device:start()
 	
 	Microphone.Server = enet.host_create("localhost:0", 256, 0, 1)
-	--Microphone.Peer = Microphone.Server:connect("localhost:9553", 10)
 end
 
 function Microphone.Update()

@@ -31,32 +31,32 @@ Core.Network.Protocol[CONST.NET.SERVERTRANSFER] = function (Peer, Message)
 			local FileSize, Message = Message:ReadInt()
 			local FileMD5Hash, Message = Message:ReadLine()
 			
-			if Core.Transfer.File then
-				Core.Transfer.File:close()
-				Core.Transfer.File = nil
-				Core.Transfer.FilePath = nil
-				Core.Transfer.FileSize = nil
+			if Transfer.File then
+				Transfer.File:close()
+				Transfer.File = nil
+				Transfer.FilePath = nil
+				Transfer.FileSize = nil
 			end
 			
 			if not Transfer.Filter(FilePath, FileSize, FileMD5Hash) then
 				return nil
 			end
 			
-			local File = io.open(FilePath, "wb")
+			local File = Transfer.Open(FilePath)
 			if File then
-				Core.Transfer.File = File
-				Core.Transfer.FilePath = FilePath
-				Core.Transfer.FileSize = FileSize
+				Transfer.File = File
+				Transfer.FilePath = FilePath
+				Transfer.FileSize = FileSize
 			end
 		
 			Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_file", {FILENAME = FilePath, Percent = 0}))
 		elseif Stage == CONST.NET.STAGE.GETFILE then
-			if Core.Transfer.File then
+			if Transfer.File then
 				local Size, Message = Message:ReadShort()
 				local Part, Message = Message:ReadString(Size)
 				
-				Core.Transfer.File:write(Part)
-				Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_file", {FILENAME = Core.Transfer.FilePath, Percent = Core.Transfer.File:seek("cur", 0)/Core.Transfer.FileSize}))
+				Transfer.File:write(Part)
+				Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_file", {FILENAME = Transfer.FilePath, Percent = Transfer.File:seek("cur", 0)/Transfer.FileSize}))
 			end
 			
 		elseif Stage == CONST.NET.STAGE.GETSTATE then

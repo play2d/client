@@ -2,6 +2,7 @@ Core.Transfer = {}
 
 local Transfer = Core.Transfer
 Transfer.Formats = {}
+Transfer.ForcedFormats = {}
 Transfer.ProtectedFolders = {}
 
 function Transfer.Filter(Path, Size, MD5)
@@ -11,14 +12,31 @@ function Transfer.Filter(Path, Size, MD5)
 	end
 	
 	local Type = Path:match(".+%p([%w|%_|%d]+)")
-	if not table.find(Transfer.Formats,Type) then
+	if not table.find(Transfer.Formats, Type) then
 		return false
 	end
 	
 	if lfs.attributes(Path, "mode") == "file" then
+		-- File exists, do a MD5 checksum
 	end
 	
 	return true
+end
+
+function Transfer.Open(Path)
+	local Folders = Path:split("%/")
+	local FolderPath = ""
+	for Index, Folder in pairs(Folders) do
+		FolderPath = FolderPath .. Folder.."/"
+		if lfs.attributes(FolderPath:sub(1, -2), "mode") ~= "directory" then
+			if next(Folders, Index) then
+				if not lfs.mkdir(FolderPath:sub(1, -2)) then
+					return nil
+				end
+			end
+		end
+	end
+	return io.open(Path, "wb")
 end
 
 function Transfer.Load()
