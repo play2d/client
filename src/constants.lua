@@ -7,8 +7,9 @@ CONST = {
 			GETFILENAME = 2,
 			GETFILE = 3,
 			GETSTATE = 4,
+			CONFIRM = 5,
 			
-			CANCELFILE = 5,
+			CANCEL = 6,
 		},
 		
 		CONMSG = {

@@ -94,6 +94,7 @@ function Core.Connect.Cancel()
 		end
 	end
 	
+	Core.Transfer.Cancel()
 	Core.Connect.Stage = nil
 	Core.Connect.Request = nil
 	Interface.Connecting.Cancel()

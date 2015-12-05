@@ -27,82 +27,98 @@ end
 setfenv(string.findany, {find = string.find, type = type, pairs = pairs})
 
 function string:ReadByte()
-	return self:byte(1), self:sub(2)
+	if #self >= 1 then
+		return self:byte(1), self:sub(2)
+	end
 end
 
 function string:ReadShort()
-	return self:byte(1) + self:byte(2) * 256, self:sub(3)
+	if #self >= 2 then
+		return self:byte(1) + self:byte(2) * 256, self:sub(3)
+	end
 end
 
 function string:ReadInt24()
-	return self:byte(1) + self:byte(2) * 256 + self:byte(3) * 65536, self:sub(4)
+	if #self >= 3 then
+		return self:byte(1) + self:byte(2) * 256 + self:byte(3) * 65536, self:sub(4)
+	end
+	return 0
 end
 
 function string:ReadInt()
-	return self:byte(1) + self:byte(2) * 256 + self:byte(3) * 65536 + self:byte(4) * 16777216, self:sub(5)
+	if #self >= 4 then
+		return self:byte(1) + self:byte(2) * 256 + self:byte(3) * 65536 + self:byte(4) * 16777216, self:sub(5)
+	end
+	return 0
 end
 
 function string:ReadNumber()
-	local ByteArray = {}
-	for i = 0, 7 do
-		ByteArray[i], self = self:ReadByte()
-	end
-	
-	local BitArray = {}
-	for Index = 0, 7 do
-		local Bit = 128
-		for Offset = 7, 0, -1 do
-			if ByteArray[Index] >= Bit then
-				ByteArray[Index] = ByteArray[Index] - Bit
-				BitArray[Index * 8 + Offset] = true
+	if #self >= 8 then
+		local ByteArray = {}
+		for i = 0, 7 do
+			ByteArray[i], self = self:ReadByte()
+		end
+		
+		local BitArray = {}
+		for Index = 0, 7 do
+			local Bit = 128
+			for Offset = 7, 0, -1 do
+				if ByteArray[Index] >= Bit then
+					ByteArray[Index] = ByteArray[Index] - Bit
+					BitArray[Index * 8 + Offset] = true
+				end
+				Bit = Bit / 2
+			end
+		end
+		
+		local Exponent = 0
+		local Bit = 1
+		for BitID = 1, 11 do
+			if BitArray[BitID] then
+				Exponent = Exponent + Bit
+			end
+			Bit = Bit * 2
+		end
+		
+		local Fraction = 0
+		local Bit = 1
+		for BitID = 1, 52 do
+			if BitArray[BitID + 11] then
+				Fraction = Fraction + Bit
 			end
 			Bit = Bit / 2
 		end
-	end
-	
-	local Exponent = 0
-	local Bit = 1
-	for BitID = 1, 11 do
-		if BitArray[BitID] then
-			Exponent = Exponent + Bit
+		
+		if BitArray[0] then
+			Fraction = -Fraction
 		end
-		Bit = Bit * 2
+		return Fraction * 2 ^ Exponent
 	end
-	
-	local Fraction = 0
-	local Bit = 1
-	for BitID = 1, 52 do
-		if BitArray[BitID + 11] then
-			Fraction = Fraction + Bit
-		end
-		Bit = Bit / 2
-	end
-	
-	if BitArray[0] then
-		Fraction = -Fraction
-	end
-	return Fraction * 2 ^ Exponent
+	return 0
 end
 
 function string:ReadFloat()
-	local Integer, self = self:ReadInt()
-	local Fraction = 0
-	
-	local ByteMult = 1
-	for ByteID = 1, 4 do
-		local Bit, Byte = 128
+	if #self >= 8 then
+		local Integer, self = self:ReadInt()
+		local Fraction = 0
+		
+		local ByteMult = 1
+		for ByteID = 1, 4 do
+			local Bit, Byte = 128
 
-		Byte, self = self:ReadByte()
-		for BitID = 8, 1, -1 do
-			if Byte >= Bit then
-				Byte = Byte - Bit
-				Fraction = Fraction + (1/Bit) * ByteMult
+			Byte, self = self:ReadByte()
+			for BitID = 8, 1, -1 do
+				if Byte >= Bit then
+					Byte = Byte - Bit
+					Fraction = Fraction + (1/Bit) * ByteMult
+				end
+				Bit = Bit / 2
 			end
-			Bit = Bit / 2
+			ByteMult = ByteMult / 256
 		end
-		ByteMult = ByteMult / 256
+		return Integer + Fraction, self:sub(9)
 	end
-	return Integer + Fraction, self:sub(9)
+	return 0
 end
 
 function string:ReadString(Length)

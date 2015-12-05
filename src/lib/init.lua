@@ -8,6 +8,7 @@ require("enet")
 
 require(Path..".string")
 require(Path..".table")
+require(Path..".io")
 require(Path..".coro")
 require(Path..".console")
 

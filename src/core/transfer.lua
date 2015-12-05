@@ -39,6 +39,12 @@ function Transfer.Open(Path)
 	return io.open(Path, "wb")
 end
 
+function Transfer.Cancel()
+	if Transfer.File then
+		Transfer.File:close()
+	end
+end
+
 function Transfer.Load()
 	local File = io.open("sys/core/transfer.lst", "rb")
 	if File then
