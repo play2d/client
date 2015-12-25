@@ -5,6 +5,22 @@ Transfer.Formats = {}
 Transfer.ForcedFormats = {}
 Transfer.ProtectedFolders = {}
 
+function Transfer.Initialize()
+	Transfer.Cancel()
+	
+	Transfer.Scripts = {}
+	Transfer.Entities = {}
+end
+
+function Transfer.Cancel()
+	if Transfer.File then
+		Transfer.File:close()
+	end
+	
+	Transfer.Scripts = nil
+	Transfer.Entities = nil
+end
+
 function Transfer.Filter(Path, Size, MD5)
 	local Find = Path:findany(Transfer.ProtectedFolders)
 	if Find and Find == 1 then
@@ -18,6 +34,19 @@ function Transfer.Filter(Path, Size, MD5)
 	
 	if lfs.attributes(Path, "mode") == "file" then
 		-- File exists, do a MD5 checksum
+		local File = io.open(Path, "r")
+		if File then
+			local Content = ""
+			while not File:eof() do
+				Content = File:read("*a")
+			end
+			File:close()
+			
+			local Checksum = md5.sumhexa(Content)
+			if Checksum == MD5 then
+				return false
+			end
+		end
 	end
 	
 	return true
@@ -37,12 +66,6 @@ function Transfer.Open(Path)
 		end
 	end
 	return io.open(Path, "wb")
-end
-
-function Transfer.Cancel()
-	if Transfer.File then
-		Transfer.File:close()
-	end
 end
 
 function Transfer.Load()

@@ -1,6 +1,4 @@
-Core.Network = {
-	Protocol = {}
-}
+Core.Network.Protocol = {}
 
 local Path = ...
 local Network = Core.Network

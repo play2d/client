@@ -1,45 +1,27 @@
 Commands = {}
 Commands.List = {}
-Commands.FunctionList = {}
+
+function Commands.FindFunction(Name)
+	local Command = Commands.List[Name]
+	if Command then
+		return Command.Call
+	end
+	
+	local CVar = Core.State.ConVars[Name]
+	if CVar then
+		return function (Source, Value)
+			CVar.Value = tostring(Value)
+		end
+	end
+end
 
 function parse(command, source)
 	if type(command) == "string" then
-		console.run(command, Commands.FunctionList, source or {source = "game"})
+		console.run(command, Commands.FindFunction, source or {source = "game"})
 	end
 end
 
 function Commands.Load()
-	local FunctionListMetatable = {}
-	function FunctionListMetatable:__index(Command)
-		if Commands.List[Command] then
-			return Commands.List[Command].Call
-		end
-	end
-	setmetatable(Commands.FunctionList, FunctionListMetatable)
-
-	for File in lfs.dir("sys/commands") do
-		if File:sub(-4) == ".lua" then
-			
-			local Command = string.match(File, "([%a|%_]+)%p(%a+)")
-			local Path = "sys/commands/"..File
-			if lfs.attributes(Path, "mode") then
-				local Load, Error = loadfile(Path)
-				if Load then
-					setfenv(Load, Namespace.Commands)
-					
-					local Success, CommandOrError = pcall(Load)
-					if Success then
-						Commands.List[string.lower(Command)] = CommandOrError
-					else
-						print("Lua Error [Command: "..Command.."]: "..CommandOrError)
-					end
-				else
-					print("Lua Error [Command: "..Command.."]: "..Error)
-				end
-			end
-		end
-	end
-	
 	for _, File in pairs(love.filesystem.getDirectoryItems("src/commands")) do
 		if File:sub(-4) == ".lua" then
 			

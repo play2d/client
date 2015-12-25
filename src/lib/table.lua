@@ -1,15 +1,20 @@
-function table.copy(t)
+function table.copy(t, C, C2)
 	local Copy = {}
+	local C = C or {}
+	local C2 = C2 or {}
 	for k, v in pairs(t) do
-		local ValueType = type(v)
-		if ValueType == "table" then
-			Copy[k] = table.copy(v)
-		elseif ValueType == "function" then
-			local Success, Func = pcall(string.dump, v)
-			if Success then
-				Copy[k] = loadstring(Func)
+		if type(v) == "table" then
+			if v == t then
+				Copy[k] = Copy
+			elseif C[v] then
+				Copy[k] = C[v]
+			elseif C2[v] then
+				Copy[k] = Copy
 			else
-				Copy[k] = v
+				C2[v] = true
+				Copy[k] = table.copy(v, C, C2)
+				C2[v] = nil
+				C[v] = Copy[k]
 			end
 		else
 			Copy[k] = v

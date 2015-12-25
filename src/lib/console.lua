@@ -91,11 +91,16 @@ end
 
 function console.run(Command, CommandList, Source, ErrorFunction)
 	assert(type(Command) == "string", "#1: expected string")
-	assert(type(CommandList) == "table", "#2: expected table")
+	assert(type(CommandList) == "table" or type(CommandList) == "function", "#2: expected table or function")
 	local Commands = console.parse(Command)
 	if next(Commands) then
 		for _, CMD in pairs(Commands) do
-			local Function = CommandList[CMD.Command]
+			local Function
+			if type(CommandList) == "function" then
+				Function = CommandList(CMD.Command)
+			else
+				Function = CommandList[CMD.Command]
+			end
 			if Function then
 				Function(Source, unpack(CMD.Arguments))
 			elseif ErrorFunction then

@@ -1,13 +1,13 @@
-Core.Maps = {
-	Format = {}
-}
+Core.Maps.Format = {}
 
+local Map = Core.Maps
 local Path = ...
+
 require(Path..".format_base")
 require(Path..".format_map")
 
-function Core.Maps.Load(Path, FileFormat)
-	local Format = Core.Maps.Format[FileFormat]
+function Map.Load(Path, FileFormat)
+	local Format = Map.Format[FileFormat]
 	local File = io.open(Path, "rb")
 	
 	print("Loading map '"..Path.."'")

@@ -1,3 +1,4 @@
-Core.State = {}
+local Path = ...
 
-local State = Core.State
+require(Path..".state")
+require(Path..".functions")
