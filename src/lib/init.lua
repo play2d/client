@@ -14,6 +14,7 @@ ffi.FALSE = ffi.new("bool", false)
 require(Path..".string")
 require(Path..".table")
 require(Path..".io")
+require(Path..".wrapper")
 require(Path..".console")
 require(Path..".lua")
 
