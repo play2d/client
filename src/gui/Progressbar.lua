@@ -47,7 +47,10 @@ function TProgressbar:Render(dt)
 		else
 			Text = self.Progress.." %"
 		end
-		love.graphics.print(Text, x + (Width - Font:getWidth(Text))/2, y + (Height - Font:getHeight())/2)
+		love.graphics.print(Text,
+			math.floor(x + (Width - Font:getWidth(Text))/2),
+			math.floor(y + (Height - Font:getHeight())/2)
+		)
 		self:RenderGadgets(dt)
 	end
 end

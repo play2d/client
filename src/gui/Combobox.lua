@@ -92,7 +92,10 @@ function TCombobox:Render(dt)
 		love.graphics.setFont(Font)
 		if self.Text then
 			love.graphics.setColor(unpack(Theme.Text))
-			love.graphics.print(self.Text, x + 2.5, y + (Height - Font:getHeight())/2)
+			love.graphics.print(self.Text,
+				math.floor(x + 2.5),
+				math.floor(y + (Height - Font:getHeight())/2)
+			)
 		end
 		
 		if self.Open then
@@ -112,7 +115,10 @@ function TCombobox:Render(dt)
 			love.graphics.setColor(unpack(Theme.Text))
 			local HeightOffset = 0
 			for Index, Item in pairs(self.Items) do
-				love.graphics.print(Item, x + 2.5, y + Height + HeightOffset + 2.5)
+				love.graphics.print(Item,
+					math.floor(x + 2.5),
+					math.floor(y + Height + HeightOffset + 2.5)
+				)
 				if self.Selected == Index then
 					love.graphics.setColor(unpack(Theme.Selected))
 					love.graphics.rectangle("fill", x + 1, y + Height + HeightOffset, Width, FontHeight + 5)

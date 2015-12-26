@@ -99,7 +99,10 @@ function TListbox:Render(dt)
 		for Index = FirstItem, LastItem do
 			local Item = self.Items[Index]
 			if Item then
-				love.graphics.print(Item, x + 2.5, y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset)
+				love.graphics.print(Item,
+					math.floor(x + 2.5),
+					math.floor(y + (Index - 1) * (FontHeight + 5) + 2.5 + HeightOffset)
+				)
 				if self.Selected == Index then
 					love.graphics.setColor(unpack(Theme.Selected))
 					love.graphics.rectangle("fill", x + 2.5, y + (Index - 1) * (FontHeight + 5) + HeightOffset, Width - 5, FontHeight + 5)

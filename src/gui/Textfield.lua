@@ -371,10 +371,16 @@ function TTextfield:Render(dt)
 		love.graphics.setFont(Font)
 		if #self.Text > 0 or First then
 			love.graphics.setColor(unpack(Theme.Text))
-			love.graphics.print(Text, x - self.TextOffset, y + TextY)
+			love.graphics.print(Text,
+				math.floor(x - self.TextOffset),
+				math.floor(y + TextY)
+			)
 		else
 			love.graphics.setColor(unpack(Theme.HintText))
-			love.graphics.print(self.HintText, x + 2.5, y + TextY)
+			love.graphics.print(self.HintText,
+				math.floor(x + 2.5),
+				math.floor(y + TextY)
+			)
 		end
 
 		if not self.Disabled and First then
@@ -388,7 +394,10 @@ function TTextfield:Render(dt)
 
 		if self.Length == 0 then
 			if self.Tick then
-				love.graphics.print("|", x + Font:getWidth(Text:sub(1, self.Start)) - self.TextOffset - 2, y + TextY)
+				love.graphics.print("|",
+					math.floor(x + Font:getWidth(Text:sub(1, self.Start)) - self.TextOffset - 2),
+					math.floor(y + TextY)
+				)
 			end
 		else
 			love.graphics.setColor(unpack(Theme.SelectedText))

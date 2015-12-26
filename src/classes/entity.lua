@@ -26,6 +26,8 @@ local Metatable = {}
 Metatable.__index = Entity
 
 function Metatable:__gc()
+	self:Delete()
+	
 	local PhysObj = self:GetPhysicsObject()
 	if PhysObj then
 		PhysObj:destroy()
@@ -196,15 +198,7 @@ elseif SERVER then
 				:WriteShort(#JointDatagram)
 				:WriteString(JointDatagram)
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.CHAT, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 		
 		return Joint
@@ -213,6 +207,25 @@ elseif SERVER then
 end
 
 function Entity:Initialize(Memory)
+end
+
+if SERVER then
+
+	function Entity:Delete()
+		local Datagram = ("")
+			:WriteShort(CONST.NET.ENTITYDEL)
+			:WriteInt24(self:GetID())
+		
+		Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+		self:OnDelete()
+	end
+	
+elseif CLIENT then
+	
+	function Entity:Delete()
+		self:OnDelete()
+	end
+	
 end
 
 function Entity:GetID()
@@ -258,15 +271,7 @@ elseif SERVER then
 				:WriteInt(x)
 				:WriteInt(y)
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "unreliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "unsequenced")
 		end
 	end
 
@@ -301,15 +306,7 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteLine(Message:gsub("\n", ""))
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.CHAT, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 
@@ -320,15 +317,7 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteLine(Message:gsub("\n", ""))
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.CHAT, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -353,17 +342,7 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteInt(Health)
 				
-			for Adress, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
-			
-			return true
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -376,10 +355,13 @@ end
 if CLIENT then
 	
 	function Entity:SetName(Name)
-		self.Name = Name
+		if type(Name) == "string" then
+			self.Name = Name
+		end
 	end
 	
 elseif SERVER then
+	
 	function Entity:SetName(Name)
 		if type(Name) == "string" then
 			self.Name = Name
@@ -389,17 +371,10 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteLine(Name)
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
+	
 end
 
 function Entity:GetPosition()
@@ -441,16 +416,8 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteInt(x)
 				:WriteInt(y)
-			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -494,16 +461,8 @@ elseif SERVER then
 				:WriteShort(CONST.NET.ENTITYANG)
 				:WriteInt24(self:GetID())
 				:WriteShort(Angle + 360)
-			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -513,22 +472,20 @@ function Entity:Update(dt)
 	if self:IsValid() then
 		local L = self.LuaStateRef
 		
-		lua.lua_pushentity(L, Entity)
+		lua.lua_pushentity(L, self)
 		lua.lua_getmetatable(L, -1)
 		if lua.lua_istable(L, -1) then
 			lua.lua_pop(L, 1)
 			lua.lua_getfield(L, -1, "Update")
 		
 			if lua.lua_isfunction(L, -1) then
-				lua.lua_pushentity(L, Entity)
+				lua.lua_pushentity(L, self)
 				if lua.lua_pcall(L, 1, 0, 0) ~= 0 then
-					print("Lua Error ["..Class.."]: "..lua.lua_geterror(L))
+					print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
 				end
-			else
-				error("No update function found for "..Class)
 			end
 		else
-			error("UNREGISTERED CLASS "..Class)
+			error("UNREGISTERED CLASS "..self:GetClass())
 		end
 		
 	end
@@ -571,16 +528,8 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteInt(x)
 				:WriteInt(y)
-			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -618,16 +567,8 @@ elseif SERVER then
 				:WriteShort(CONST.NET.ENTITYANGVEL)
 				:WriteInt24(self:GetID())
 				:WriteShort(Velocity + 32767)
-			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -709,15 +650,7 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteShort(Inertia + 32767)
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -770,15 +703,7 @@ elseif SERVER then
 				:WriteInt24(self:GetID())
 				:WriteInt(Mass)
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -827,15 +752,7 @@ elseif SERVER then
 				:WriteShort(CONST.NET.ENTITYUNCONSTRAIN)
 				:WriteInt24(self:GetID())
 			
-			for Address, Connection in pairs(State.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-			
-			for Address, Connection in pairs(State.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 	
@@ -866,15 +783,7 @@ elseif SERVER then
 					:WriteInt(x)
 					:WriteInt(y)
 				
-				for Address, Connection in pairs(State.PlayersConnected) do
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-				
-				for Address, Connection in pairs(State.PlayersConnecting) do
-					if Connection.Sync then
-						Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-					end
-				end
+				Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 			end
 		end
 	end
@@ -905,15 +814,7 @@ elseif SERVER then
 					:WriteInt24(self:GetID())
 					:WriteShort(Force + 32767)
 				
-				for Address, Connection in pairs(State.PlayersConnected) do
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-				
-				for Address, Connection in pairs(State.PlayersConnecting) do
-					if Connection.Sync then
-						Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-					end
-				end
+				Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 			end
 		end
 	end
@@ -933,15 +834,7 @@ elseif SERVER then
 			:WriteInt24(self:GetID())
 			:WriteInt24(Item:GetID())
 		
-		for Address, Connection in pairs(State.PlayersConnected) do
-			Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-		end
-		
-		for Address, Connection in pairs(State.PlayersConnecting) do
-			if Connection.Sync then
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
-		end
+		Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 	end
 	
 end
@@ -986,15 +879,7 @@ if SERVER then
 		
 		local Flag = (Reliable and Sequenced and "reliable") or (Sequenced and "unreliable") or "unsequenced"
 		
-		for Address, Connection in pairs(State.PlayersConnected) do
-			Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, Flag)
-		end
-		
-		for Address, Connection in pairs(State.PlayersConnecting) do
-			if Connection.Sync then
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, Flag)
-			end
-		end
+		Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, Flag)
 	end
 	
 end
@@ -1009,25 +894,169 @@ if CLIENT then
 
 end
 
-function Entity:OnCollide(Entity)
+function Entity:OnCollide(Source)
+	local L = self.LuaStateRef
+	
+	lua.lua_pushentity(L, self)
+	lua.lua_getmetatable(L, -1)
+	if lua.lua_istable(L, -1) then
+		lua.lua_pop(L, 1)
+		lua.lua_getfield(L, -1, "OnCollide")
+	
+		if lua.lua_isfunction(L, -1) then
+			lua.lua_pushentity(L, self)
+			if Source then
+				lua.lua_pushentity(L, Source)
+			else
+				lua.lua_pushnil(L)
+			end
+			if lua.lua_pcall(L, 2, 0, 0) ~= 0 then
+				print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
+			end
+		end
+	else
+		error("UNREGISTERED CLASS "..self:GetClass())
+	end
 end
 
-function Entity:OnUse(Entity)
+function Entity:OnUse(Source)
+	local L = self.LuaStateRef
+	
+	lua.lua_pushentity(L, self)
+	lua.lua_getmetatable(L, -1)
+	if lua.lua_istable(L, -1) then
+		lua.lua_pop(L, 1)
+		lua.lua_getfield(L, -1, "OnUse")
+	
+		if lua.lua_isfunction(L, -1) then
+			lua.lua_pushentity(L, self)
+			if Source then
+				lua.lua_pushentity(L, Source)
+			else
+				lua.lua_pushnil(L)
+			end
+			if lua.lua_pcall(L, 2, 0, 0) ~= 0 then
+				print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
+			end
+		end
+	else
+		error("UNREGISTERED CLASS "..self:GetClass())
+	end
 end
 
 function Entity:OnHit(Source, Damage)
+	local L = self.LuaStateRef
+	
+	lua.lua_pushentity(L, self)
+	lua.lua_getmetatable(L, -1)
+	if lua.lua_istable(L, -1) then
+		lua.lua_pop(L, 1)
+		lua.lua_getfield(L, -1, "OnHit")
+	
+		if lua.lua_isfunction(L, -1) then
+			lua.lua_pushentity(L, self)
+			if Source then
+				lua.lua_pushentity(L, Source)
+			else
+				lua.lua_pushnil(L)
+			end
+			lua.lua_pushnumber(L, Damage)
+			if lua.lua_pcall(L, 3, 0, 0) ~= 0 then
+				print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
+			end
+		end
+	else
+		error("UNREGISTERED CLASS "..self:GetClass())
+	end
+end
+
+function Entity:OnDelete()
+	local L = self.LuaStateRef
+	
+	lua.lua_pushentity(L, self)
+	lua.lua_getmetatable(L, -1)
+	if lua.lua_istable(L, -1) then
+		lua.lua_pop(L, 1)
+		lua.lua_getfield(L, -1, "OnDelete")
+	
+		if lua.lua_isfunction(L, -1) then
+			lua.lua_pushentity(L, self)
+			if lua.lua_pcall(L, 1, 0, 0) ~= 0 then
+				print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
+			end
+		end
+	else
+		error("UNREGISTERED CLASS "..self:GetClass())
+	end
 end
 
 if CLIENT then
 	
 	function Entity:OnRender()
+		local L = self.LuaStateRef
+	
+		lua.lua_pushentity(L, self)
+		lua.lua_getmetatable(L, -1)
+		if lua.lua_istable(L, -1) then
+			lua.lua_pop(L, 1)
+			lua.lua_getfield(L, -1, "OnRender")
+		
+			if lua.lua_isfunction(L, -1) then
+				lua.lua_pushentity(L, self)
+				if lua.lua_pcall(L, 1, 0, 0) ~= 0 then
+					print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
+				end
+			end
+		else
+			error("UNREGISTERED CLASS "..self:GetClass())
+		end
 	end
 
 	function Entity:SetNETData(Data)
+		local L = self.LuaStateRef
+	
+		lua.lua_pushentity(L, self)
+		lua.lua_getmetatable(L, -1)
+		if lua.lua_istable(L, -1) then
+			lua.lua_pop(L, 1)
+			lua.lua_getfield(L, -1, "SetNetData")
+		
+			if lua.lua_isfunction(L, -1) then
+				lua.lua_pushentity(L, self)
+				lua.lua_pushrawtable(L, Data)
+				if lua.lua_pcall(L, 2, 0, 0) ~= 0 then
+					print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
+				end
+			end
+		else
+			error("UNREGISTERED CLASS "..self:GetClass())
+		end
 	end
 end
 
 function Entity:GetNETData()
+	local L = self.LuaStateRef
+	
+	lua.lua_pushentity(L, self)
+	lua.lua_getmetatable(L, -1)
+	if lua.lua_istable(L, -1) then
+		lua.lua_pop(L, 1)
+		lua.lua_getfield(L, -1, "GetNetData")
+	
+		if lua.lua_isfunction(L, -1) then
+			lua.lua_pushentity(L, self)
+			if lua.lua_pcall(L, 1, 1, 0) == 0 then
+				if lua.lua_istable(L, 1) then
+					return lua.lua_totable(L, 1) or {}
+				end
+			else
+				print("Lua Error ["..self:GetClass().."]: "..lua.lua_geterror(L))
+			end
+		end
+	else
+		error("UNREGISTERED CLASS "..self:GetClass())
+	end
+	
 	return {}
 end
 
@@ -1052,16 +1081,8 @@ if SERVER then
 				:WriteShort(CONST.NET.ENTITYADDRESS)
 				:WriteInt24(self:GetID())
 				:WriteLine(Address)
-				
-			for _, Connection in pairs(Players.PlayersConnected) do
-				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-			end
 			
-			for _, Connection in pairs(Players.PlayersConnecting) do
-				if Connection.Sync then
-					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
-				end
-			end
+			Core.Network.SendPlayers(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 		end
 	end
 
