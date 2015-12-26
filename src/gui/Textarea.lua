@@ -333,7 +333,10 @@ function TTextarea:Render(dt)
 				WidthOffset = 2.5 - self.Slider.Horizontal.Value * (self.Slider.Horizontal.Values.Max - Width + 5) / (self.Slider.Horizontal.Values.Max)
 				HeightOffset = HeightOffset + self.Line[Format.Line].Height
 			end
-			love.graphics.print(Format.Text, x + WidthOffset, y + HeightOffset + self.Line[Format.Line].Height - Format.Height)
+			love.graphics.print(Format.Text,
+				math.floor(x + WidthOffset),
+				math.floor(y + HeightOffset + self.Line[Format.Line].Height - Format.Height)
+			)
 				
 			if self.Length > 0 and TextPosition + #Format.Text >= self.Start then
 				love.graphics.setColor(unpack(Theme.SelectedText))
@@ -354,8 +357,8 @@ function TTextarea:Render(dt)
 			elseif self.Length == 0 and self.Start > TextPosition and self.Start <= TextPosition + #Format.Text then
 				love.graphics.setColor(unpack(Format.Color))
 				love.graphics.print("|",
-					x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - TextPosition, 0))) - 2.5,
-					y + HeightOffset + self.Line[Format.Line].Height - Format.Height
+					math.floor(x + WidthOffset + Format.Font:getWidth(Format.Text:sub(1, math.max(self.Start - TextPosition, 0))) - 2),
+					math.floor(y + HeightOffset + self.Line[Format.Line].Height - Format.Height)
 				)
 			end
 			TextPosition = TextPosition + #Format.Text

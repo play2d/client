@@ -190,14 +190,20 @@ elseif SERVER then
 			local JointDatagram = json.encode {...}
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYJOINT)
-				:WriteInt24(self.ID)
-				:WriteInt24(SecondEntity.ID)
+				:WriteInt24(self:GetID())
+				:WriteInt24(SecondEntity:GetID())
 				:WriteLine(JointType)
 				:WriteShort(#JointDatagram)
 				:WriteString(JointDatagram)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.CHAT, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 		
@@ -207,6 +213,10 @@ elseif SERVER then
 end
 
 function Entity:Initialize(Memory)
+end
+
+function Entity:GetID()
+	return tonumber(self.ID)
 end
 
 function Entity:GetName()
@@ -244,12 +254,18 @@ elseif SERVER then
 		if type(x) == "number" and type(y) == "number" then
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYMOVE)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteInt(x)
 				:WriteInt(y)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "unreliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -282,11 +298,17 @@ elseif SERVER then
 		if type(Message) == "string" then
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYSAY)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteLine(Message:gsub("\n", ""))
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.CHAT, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -295,51 +317,19 @@ elseif SERVER then
 		if type(Message) == "string" then
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYSAYTEAM)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteLine(Message:gsub("\n", ""))
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.CHAT, "reliable")
 			end
-		end
-	end
-	
-end
-
-if CLIENT then
-
-	function Entity:SetClass(Name)
-		local Class = Core.State.FindEntityClass(Name)
-		if Class then
-			self.Class = Name
-			setmetatable(self, Class)
 			
-			return true
-		end
-		return false
-	end
-	
-elseif SERVER then
-	
-	function Entity:SetClass(Name)
-		if type(Name) == "string" then
-			local Class = Core.State.FindEntityClass(Name)
-			if Class then
-				self.Class = Name
-				setmetatable(self, Class)
-				
-				local Datagram = ("")
-					:WriteShort(CONST.NET.ENTITYCLASS)
-					:WriteInt24(self.ID)
-					:WriteLine(Name)
-				
-				for Address, Connection in pairs(State.PlayersConnected) do
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
 					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
 				end
-				return true
 			end
 		end
-		return false
 	end
 	
 end
@@ -360,11 +350,17 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYHEALTH)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteInt(Health)
 				
 			for Adress, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 			
 			return true
@@ -390,11 +386,17 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYNAME)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteLine(Name)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -436,12 +438,18 @@ elseif SERVER then
 			
 			local Message = ("")
 				:WriteShort(CONST.NET.ENTITYPOS)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteInt(x)
 				:WriteInt(y)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -484,11 +492,17 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYANG)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteShort(Angle + 360)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -497,7 +511,7 @@ end
 
 function Entity:Update(dt)
 	if self:IsValid() then
-		local L = LuaState.State
+		local L = self.LuaStateRef
 		
 		lua.lua_pushentity(L, Entity)
 		lua.lua_getmetatable(L, -1)
@@ -520,17 +534,8 @@ function Entity:Update(dt)
 	end
 end
 
-if CLIENT then
-	
-	function Entity:NextUpdate(dt)
-	end
-
-elseif SERVER then
-
-	function Entity:NextUpdate(dt)
-		Core.State.EntitiesUQ[love.timer.getTime() + dt] = self
-	end
-
+function Entity:NextUpdate(dt)
+	Core.State.EntitiesUQ[love.timer.getTime() + dt] = self
 end
 
 function Entity:GetVelocity()
@@ -563,12 +568,18 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYVEL)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteInt(x)
 				:WriteInt(y)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -605,11 +616,17 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYANGVEL)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteShort(Velocity + 32767)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -689,11 +706,17 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYINERTIA)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteShort(Inertia + 32767)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -744,11 +767,17 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYMASS)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 				:WriteInt(Mass)
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -796,10 +825,16 @@ elseif SERVER then
 			
 			local Datagram = ("")
 				:WriteShort(CONST.NET.ENTITYUNCONSTRAIN)
-				:WriteInt24(self.ID)
+				:WriteInt24(self:GetID())
 			
 			for Address, Connection in pairs(State.PlayersConnected) do
 				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for Address, Connection in pairs(State.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
 			end
 		end
 	end
@@ -827,12 +862,18 @@ elseif SERVER then
 				
 				local Datagram = ("")
 					:WriteShort(CONST.NET.ENTITYFORCE)
-					:WriteInt24(self.ID)
+					:WriteInt24(self:GetID())
 					:WriteInt(x)
 					:WriteInt(y)
 				
 				for Address, Connection in pairs(State.PlayersConnected) do
 					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
+				
+				for Address, Connection in pairs(State.PlayersConnecting) do
+					if Connection.Sync then
+						Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+					end
 				end
 			end
 		end
@@ -861,11 +902,17 @@ elseif SERVER then
 				
 				local Datagram = ("")
 					:WriteShort(CONST.NET.ENTITYANGFORCE)
-					:WriteInt24(self.ID)
+					:WriteInt24(self:GetID())
 					:WriteShort(Force + 32767)
 				
 				for Address, Connection in pairs(State.PlayersConnected) do
 					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
+				
+				for Address, Connection in pairs(State.PlayersConnecting) do
+					if Connection.Sync then
+						Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+					end
 				end
 			end
 		end
@@ -883,11 +930,17 @@ elseif SERVER then
 	function Entity:Equip(Item)
 		local Datagram = ("")
 			:WriteShort(CONST.NET.ENTITYEQUIP)
-			:WriteInt24(self.ID)
-			:WriteInt24(Item.ID)
+			:WriteInt24(self:GetID())
+			:WriteInt24(Item:GetID())
 		
 		for Address, Connection in pairs(State.PlayersConnected) do
 			Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+		end
+		
+		for Address, Connection in pairs(State.PlayersConnecting) do
+			if Connection.Sync then
+				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
 		end
 	end
 	
@@ -910,7 +963,7 @@ if SERVER then
 	function Entity:Send(Message, Reliable, Sequenced)
 		local Datagram = ("")
 			:WriteShort(CONST.NET.ENTITYMESSAGE)
-			:WriteInt24(self.ID)
+			:WriteInt24(self:GetID())
 			:WriteString(Message)
 			
 		local Flag = (Reliable and Sequenced and "reliable") or (Sequenced and "unreliable") or "unsequenced"
@@ -928,12 +981,19 @@ if SERVER then
 	function Entity:SendBroadcast(Message, Reliable, Sequenced)
 		local Datagram = ("")
 			:WriteShort(CONST.NET.ENTITYBROADCAST)
-			:WriteInt24(self.ID)
+			:WriteInt24(self:GetID())
 			:WriteString(Message)
 		
 		local Flag = (Reliable and Sequenced and "reliable") or (Sequenced and "unreliable") or "unsequenced"
+		
 		for Address, Connection in pairs(State.PlayersConnected) do
 			Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, Flag)
+		end
+		
+		for Address, Connection in pairs(State.PlayersConnecting) do
+			if Connection.Sync then
+				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, Flag)
+			end
 		end
 	end
 	
@@ -982,4 +1042,27 @@ if SERVER then
 	function Entity:IsModerator()
 	end
 	
+end
+
+if SERVER then
+	
+	function Entity:SetPlayer(Address)
+		if type(Address) == "string" then
+			local Datagram = ("")
+				:WriteShort(CONST.NET.ENTITYADDRESS)
+				:WriteInt24(self:GetID())
+				:WriteLine(Address)
+				
+			for _, Connection in pairs(Players.PlayersConnected) do
+				Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+			end
+			
+			for _, Connection in pairs(Players.PlayersConnecting) do
+				if Connection.Sync then
+					Connection.Peer:send(Datagram, CONST.NET.CHANNELS.OBJECTS, "reliable")
+				end
+			end
+		end
+	end
+
 end

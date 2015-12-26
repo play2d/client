@@ -153,7 +153,7 @@ function TListview:Render(dt)
 			love.graphics.rectangle("fill", x + 1, y + FontHeight/2 + 3.5, Width - 2, FontHeight/2 + 1)
 			
 			love.graphics.setColor(unpack(Theme.Text))
-			love.graphics.print(Column.Text, x + 2.5, y + 2.5)
+			love.graphics.print(Column.Text, x + 2, y + 2)
 			x = x + Width - 1
 		end
 		self.Slider:Render(dt)

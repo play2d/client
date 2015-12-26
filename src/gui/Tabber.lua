@@ -49,13 +49,13 @@ function TTabber:Render(dt)
 				love.graphics.rectangle("line", x, y - 3, Width, Height + 3)
 
 				love.graphics.setColor(unpack(ItemTheme.HoldTop))
-				love.graphics.rectangle("fill", x, y - 3, Width, Height/2 + 1.5)
+				love.graphics.rectangle("fill", x, y - 3, Width, Height/2 + 2)
 
 				love.graphics.setColor(unpack(ItemTheme.HoldBottom))
-				love.graphics.rectangle("fill", x, y + Height/2 - 1.5, Width, Height/2 + 1.5)
+				love.graphics.rectangle("fill", x, y + Height/2 - 1, Width, Height/2 + 1)
 
 				love.graphics.setColor(unpack(ItemTheme.Text))
-				love.graphics.print(Item.Text, x + 2.5, y + 1)
+				love.graphics.print(Item.Text, x + 2, y + 1)
 			elseif self:IsHovered() and self:MouseHoverArea(Offset, 0, Width, Height) then
 				love.graphics.setColor(unpack(ItemTheme.Border))
 				love.graphics.rectangle("line", x, y, Width, Height)
@@ -67,7 +67,7 @@ function TTabber:Render(dt)
 				love.graphics.rectangle("fill", x, y + Height/2, Width, Height/2)
 
 				love.graphics.setColor(unpack(ItemTheme.Text))
-				love.graphics.print(Item.Text, x + 2.5, y + 2.5)
+				love.graphics.print(Item.Text, x + 2, y + 2)
 			else
 				love.graphics.setColor(unpack(ItemTheme.Border))
 				love.graphics.rectangle("line", x, y, Width, Height)
@@ -79,7 +79,7 @@ function TTabber:Render(dt)
 				love.graphics.rectangle("fill", x, y + Height/2, Width, Height/2)
 
 				love.graphics.setColor(unpack(ItemTheme.Text))
-				love.graphics.print(Item.Text, x + 2.5, y + 2.5)
+				love.graphics.print(Item.Text, x + 2, y + 2)
 			end
 			Offset = Offset + Width + 1
 			x = x + Width + 1

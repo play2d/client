@@ -23,6 +23,7 @@ function TDesktop:Init(ThemePath, Splash)
 	self:LoadTheme(ThemePath)
 
 	if Hook then
+		Hook.Add("wheelmoved", function (x, y) self:wheelmoved(x, y) end)
 		Hook.Add("mousepressed", function(x, y, button) self:mousepressed(x, y, button) end)
 		Hook.Add("mousereleased", function(x, y, button) self:mousereleased(x, y, button) end)
 		Hook.Add("mousemoved", function(x, y, dx, dy) self:mousemoved(x, y, dx, dy) end)
@@ -169,20 +170,24 @@ function TDesktop:MouseHoverIdle()
 	return love.timer.getTime() - self.FirstHoverMouseMovement
 end
 
-function TDesktop:mousepressed(x, y, Button)
-	if Button == "l" then
-		self:MouseClicked(x, y)
-	elseif Button == "r" then
-		self:MouseRightClicked(x, y)
-	elseif Button == "wu" then
+function TDesktop:wheelmoved(x, y)
+	if y > 0 then
 		self:WheelUp()
-	elseif Button == "wd" then
+	elseif y < 0 then
 		self:WheelDown()
 	end
 end
 
+function TDesktop:mousepressed(x, y, Button)
+	if Button == 1 then
+		self:MouseClicked(x, y)
+	elseif Button == 2 then
+		self:MouseRightClicked(x, y)
+	end
+end
+
 function TDesktop:mousereleased(x, y, Button)
-	if Button == "l" then
+	if Button == 1 then
 		self:MouseDropped(x, y)
 	end
 end
