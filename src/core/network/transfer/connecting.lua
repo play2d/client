@@ -4,7 +4,7 @@ Transfer.Stage[CONST.NET.STAGE.CONNECTING] = function (Peer, Message)
 	Transfer.Initialize()
 	
 	-- Transfer list
-	Response = ("")
+	local Datagram = ("")
 		:WriteShort(CONST.NET.SERVERTRANSFER)
 		:WriteByte(CONST.NET.STAGE.CONNECTING)
 	
@@ -16,12 +16,12 @@ Transfer.Stage[CONST.NET.STAGE.CONNECTING] = function (Peer, Message)
 		FileMD5Hash, Message = Message:ReadLine()
 		
 		if Transfer.Filter(FilePath, nil, nil) then
-			Response = Response:WriteLine(FilePath, FileSize, FileMD5Hash)
+			Datagram = Datagram:WriteLine(FilePath, FileSize, FileMD5Hash)
 		end
 	end
 	
 	Interface.Connecting.Transfer.Panel:Show()
 	Interface.Connecting.Transfer.Label:SetText(Lang.Get("gui_connecting_files"))
 	
-	Peer:send(Response, CONST.NET.CHANNELS.CONNECTING, "reliable")
+	Peer:send(Datagram, CONST.NET.CHANNELS.CONNECTING, "reliable")
 end

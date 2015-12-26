@@ -52,7 +52,10 @@ function TWindow:Render(dt)
 		love.graphics.setColor(unpack(Theme.TitleText))
 		local Font = self:GetFont()
 		love.graphics.setFont(Font)
-		love.graphics.print(self.Text, x + (Width - Font:getWidth(self.Text))/2, y + (CloseImageHeight - Font:getHeight())/2)
+		love.graphics.print(self.Text,
+			math.floor(x + (Width - Font:getWidth(self.Text))/2),
+			math.floor(y + (CloseImageHeight - Font:getHeight())/2)
+		)
 
 		if self.Closeable then
 			local CloseImageWidth = CloseImage:getWidth()

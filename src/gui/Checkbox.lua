@@ -37,7 +37,10 @@ function TCheckbox:Render(dt)
 		local Font = self:GetFont()
 		love.graphics.setColor(unpack(Theme.Text))
 		love.graphics.setFont(Font)
-		love.graphics.print(self.Text, x + Width + 5, y + (Height - Font:getHeight())/2)
+		love.graphics.print(self.Text,
+			math.floor(x + Width + 5),
+			math.floor(y + (Height - Font:getHeight())/2)
+		)
 
 		if self.Status then
 			love.graphics.setColor(255, 255, 255, 255)

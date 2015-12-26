@@ -7,15 +7,23 @@ Transfer.Stage[CONST.NET.STAGE.GETFILE] = function (Peer, Message)
 		local EndOf = Message:ReadByte() == 1
 		
 		Transfer.File:write(Part)
-		Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_file", {FILENAME = Transfer.FilePath, Percent = Transfer.File:seek("cur", 0)/Transfer.FileSize}))
+		Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_file", {FILENAME = Transfer.FilePath, PERCENT = Transfer.File:seek("cur", 0)/Transfer.FileSize}))
 		
 		if EndOf then
 			Transfer.File:close()
+			Transfer.File = nil
 			
-			local ConfirmMessage = ("")
+			local Datagram = ("")
 				:WriteShort(CONST.NET.SERVERTRANSFER)
 				:WriteByte(CONST.NET.STAGE.CONFIRM)
-			Peer:send(ConfirmMessage, CONST.NET.CHANNELS.CONNECTING, "reliable")
+				
+			Peer:send(Datagram, CONST.NET.CHANNELS.CONNECTING, "reliable")
 		end
+	else
+		local Datagram = ("")
+			:WriteShort(CONST.NET.SERVERTRANSFER)
+			:WriteByte(CONST.NET.STAGE.CONFIRM)
+		
+		Peer:send(Datagram, CONST.NET.CHANNELS.CONNECTING, "reliable")
 	end
 end

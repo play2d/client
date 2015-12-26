@@ -38,6 +38,7 @@ CONST = {
 			CHAT = 4;				-- Chat messages
 			PLAYERS = 5;			-- Game state messages
 			OBJECTS = 6;			-- Game state messages (players, weapons, vehicles, etc)
+			CVARS = 7;
 		},
 		
 		-- Message types > 50
@@ -46,6 +47,8 @@ CONST = {
 		RCON = 1003;
 		CVARS = 1004;
 		CVAR = 1005;
+		CVARNEW = 1006;
+		CVARDEL = 1007;
 		CHATMESSAGE = 1054;
 		SCREENMESSAGE = 1055;
 		USERMESSAGE = 1056;
@@ -94,6 +97,8 @@ CONST = {
 		ENTITYEQUIP = 2045;
 		ENTITYMESSAGE = 2046;
 		ENTITYBROADCAST = 2047;
+		ENTITYADDRESS = 2048;
+		ENTITYDEL = 2049;
 		
 		CHANGEMAP = 3000;
 		RESTARTMAP = 3001;

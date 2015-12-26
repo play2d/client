@@ -424,13 +424,11 @@ elseif SERVER then
 end
 
 function Entity:GetAngle()
-	if type(x) == "number" and type(y) == "number" then
-		local PhysObj = self:GetPhysicsObject()
-		if PhysObj then
-			return PhysObj:getAngle()
-		end
-		return tonumber(self.Angle)
+	local PhysObj = self:GetPhysicsObject()
+	if PhysObj then
+		return PhysObj:getAngle()
 	end
+	return tonumber(self.Angle)
 end
 
 if CLIENT then

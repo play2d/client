@@ -25,8 +25,15 @@ Transfer.Stage[CONST.NET.STAGE.GETSTATEENTS] = function (Peer, Message)
 			x = EntityX,
 			y = EntityY,
 			Angle = EntityAngle - 360,
-			Data = json.decode(Data),
+			Data = {},
 		}
+		
+		if #Data > 0 then
+			local Success, Decode = pcall(json.decode, Data)
+			if Success then
+				EntityMemory.Decode = Data
+			end
+		end
 		
 		table.insert(Transfer.Entities, EntityMemory)
 	end

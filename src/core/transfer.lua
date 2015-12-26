@@ -1,5 +1,3 @@
-Core.Transfer = {}
-
 local Transfer = Core.Transfer
 Transfer.Formats = {}
 Transfer.ForcedFormats = {}
@@ -10,6 +8,7 @@ function Transfer.Initialize()
 	
 	Transfer.Scripts = {}
 	Transfer.Entities = {}
+	Transfer.PacketQueue = {}
 end
 
 function Transfer.Cancel()
@@ -17,8 +16,10 @@ function Transfer.Cancel()
 		Transfer.File:close()
 	end
 	
+	Transfer.File = nil
 	Transfer.Scripts = nil
 	Transfer.Entities = nil
+	Transfer.PacketQueue = nil
 end
 
 function Transfer.Filter(Path, Size, MD5)

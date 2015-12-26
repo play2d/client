@@ -31,7 +31,10 @@ function TLabel:Render(dt)
 		love.graphics.setScissor(x - 1, y - 1, Width + 2, Height + 2)
 		love.graphics.setColor(unpack(Theme.Text))
 		love.graphics.setFont(Font)
-		love.graphics.print(self.Text, x, y)
+		love.graphics.print(self.Text,
+			math.floor(x),
+			math.floor(y)
+		)
 		self:RenderGadgets(dt)
 	end
 end

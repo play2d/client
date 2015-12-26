@@ -44,7 +44,10 @@ function TPanel:Render(dt)
 		
 		love.graphics.setFont(Font)
 		love.graphics.setColor(unpack(Theme.Text))
-		love.graphics.print(self.Text, x + 7.5, y)
+		love.graphics.print(self.Text,
+			math.floor(x + 7.5),
+			math.floor(y)
+		)
 		
 		self:RenderGadgets()
 	end

@@ -1,6 +1,7 @@
 local Path = ...
 
 Core = {}
+Core.Connect = {}
 Core.State = {}
 Core.LuaState = {}
 Core.Network = {}

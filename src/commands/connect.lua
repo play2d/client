@@ -4,8 +4,11 @@ end
 
 local Command = {}
 
-function Command.Call(Source, IP, Port)
+function Command.Call(Source, Address)
 	if Source.source == "game" then
+		if type(Address) == "string" then
+			Core.Connect.ConnectTo(Address)
+		end
 	end
 end
 

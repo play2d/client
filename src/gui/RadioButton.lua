@@ -70,6 +70,9 @@ function TRadioButton:Render(dt)
 		local FontHeight = Font:getHeight()
 		love.graphics.setScissor(x + Radius * 2 + 5, y + (Radius * 2 - FontHeight)/2, Font:getWidth(self.Text), FontHeight)
 		love.graphics.setColor(unpack(Theme.Text))
-		love.graphics.print(self.Text, x + Radius * 2 + 5, y + (Radius * 2 - FontHeight)/2)
+		love.graphics.print(self.Text,
+			math.floor(x + Radius * 2 + 5),
+			math.floor(y + (Radius * 2 - FontHeight)/2)
+		)
 	end
 end

@@ -35,8 +35,7 @@ end
 
 function Interface.Servers.Refresh()
 	for _, Address in pairs(Cache.List) do
-		Peer = Core.Network.Host:connect(Address, CONST.NET.CHANNELS.MAX)
-		Interface.Servers.Request[Address] = true
+		Interface.Servers.Request[Address] = Core.Network.Host:connect(Address, CONST.NET.CHANNELS.MAX)
 	end
 	
 	Interface.Servers.ServerList = {}
@@ -79,10 +78,10 @@ Hook.Add("ENetConnect",
 		if Interface.Servers.Request[Address] then
 			Interface.Servers.Request[Address] = nil
 			
-			local Request = ("")
+			local Datagram = ("")
 				:WriteShort(CONST.NET.SERVERINFO)
-			
-			Peer:send(Request, CONST.NET.CHANNELS.UNCONNECTED, "reliable")
+
+			Peer:send(Datagram, CONST.NET.CHANNELS.UNCONNECTED, "reliable")
 		end
 	end
 )
