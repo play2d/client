@@ -1,0 +1,1 @@
+DEFINE_BASECLASS("vehicle")

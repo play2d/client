@@ -1,6 +1,5 @@
 local Transfer = Core.Transfer
 Transfer.Formats = {}
-Transfer.ForcedFormats = {}
 Transfer.ProtectedFolders = {}
 
 function Transfer.Initialize()
@@ -34,22 +33,28 @@ function Transfer.Filter(Path, Size, MD5)
 	end
 	
 	if lfs.attributes(Path, "mode") == "file" then
-		-- File exists, do a MD5 checksum
-		local File = io.open(Path, "r")
-		if File then
-			local Content = ""
-			while not File:eof() do
-				Content = File:read("*a")
-			end
-			File:close()
-			
-			local Checksum = md5.sumhexa(Content)
-			if Checksum == MD5 then
-				return false
+		-- File already exists
+		
+		if lfs.attributes(Path, "size") == Size then
+			-- File has the same size, it might have the same contents
+
+			local File = io.open(Path, "rb")
+			if File then
+				local Content = ""
+				while not File:eof() do
+					Content = File:read("*a")
+				end
+				File:close()
+				
+				local Checksum = md5.sumhexa(Content)
+				if Checksum == MD5 then
+					-- File has the same contents, no need to resend
+					return false
+				end
 			end
 		end
 	end
-	
+
 	return true
 end
 
@@ -77,7 +82,6 @@ function Transfer.Load()
 			local Decode = json.decode(Content)
 			
 			Transfer.Formats = Decode["Formats"] or {}
-			Transfer.ForcedFormats = Decode["Forced Formats"] or {}
 			Transfer.ProtectedFolders = Decode["Protected Formats"] or {}
 		end
 		File:close()

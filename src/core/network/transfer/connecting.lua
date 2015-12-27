@@ -15,7 +15,7 @@ Transfer.Stage[CONST.NET.STAGE.CONNECTING] = function (Peer, Message)
 		FileSize, Message = Message:ReadInt()
 		FileMD5Hash, Message = Message:ReadLine()
 		
-		if Transfer.Filter(FilePath, nil, nil) then
+		if Transfer.Filter(FilePath, FileSize, FileMD5Hash) then
 			Datagram = Datagram:WriteLine(FilePath, FileSize, FileMD5Hash)
 		end
 	end
