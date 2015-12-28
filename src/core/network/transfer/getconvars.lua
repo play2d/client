@@ -14,5 +14,9 @@ Transfer.Stage[CONST.NET.STAGE.GETSTATECVARS] = function (Peer, Message)
 		CVar.SendToClient = true
 		
 		Core.State.ConVars[CVarName] = CVar
+		
+		local Progress = math.floor((table.count(Core.State.ConVars)/CVarCount)*100)
+		Interface.Connecting.Transfer.ProgressBar.Progress = Progress
+		Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_cvars"))
 	end
 end

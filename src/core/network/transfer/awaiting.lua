@@ -8,4 +8,5 @@ Transfer.Stage[CONST.NET.STAGE.AWAIT] = function (Peer, Message)
 	-- Load players
 	-- Set into game mode
 	-- Process packet queue
+	Interface.Connecting.Menu:Hide()
 end

@@ -36,5 +36,9 @@ Transfer.Stage[CONST.NET.STAGE.GETSTATEENTS] = function (Peer, Message)
 		end
 		
 		table.insert(Transfer.Entities, EntityMemory)
+		
+		local Progress = math.floor((#Transfer.Entities/EntityCount)*100)
+		Interface.Connecting.Transfer.ProgressBar.Progress = Progress
+		Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_entities"))
 	end
 end

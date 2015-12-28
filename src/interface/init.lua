@@ -28,6 +28,7 @@ require(Path..".servers")
 require(Path..".connecting")
 require(Path..".options")
 require(Path..".quit")
+require(Path..".gameplay")
 
 local function HighlightLabel(self)
 	self:SetColor("Text", 255, 255, 255, 255)

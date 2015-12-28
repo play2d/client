@@ -1,5 +1,9 @@
 Core.Connect.Response[CONST.NET.CONMSG.WRONGPASS] = function (Peer, Message)
+	Core.Connect.Last = tostring(Peer)
+	Core.Connect.Cancel()
+	
 	Interface.MainMenu:Show()
+
 	Interface.Connecting.Menu:Hide()
 	
 	Interface.Connecting.Window:Hide()

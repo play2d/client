@@ -13,6 +13,7 @@ function Interface.Connecting.Initialize()
 	Interface.Connecting.Transfer = {}
 	Interface.Connecting.Transfer.Panel = gui.CreatePanel(Lang.Get("gui_connecting_files"), 10, 40, 380, 140, Interface.Connecting.Window)
 	Interface.Connecting.Transfer.Label = gui.CreateLabel(Lang.Get("gui_connecting_file"), 10, 30, Interface.Connecting.Transfer.Panel)
+	Interface.Connecting.Transfer.ProgressBar = gui.CreateProgressbar(15, 70, 350, 25, Interface.Connecting.Transfer.Panel)
 	
 	Interface.Connecting.ErrorWindow = gui.CreateWindow(Lang.Get("gui_connecting_error"), Interface.MainMenu:GetWidth()/2 - 200, Interface.MainMenu:GetHeight()/2 - 100, 400, 200, Interface.MainMenu)
 	
@@ -29,7 +30,7 @@ function Interface.Connecting.Initialize()
 	Interface.Connecting.Password.Panel:Hide()
 	
 	function Interface.Connecting.Password.Connect:OnClick()
-		Interface.Connecting.ConnectTo(tostring(Core.Connect.Request))
+		Interface.Connecting.ConnectTo(tostring(Core.Connect.Last))
 	end
 end
 

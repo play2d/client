@@ -71,7 +71,7 @@ ffi.cdef [[
 	
 	typedef struct Table {
 		struct Table *metatable;
-		TValue *array;  /* array part */
+		TValue *array; /* array part */
 		GCObject *gclist;
 		int sizearray;  /* size of `array' array */
 	} Table;

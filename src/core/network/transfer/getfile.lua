@@ -5,9 +5,12 @@ Transfer.Stage[CONST.NET.STAGE.GETFILE] = function (Peer, Message)
 		local Size, Message = Message:ReadShort()
 		local Part, Message = Message:ReadString(Size)
 		local EndOf = Message:ReadByte() == 1
-		
+
 		Transfer.File:write(Part)
-		Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_file", {FILENAME = Transfer.FilePath, PERCENT = Transfer.File:seek("cur", 0)/Transfer.FileSize}))
+		
+		local Progress = math.floor((Transfer.File:seek("cur", 0)/Transfer.FileSize)*100)
+		Interface.Connecting.Transfer.ProgressBar.Progress = Progress
+		Interface.Connecting.Transfer.Label:SetText(Lang.Get2("gui_connecting_file", {FILENAME = Transfer.FilePath}))
 		
 		if EndOf then
 			Transfer.File:close()
