@@ -4,27 +4,27 @@ local LuaState = Core.LuaState
 Hook.Create("StartRound")
 
 function State.Renew()
-	-- This is pretty much a changemap
-	
-	if not State.Map then
-		error("FAILED TO LOAD MAP")
-	end
-
-	LuaState.Renew()
-	
-	State.Mode = "Play2D"
+	-- Changemap
 	State.Start = love.timer.getTime()
-	
 	State.PlayersConnected = {}
 	
 	State.ConVars = {}
 	State.Entities = {}
 	State.EntitiesUQ = {}				-- Update Queue
-	
-	LuaState.Load()
+
 	State.Map:GenerateWorld()
 	
 	Hook.Call("StartRound")
+end
+
+function State.Destroy()
+	State.Map = nil
+	State.Mode = nil
+	State.Start = nil
+	State.PlayersConnected = nil
+	State.ConVars = nil
+	State.Entities = nil
+	State.EntitiesUQ = nil
 end
 
 function State.Reset()

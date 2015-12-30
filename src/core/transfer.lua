@@ -5,8 +5,9 @@ Transfer.ProtectedFolders = {}
 function Transfer.Initialize()
 	Transfer.Cancel()
 	
-	Transfer.Scripts = {}
+	Transfer.Files = {}
 	Transfer.Entities = {}
+	Transfer.Players = {}
 	Transfer.PacketQueue = {}
 end
 
@@ -16,9 +17,36 @@ function Transfer.Cancel()
 	end
 	
 	Transfer.File = nil
-	Transfer.Scripts = nil
+	Transfer.Files = nil
 	Transfer.Entities = nil
+	Transfer.Players = nil
 	Transfer.PacketQueue = nil
+end
+
+function Transfer.GetScripts()
+	local Files = {}
+
+	for _, File in pairs(Transfer.Files) do
+		local Type = File:match(".+%p([%w|%_|%d]+)")
+		if Type == "lua" then
+			table.insert(Files, File)
+		end
+	end
+	
+	local Scripts = {
+		Autorun = {},
+		Entities = {},
+	}
+	
+	for _, File in pairs(Files) do
+		if File:find("src/entities/[%w|%_|%d]+%plua") == 1 or File:find("addons/[%w|%_|%d]+/lua/entities/[%w|%_|%d]+%plua") == 1 then
+			table.insert(Scripts.Entities, File)
+		elseif File:find("addons/[%w|%_|%d]+/lua/autorun/cl_[%w|%_|%d]+.lua") == 1 or File:find("addons/[%w|%_|%d]+/lua/autorun/sh_[%w|%_|%d]+%plua") == 1 then
+			table.insert(Scripts.Autorun, File)
+		end
+	end
+	
+	return Scripts
 end
 
 function Transfer.Filter(Path, Size, MD5)

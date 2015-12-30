@@ -1,3 +1,4 @@
+local Transfer = Core.Transfer
 local State = Core.State
 local LuaState = Core.LuaState
 
@@ -9,6 +10,9 @@ function LuaState.Renew()
 	LuaState.State = lua.luaL_newstate()
 	lua.luaL_openlibs(LuaState.State)
 	
+	lua.lua_pushboolean(LuaState.State, true)
+	lua.lua_setglobal(LuaState.State, "CLIENT")
+	
 	LuaState.BodyReference = {}
 	LuaState.Hooks = {}
 
@@ -16,21 +20,33 @@ function LuaState.Renew()
 	LuaState.RegisterMetatables()
 end
 
+function LuaState.Destroy()
+	if LuaState.State then
+		lua.lua_close(LuaState.State)
+		LuaState.State = nil
+	end
+	
+	LuaState.BodyReference = nil
+	LuaState.Hooks = nil
+end
+
 function LuaState.Load()
 	local L = LuaState.State
+	local Scripts = Transfer.GetScripts()
 
---[[
-	print("Loading core entities")
-	for k, File in pairs(love.filesystem.getDirectoryItems("src/entities")) do
-		local Name = File:match("(.+)%plua")
+	for _, Path in pairs(Scripts.Autorun) do
+		if lua.luaL_dofile(L, Path) ~= 0 then
+			print("Lua Error: "..lua.lua_geterror(L))
+		end
+	end
+	
+	for _, Path in pairs(Scripts.Entities) do
+		local Name = Path:match("([%w|%_|%d]+)%.lua")
 		if #Name > 0 then
-			local Path = "src/entities/"..File
-			local File = love.filesystem.newFile(Path, "r")
-			
 			lua.lua_newtable(L)
 			lua.lua_setglobal(L, "ENTITY")
 			
-			if lua.luaL_dostring(L, File:read(File:getSize())) == 0 then
+			if lua.luaL_dofile(L, Path) == 0 then
 				local BaseClass
 				
 				lua.lua_getglobal(L, "ENTITY")
@@ -53,69 +69,11 @@ function LuaState.Load()
 				else
 					print("Entity '"..Name.."' loaded")
 				end
-				
-				table.insert(State.Transfer, Path)
 			else
 				print("Lua Error: "..lua.lua_geterror(L))
 			end
-			File:close()
 		end
 	end
-	
-	for _, Addon in pairs(State.Addons.List) do
-		print("------------------------------------------------------")
-		for _, Path in pairs(Addon.Autorun.SV) do
-			if lua.luaL_dofile(L, Path) ~= 0 then
-				print("Lua Error: "..lua.lua_geterror(L))
-			end
-		end
-		
-		for _, Path in pairs(Addon.Autorun.SH) do
-			if lua.luaL_dofile(L, Path) then
-				print("Lua Error: "..lua.lua_geterror(L))
-			end
-		end
-		
-		for _, Path in pairs(Addon.Entities) do
-			
-			local Name = Path:match("([%w|%_|%d]+)%.lua")
-			if #Name > 0 then
-				
-				lua.lua_newtable(L)
-				lua.lua_setglobal(L, "ENTITY")
-				
-				if lua.luaL_dofile(L, Path) == 0 then
-					local BaseClass
-					
-					lua.lua_getglobal(L, "ENTITY")
-					if lua.lua_istable(L, -1) then
-						lua.lua_getfield(L, -1, "BASE_CLASS")
-						if lua.lua_isstring(L, -1) == 1 then
-							BaseClass = lua.lua_tostring(L, -1)
-							lua.lua_pop(L, 1)
-						end
-						lua.lua_pop(L, 1)
-						
-						lua.lua_newtable(L)
-						lua.lua_pushvalue(L, -2)
-						lua.lua_setfield(L, -2, "__index")
-						lua.lua_setfield(L, lua.LUA_REGISTRYINDEX, "ent_"..Name)
-					end
-					
-					if BaseClass then
-						print("Entity '"..Name.."' loaded, inherits from '"..ffi.string(BaseClass).."'")
-					else
-						print("Entity '"..Name.."' loaded")
-					end
-					
-					table.insert(State.Transfer, Path)
-				else
-					print("Lua Error: "..lua.lua_geterror(L))
-				end
-			end
-		end
-	end
-]]
 
 	lua.lua_pushvalue(L, lua.LUA_REGISTRYINDEX)
 	lua.lua_pushnil(L)
@@ -148,6 +106,4 @@ function LuaState.Load()
 		lua.lua_pop(L, 2)
 	end
 	lua.lua_pop(L, 1)
-
-	print("Game mode: "..State.Mode)
 end

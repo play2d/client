@@ -4,15 +4,20 @@ Transfer.Stage[CONST.NET.STAGE.GETSTATEPLYS] = function (Peer, Message)
 	local PlayerCount, Message = Message:ReadByte()
 	
 	if PlayerCount > 0 then
-		local PlayerID, Message = Message:ReadByte()
+		local PlayerID, Message = Message:ReadInt()
 		local PlayerCode, Message = Message:ReadLine()
 		local PlayerName, Message = Message:ReadLine()
+		local PlayerIP, Message = Message:ReadLine()
+		local PlayerMicPort, Message = Message:ReadShort()
 		local PlayerScore, Message = Message:ReadNumber()
 		local PlayerKills, Message = Message:ReadNumber()
 		local PlayerDeaths, Message = Message:ReadNumber()
 		
-		State.PlayersConnected[PlayerID] = {
+		Transfer.Players[PlayerID] = {
+			Code = PlayerCode,
 			Name = PlayerName,
+			IP = PlayerIP,
+			MicPort = PlayerMicPort,
 			Score = PlayerScore,
 			Kills = PlayerKills,
 			Deaths = PlayerDeaths,

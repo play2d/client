@@ -16,7 +16,7 @@ ffi.cdef [[
 		
 		lua_State * LuaStateRef;
 		int TableRef;
-		Proxy * PhysObj;
+		int PhysObj;
 	}
 ]]
 
@@ -28,10 +28,10 @@ Metatable.__index = Entity
 function Metatable:__gc()
 	self:Delete()
 	
-	local PhysObj = self:GetPhysicsObject()
+	local PhysObj, IntAddress = self:GetPhysicsObject()
 	if PhysObj then
 		PhysObj:destroy()
-		LuaState.BodyReference[self.PhysObj] = nil
+		LuaState.BodyReference[IntAddress] = nil
 	end
 	lua.luaL_unref(self.LuaStateRef, self.TableRef)
 end
@@ -40,15 +40,20 @@ ffi.metatype("struct Entity", Metatable)
 
 function Entity:GetPhysicsObject()
 	if self.PhysObj then
-		return LuaState.BodyReference[self.PhysObj]
+		local IntAddress = tonumber(self.PhysObj)
+		if IntAddress and IntAddress > 0 then
+			return LuaState.BodyReference[IntAddress], IntAddress
+		end
 	end
 end
 
 function Entity:SetPhysicsObject(PhysObj)
-	if type(PhysObj) == "Body" then
-		self.PhysObj = ffi.cast("Proxy *", PhysObj)
+	if PhysObj:typeOf("Body") then
+		local Address = tostring(PhysObj):match("Body: (.+)")
+		local IntAddress = tonumber(Address, 16)
 		
-		LuaState.BodyReference[self.PhysObj] = PhysObj
+		self.PhysObj = IntAddress
+		LuaState.BodyReference[IntAddress] = PhysObj
 	end
 end
 

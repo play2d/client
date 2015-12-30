@@ -17,10 +17,8 @@ function love.graphics.newImage(...)
 			local ImageData = love.image.newImageData(FileData)
 			
 			if ImageData then
-				
 				return love_graphics_newImage(ImageData)
 			end
 		end
-		
 	end
 end

@@ -18,6 +18,7 @@ Transfer.Stage[CONST.NET.STAGE.CONNECTING] = function (Peer, Message)
 		if Transfer.Filter(FilePath, FileSize, FileMD5Hash) then
 			Datagram = Datagram:WriteLine(FilePath, FileSize, FileMD5Hash)
 		end
+		table.insert(Transfer.Files, FilePath)
 	end
 	
 	Interface.Connecting.Transfer.Panel:Show()
