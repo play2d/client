@@ -113,8 +113,16 @@ function Format.Load(Path, File)
 	end
 	
 	if CLIENT then
+		Map.BackgroundImage = love.graphics.newImage("gfx/backgrounds/"..Map.Background.File)
 		Map.TilesetImage = love.graphics.newImage("gfx/tiles/"..Map.Tileset)
-		if not Map.TilesetImage then
+		
+		if Map.BackgroundImage then
+			Map.BackgroundImage = love.graphics.filterMagenta(Map.BackgroundImage)
+		end
+		
+		if Map.TilesetImage then
+			Map.TilesetImage = love.graphics.filterMagenta(Map.TilesetImage)
+		else
 			return nil, "Failed to load image: gfx/tiles/"..Map.Tileset.." "..#Map.Tileset
 		end
 		
@@ -198,8 +206,22 @@ end
 if CLIENT then
 	
 	function Format:RenderFloor(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHeight)
-		for x = MapX, Width do
-			for y = MapY, Height do
+		love.graphics.setColor(255, 255, 255, 255)
+		if self.BackgroundImage then
+			if self.Byte[1] == 1 then
+				local BackgroundWidth = self.BackgroundImage:getWidth()
+				local BackgroundHeight = self.BackgroundImage:getHeight()
+				
+				for y = 0, math.ceil(ScreenHeight/BackgroundHeight) do
+					for x = 0, math.ceil(ScreenWidth/BackgroundWidth) do
+						love.graphics.draw(self.BackgroundImage, x * BackgroundWidth, y * BackgroundHeight)
+					end
+				end
+			end
+		end
+		
+		for x = MapX - 1, math.ceil(ScreenWidth/32) do
+			for y = MapY - 1, math.ceil(ScreenHeight/32) do
 				local TileMode = self:GetTileMode(x, y)
 				if TileMode ~= 1 and TileMode ~= 2 then
 					love.graphics.draw(self.TilesetImage, self.Tiles[self:GetTileFrame(x, y)], x * 32 + 16 - ScreenX, y * 32 + 16 - ScreenY)
@@ -209,8 +231,9 @@ if CLIENT then
 	end
 
 	function Format:RenderTop(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHeight)
-		for x = MapX, Width do
-			for y = MapY, Height do
+		love.graphics.setColor(255, 255, 255, 255)
+		for x = MapX - 1, math.ceil(ScreenWidth/32) do
+			for y = MapY - 1, math.ceil(ScreenHeight/32) do
 				local TileMode = self:GetTileMode(x, y)
 				if TileMode == 1 or TileMode == 2 then
 					love.graphics.draw(self.TilesetImage, self.Tiles[self:GetTileFrame(x, y)], x * 32 + 16 - ScreenX, y * 32 + 16 - ScreenY)

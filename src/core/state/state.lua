@@ -57,3 +57,17 @@ function State.Update(dt)
 		State.Map.World:update(dt)
 	end
 end
+
+function State.RenderCamera(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHeight)
+	if State.Map then
+		State.Map:RenderFloor(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHeight)
+	end
+	
+	if State.Map then
+		State.Map:RenderTop(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHeight)
+	end
+end
+
+function State.Render(dt)
+	State.RenderCamera(0, 0, 0, 0, love.graphics.getDimensions())
+end

@@ -24,6 +24,10 @@ function Core.Load()
 	Core.Load = nil
 end
 
+function Core.Render(dt)
+	Core.State.Render(dt)
+end
+
 function Core.Update(dt)
 	Core.Network.Update(dt)
 	Core.State.Update(dt)

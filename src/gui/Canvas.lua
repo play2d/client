@@ -3,11 +3,12 @@ local TCanvasMetatable = {__index = TCanvas}
 TCanvas.Type = "Canvas"
 setmetatable(TCanvas, gui.TGadgetMetatable)
 
-function gui.CreateCanvas(x, y, Width, Height, Parent)
+function gui.CreateCanvas(x, y, Width, Height, Parent, Background)
 	local Canvas = TCanvas.New()
 	if Parent:AddGadget(Canvas) then
 		Canvas:SetPosition(x, y)
 		Canvas:SetDimensions(Width, Height)
+		Canvas:SetBackground(Background)
 		return Canvas:Init()
 	end
 end
@@ -20,6 +21,10 @@ function TCanvas:Init()
 	self.Gadgets = {}
 	self.GadgetsOrder = {}
 	return self
+end
+
+function TCanvas:SetBackground(Background)
+	self.Background = Background
 end
 
 function TCanvas:HoverGadget()
@@ -47,7 +52,13 @@ function TCanvas:Render(dt)
 	if not self.Hidden then
 		local x, y = self:GetPosition()
 		local Width, Height = self:GetDimensions()
+		local Theme = self:GetTheme()
 		love.graphics.setScissor(x, y, Width, Height)
+		love.graphics.setColor(unpack(Theme.Color))
+		if self.Background then
+			love.graphics.draw(self.Background, x, y)
+		end
+		
 		self:Draw(x, y, Width, Height, dt)
 		self:RenderGadgets(dt)
 	end

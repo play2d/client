@@ -39,9 +39,9 @@ local function NormalizeLabel(self)
 end
 
 function Interface.Initialize()
-	Interface.Desktop = gui.CreateDesktop(Config.CFG["cl_gui"], love.graphics.newImage("gfx/splash.png"))
+	Interface.Desktop = gui.CreateDesktop(Config.CFG["cl_gui"])
 	
-	Interface.MainMenu = gui.CreateCanvas(0, 0, Interface.Desktop:GetWidth(), Interface.Desktop:GetHeight(), Interface.Desktop)
+	Interface.MainMenu = gui.CreateCanvas(0, 0, Interface.Desktop:GetWidth(), Interface.Desktop:GetHeight(), Interface.Desktop, love.graphics.newImage("gfx/splash.png"))
 	
 	Interface.ConsoleButton = gui.CreateLabel(Lang.Get("gui_label_console"), 20, 200, Interface.MainMenu)
 	Interface.ConsoleButton:SetColor("Text", 150, 150, 150, 255)

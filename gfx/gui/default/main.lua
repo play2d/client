@@ -42,6 +42,10 @@ Button = {
 	Cursor = love.mouse.getSystemCursor("hand"),
 }
 
+Canvas = {
+	Color = {255, 255, 255, 255}
+}
+
 Slider = {
 	Border = {15, 15, 15, 255},
 	Background = {229, 229, 229, 255},

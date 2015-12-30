@@ -17,6 +17,7 @@ require(Path..".io")
 require(Path..".wrapper")
 require(Path..".console")
 require(Path..".lua")
+require(Path..".graphics")
 
 local LFS_DIR = lfs.dir
 function lfs.dir(...)

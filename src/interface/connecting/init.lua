@@ -1,7 +1,7 @@
 Interface.Connecting = {}
 
 function Interface.Connecting.Initialize()
-	Interface.Connecting.Menu = gui.CreateCanvas(0, 0, Interface.Desktop:GetWidth(), Interface.Desktop:GetHeight(), Interface.Desktop)
+	Interface.Connecting.Menu = gui.CreateCanvas(0, 0, Interface.Desktop:GetWidth(), Interface.Desktop:GetHeight(), Interface.Desktop, love.graphics.newImage("gfx/splash.png"))
 	Interface.Connecting.Menu:Hide()
 	
 	Interface.Connecting.Window = gui.CreateWindow(Lang.Get("gui_connecting_window"), Interface.Connecting.Menu:GetWidth()/2 - 200, Interface.Connecting.Menu:GetHeight()/2 - 100, 400, 200, Interface.Connecting.Menu)

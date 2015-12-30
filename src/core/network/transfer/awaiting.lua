@@ -45,4 +45,10 @@ Transfer.Stage[CONST.NET.STAGE.AWAIT] = function (Peer, Message)
 
 	-- Process packet queue
 	Interface.Connecting.Menu:Hide()
+	
+	local Datagram = ("")
+		:WriteShort(CONST.NET.SERVERTRANSFER)
+		:WriteByte(CONST.NET.STAGE.JOIN)
+	
+	Peer:send(Datagram, CONST.NET.CHANNELS.CONNECTING, "reliable")
 end
