@@ -9,6 +9,10 @@ Core.Transfer = {}
 Core.Maps = {}
 Core.Bans = {}
 
+-- Network hooks
+Hook.Create("ENetConnect")
+Hook.Create("ENetDisconnect")
+
 require(Path..".state")
 require(Path..".luastate")
 require(Path..".network")

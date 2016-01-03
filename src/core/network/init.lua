@@ -3,12 +3,6 @@ Core.Network.Protocol = {}
 local Path = ...
 local Network = Core.Network
 
--- Hooks
-Hook.Create("ENetConnect")
-Hook.Create("ENetDisconnect")
-
--- Master server messages
-
 -- Server/Client messages
 require(Path..".serverinfo")
 require(Path..".connect")

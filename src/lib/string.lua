@@ -30,26 +30,28 @@ function string:ReadByte()
 	if #self >= 1 then
 		return self:byte(1), self:sub(2)
 	end
+	return 0, self:sub(2)
 end
 
 function string:ReadShort()
 	if #self >= 2 then
 		return self:byte(1) + self:byte(2) * 256, self:sub(3)
 	end
+	return 0, self:sub(3)
 end
 
 function string:ReadInt24()
 	if #self >= 3 then
 		return self:byte(1) + self:byte(2) * 256 + self:byte(3) * 65536, self:sub(4)
 	end
-	return 0
+	return 0, self:sub(4)
 end
 
 function string:ReadInt()
 	if #self >= 4 then
 		return self:byte(1) + self:byte(2) * 256 + self:byte(3) * 65536 + self:byte(4) * 16777216, self:sub(5)
 	end
-	return 0
+	return 0, self:sub(5)
 end
 
 function string:ReadNumber()
@@ -92,9 +94,9 @@ function string:ReadNumber()
 		if BitArray[0] then
 			Fraction = -Fraction
 		end
-		return Fraction * 2 ^ Exponent
+		return Fraction * 2 ^ Exponent, self:sub(9)
 	end
-	return 0
+	return 0, self:sub(9)
 end
 
 function string:ReadFloat()
@@ -118,7 +120,7 @@ function string:ReadFloat()
 		end
 		return Integer + Fraction, self:sub(9)
 	end
-	return 0
+	return 0, self:sub(9)
 end
 
 function string:ReadString(Length)

@@ -75,15 +75,15 @@ function Format.Load(Path, File)
 		Entity = {}
 	}
 
-	for i = 1, 10 do
+	for i = 0, 9 do
 		Map.Byte[i] = File:ReadByte()
 	end
 	
-	for i = 1, 10 do
+	for i = 0, 9 do
 		Map.Int[i] = File:ReadInt()
 	end
 	
-	for i = 1, 10 do
+	for i = 0, 9 do
 		Map.String[i] = File:ReadLine()
 	end
 	
@@ -127,8 +127,8 @@ function Format.Load(Path, File)
 		end
 		
 		local TileIndex = 0
-		for y = 0, math.floor(Map.TilesetImage:getHeight()/32) do
-			for x = 0, math.floor(Map.TilesetImage:getWidth()/32) do
+		for y = 0, math.floor(Map.TilesetImage:getHeight()/32) - 1 do
+			for x = 0, math.floor(Map.TilesetImage:getWidth()/32) - 1 do
 				Map.Tiles[TileIndex] = love.graphics.newQuad(x * 32, y * 32, 32, 32, Map.TilesetImage:getDimensions())
 				TileIndex = TileIndex + 1
 			end
@@ -142,7 +142,7 @@ function Format.Load(Path, File)
 		end
 	end
 	
-	if Map.Byte[2] == 1 then
+	if Map.Byte[1] == 1 then
 		for x = 0, Map.Width do
 			for y = 0, Map.Height do
 				local Modifier = File:ReadByte()
@@ -156,10 +156,11 @@ function Format.Load(Path, File)
 						Map.Tile[x][y][2] = File:ReadByte()
 					elseif not HAS64BIT and HAS128BIT then
 						-- Red, green, blue, overlay frame
-						Map.Tile[x][y][3] = File:ReadByte()
-						Map.Tile[x][y][4] = File:ReadByte()
-						Map.Tile[x][y][5] = File:ReadByte()
-						Map.Tile[x][y][6] = File:ReadByte()
+						Map.Tile[x][y][2] = 0						-- Frame
+						Map.Tile[x][y][3] = File:ReadByte()		-- R
+						Map.Tile[x][y][4] = File:ReadByte()		-- G
+						Map.Tile[x][y][5] = File:ReadByte()		-- B
+						Map.Tile[x][y][6] = File:ReadByte()		-- Overlay
 					end
 				end
 			end
@@ -193,11 +194,10 @@ function Format:GetTileMode(x, y)
 end
 
 function Format:GetTileFrame(x, y)
-	local Horizontal = self.Tile[x]
-	if Horizontal then
-		local Vertical = Horizontal[y]
-		if Vertical then
-			return Vertical[1]
+	if self.Tile[x] then
+		local Frame = self.Tile[x][y]
+		if Frame then
+			return Frame[1]
 		end
 	end
 	return 0
@@ -208,23 +208,27 @@ if CLIENT then
 	function Format:RenderFloor(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHeight)
 		love.graphics.setColor(255, 255, 255, 255)
 		if self.BackgroundImage then
-			if self.Byte[1] == 1 then
+			if self.Byte[0] == 1 then
 				local BackgroundWidth = self.BackgroundImage:getWidth()
 				local BackgroundHeight = self.BackgroundImage:getHeight()
 				
 				for y = 0, math.ceil(ScreenHeight/BackgroundHeight) do
 					for x = 0, math.ceil(ScreenWidth/BackgroundWidth) do
-						love.graphics.draw(self.BackgroundImage, x * BackgroundWidth, y * BackgroundHeight)
+						love.graphics.draw(self.BackgroundImage, x * BackgroundWidth + ScreenX, y * BackgroundHeight + ScreenY)
 					end
 				end
 			end
 		end
 		
-		for x = MapX - 1, math.ceil(ScreenWidth/32) do
-			for y = MapY - 1, math.ceil(ScreenHeight/32) do
+		for x = math.floor(MapX/32) - 1, math.floor(MapX/32) + math.ceil(ScreenWidth/32) do
+			for y = math.floor(MapY/32) - 1, math.floor(MapY/32) + math.ceil(ScreenHeight/32) do
 				local TileMode = self:GetTileMode(x, y)
 				if TileMode ~= 1 and TileMode ~= 2 then
-					love.graphics.draw(self.TilesetImage, self.Tiles[self:GetTileFrame(x, y)], x * 32 + 16 - ScreenX, y * 32 + 16 - ScreenY)
+					local TileFrame = self:GetTileFrame(x, y)
+					local Quad = self.Tiles[TileFrame]
+					if Quad then
+						love.graphics.draw(self.TilesetImage, Quad, (x * 32 - MapX) + ScreenX, (y * 32 - MapY) + ScreenY)
+					end
 				end
 			end
 		end
@@ -232,11 +236,15 @@ if CLIENT then
 
 	function Format:RenderTop(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHeight)
 		love.graphics.setColor(255, 255, 255, 255)
-		for x = MapX - 1, math.ceil(ScreenWidth/32) do
-			for y = MapY - 1, math.ceil(ScreenHeight/32) do
+		for x = math.floor(MapX/32) - 1, math.floor(MapX/32) + math.ceil(ScreenWidth/32) do
+			for y = math.floor(MapY/32) - 1, math.floor(MapY/32) + math.ceil(ScreenHeight/32) do
 				local TileMode = self:GetTileMode(x, y)
 				if TileMode == 1 or TileMode == 2 then
-					love.graphics.draw(self.TilesetImage, self.Tiles[self:GetTileFrame(x, y)], x * 32 + 16 - ScreenX, y * 32 + 16 - ScreenY)
+					local TileFrame = self:GetTileFrame(x, y)
+					local Quad = self.Tiles[TileFrame]
+					if Quad then
+						love.graphics.draw(self.TilesetImage, Quad, (x * 32 - MapX) + ScreenX, (y * 32 - MapY) + ScreenY)
+					end
 				end
 			end
 		end

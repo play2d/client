@@ -69,5 +69,7 @@ function State.RenderCamera(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHei
 end
 
 function State.Render(dt)
-	State.RenderCamera(0, 0, 0, 0, love.graphics.getDimensions())
+	if State.Start then
+		State.RenderCamera(0, 0, 0, 0, love.graphics.getDimensions())
+	end
 end
