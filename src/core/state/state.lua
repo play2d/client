@@ -70,6 +70,6 @@ end
 
 function State.Render(dt)
 	if State.Start then
-		State.RenderCamera(0, 0, 0, 0, love.graphics.getDimensions())
+		State.RenderCamera(1120, 0, 0, 0, love.graphics.getDimensions())
 	end
 end
