@@ -10,6 +10,7 @@ function Interface.Load()
 	--Interface.Chat.Initialize()
 	Interface.Options.Initialize()
 	Interface.Quit.Initialize()
+	Interface.Gameplay.Initialize()
 	
 	Interface.Load = nil
 end

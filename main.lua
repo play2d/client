@@ -23,8 +23,6 @@ require("src.classes")
 
 function love.draw(dt)
 	Hook.Call("draw", dt)
-
-	Core.Render(dt)
 	
 	-- Interface is always at top of everything
 	Interface.Render(dt)

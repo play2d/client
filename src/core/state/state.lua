@@ -14,10 +14,12 @@ function State.Renew()
 
 	State.Map:GenerateWorld()
 	
+	Interface.Gameplay.Canvas:Show()
 	Hook.Call("StartRound")
 end
 
 function State.Destroy()
+	Interface.Gameplay.Canvas:Hide()
 	State.Map = nil
 	State.Mode = nil
 	State.Start = nil
@@ -68,8 +70,8 @@ function State.RenderCamera(MapX, MapY, ScreenX, ScreenY, ScreenWidth, ScreenHei
 	end
 end
 
-function State.Render(dt)
+function State.Render(dt, x, y, Width, Height)
 	if State.Start then
-		State.RenderCamera(1120, 0, 0, 0, love.graphics.getDimensions())
+		State.RenderCamera(1120, 0, x, y, Width, Height)
 	end
 end

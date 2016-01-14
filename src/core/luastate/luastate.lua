@@ -10,9 +10,16 @@ function LuaState.Renew()
 	LuaState.State = lua.luaL_newstate()
 	lua.luaL_openlibs(LuaState.State)
 	
+	lua.luaL_dostring(LuaState.State, [[
+		os.execute = nil
+		io = nil
+	]])
+	
 	lua.lua_pushboolean(LuaState.State, true)
 	lua.lua_setglobal(LuaState.State, "CLIENT")
 	
+	LuaState.InterfaceReference = {}
+	LuaState.GadgetReference = {}
 	LuaState.BodyReference = {}
 	LuaState.Hooks = {}
 
