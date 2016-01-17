@@ -7,10 +7,12 @@ function Commands.FindFunction(Name)
 		return Command.Call
 	end
 	
-	local CVar = Core.State.ConVars[Name]
-	if CVar then
-		return function (Source, Value)
-			CVar.Value = tostring(Value)
+	if Core.State.ConVars then
+		local CVar = Core.State.ConVars[Name]
+		if CVar then
+			return function (Source, Value)
+				CVar.Value = tostring(Value)
+			end
 		end
 	end
 end

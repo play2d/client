@@ -46,8 +46,16 @@ function TTextfield:SetFont(Font)
 	self.Font = Font
 end
 
+function TTextfield:Filter(Text)
+	return true
+end
+
 function TTextfield:Write(Text)
 	if not self.Hidden and not self.Disabled then
+		if not self:Filter(Text) then
+			return false
+		end
+		
 		local Length = #Text
 		if self.Length == 0 then
 			if self.Start == #self.Text then
