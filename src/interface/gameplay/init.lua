@@ -1,3 +1,0 @@
-local Path = ...
-
-require(Path..".canvas")
