@@ -1,0 +1,3 @@
+[submodule "src/gui"]
+	path = src/gui
+	url = https://github.com/matiasah/gui
