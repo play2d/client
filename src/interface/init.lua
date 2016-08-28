@@ -1,7 +1,7 @@
 local Path, PLAY2D = ...
 local Interface = {}
 
-Interface.Desktop = PLAY2D.Require(Path.."/Desktop", Interface)
+Interface.Desktop = PLAY2D.Require("interface/Desktop", Interface)
 
 function Interface.load()
 	
