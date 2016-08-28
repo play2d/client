@@ -2,7 +2,7 @@ local Path, PLAY2D, Interface = ...
 local Options = {}
 
 function Options.load()
-	Options.Label = Interface.Desktop.CreateLabel(Interface.Language.Translation["label_options"], 30, 400)
+	Options.Label = Interface.Desktop.CreateLabel(Interface.Language.Translation["label_options"], 30, 350)
 	
 	function Options.Label:OnMouseReleased()
 		if self.IsHover then
