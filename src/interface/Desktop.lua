@@ -1,6 +1,8 @@
 local Path, PLAY2D, Interface = ...
 local Desktop = {}
 
+local LabelFont = love.graphics.newFont(PLAY2D.gui.Fonts["Kanit Light"], 16)
+
 local function LabelEnterColor(self)
 	self.Layout.TextColor = {255, 255, 255, 255}
 	self.Changed = true
@@ -14,6 +16,7 @@ end
 function Desktop.CreateLabel(Text, x, y)
 	local Label = PLAY2D.gui.create("Label", Text, x, y, PLAY2D.Main)
 	Label.Layout.TextColor = {150, 150, 150, 255}
+	Label.Layout.TextFont = LabelFont
 	Label.OnMouseEnter = LabelEnterColor
 	Label.OnMouseExit = LabelExitColor
 	return Label
