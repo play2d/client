@@ -8,11 +8,23 @@ function PLAY2D.Require(Name, ...)
 	return assert(love.filesystem.load(Path.."/"..Name..".lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
 end
 
-PLAY2D.gui = PLAY2D.Require("gui")
 PLAY2D.Terminal = PLAY2D.Require("terminal")
+PLAY2D.Commands = PLAY2D.Require("commands")
+PLAY2D.Configuration = PLAY2D.Require("configuration")
+PLAY2D.Language = PLAY2D.Require("language")
+PLAY2D.gui = PLAY2D.Require("gui")
 PLAY2D.Interface = PLAY2D.Require("interface")
 
 function PLAY2D.load()
+	
+	-- If we don't load the commands, we can't load the configuration
+	PLAY2D.Commands.load()
+	PLAY2D.Configuration.load()
+	
+	-- It's necessary to load the language translations first before loading the interface
+	PLAY2D.Language.load()
+	
+	-- The interface requires the gui functions
 	PLAY2D.gui.load()
 	PLAY2D.Interface.load()
 end

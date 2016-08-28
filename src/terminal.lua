@@ -18,10 +18,14 @@ function Terminal:Execute(Command)
 			
 			local Function = self.Function[Instruction.Command]
 			
-			if Function then
+			if type(Function) == "function" then
 				
 				pcall(Function, self, unpack(Instruction.Arguments) )
+			
+			elseif type(Function) == "table" and type(Function.Execute) == "function" then
 				
+				pcall(Function.Execute, self, unpack(Instruction.Arguments) )
+			
 			else
 				
 				self.Error = 'Command "' .. Instruction.Command .. '" does not exist'
@@ -35,6 +39,8 @@ function Terminal:Execute(Command)
 		self.Error = '"self.Function" table missing, no available commands'
 	
 	end
+	
+	return self.Error ~= nil
 end
 
 function Terminal:Parse(Command)
