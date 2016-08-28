@@ -13,6 +13,7 @@ function Interface.load()
 	
 	Interface.Desktop.load()
 	Interface.Options.load()
+	Interface.Quit.load()
 	
 	Interface.load = nil
 end
