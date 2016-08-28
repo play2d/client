@@ -1,15 +1,7 @@
-local PLAY2D = ...
+local Path, PLAY2D = ...
 
 local Terminal = {}
 local TerminalMT = {__index = Terminal}
-
-function PLAY2D.CreateTerminal(Functions)
-	local self = {}
-	
-	self.Function = Functions
-	
-	return setmetatable(self, TerminalMT)
-end
 
 function Terminal:Execute(Command)
 	local Instructions, Error = self:Parse(Command)
@@ -193,3 +185,15 @@ function Terminal:Parse(Command)
 	return Instructions
 	
 end
+
+local function CreateTerminal(Functions)
+	local self = {}
+	
+	self.Function = Functions
+	
+	return setmetatable(self, TerminalMT)
+end
+
+return {
+	Create = CreateTerminal
+}

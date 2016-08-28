@@ -1,16 +1,20 @@
 local PLAY2D = {}
 local Path = ...
 
-function PLAY2D.Require(File)
-	return assert(love.filesystem.load(Path.."/"..File))(PLAY2D)
+function PLAY2D.Require(Name, ...)
+	if love.filesystem.isDirectory(Path.."/"..Name) then
+		return assert(love.filesystem.load(Path.."/"..Name.."/init.lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
+	end
+	return assert(love.filesystem.load(Path.."/"..Name..".lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
 end
 
-PLAY2D.gui = require(Path..".gui")
-
-PLAY2D.terminal = PLAY2D.Require("terminal.lua")
+PLAY2D.gui = PLAY2D.Require("gui")
+PLAY2D.Terminal = PLAY2D.Require("terminal")
+PLAY2D.Interface = PLAY2D.Require("interface")
 
 function PLAY2D.load()
 	PLAY2D.gui.load()
+	PLAY2D.Interface.load()
 end
 
 function PLAY2D.update(dt)
