@@ -1,0 +1,8 @@
+label_yes = "Si"
+label_no = "No"
+label_options = "Opciones"
+label_servers = "Buscar Servidores"
+label_quit = "Salir"
+quit_confirm = "¿Estás seguro que quieres salir del juego?"
+quit_yes = "Si, salir!"
+quit_no = "No"

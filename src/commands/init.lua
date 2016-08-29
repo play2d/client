@@ -21,6 +21,9 @@ end
 function Command:GetNumber()
 end
 
+function Command:Set(Value)
+end
+
 function Commands.Create(Name)
 	
 	local self = {}

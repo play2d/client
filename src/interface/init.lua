@@ -8,9 +8,7 @@ Interface.Quit = PLAY2D.Require("interface/Quit", Interface)
 
 function Interface.load()
 	
-	local LanguageName = PLAY2D.Commands.List["language"]:GetString()
-	
-	Interface.Language = PLAY2D.Lang[LanguageName]
+	Interface.Language = PLAY2D.Commands.List["language"]:GetLink()
 	
 	Interface.Desktop.load()
 	Interface.Servers.load()
@@ -18,6 +16,7 @@ function Interface.load()
 	Interface.Quit.load()
 	
 	Interface.load = nil
+	
 end
 
 return Interface
