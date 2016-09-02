@@ -154,7 +154,7 @@ function Element:MouseDrag(x, y, dx, dy)
 	if self.GrabWindow and not self.Disabled then
 		self:SetPosition(self:GetHorizontalPosition() + dx, self:GetVerticalPosition() + dy)
 	end
-	self.Base.MouseDrag(self, x, y, dx, dy)
+	Element.Base.MouseDrag(self, x, y, dx, dy)
 end
 
 function Element:CanGrab(x, y, Button, IsTouch)
@@ -171,12 +171,12 @@ function Element:MousePressed(x, y, Button, IsTouch)
 			self.GrabWindow = true
 		end
 	end
-	self.Base.MousePressed(self, x, y, Button, IsTouch)
+	Element.Base.MousePressed(self, x, y, Button, IsTouch)
 end
 
 function Element:MouseReleased(x, y, Button, IsTouch)
 	self.GrabWindow = nil
-	self.Base.MouseReleased(self, x, y, Button, IsTouch)
+	Element.Base.MouseReleased(self, x, y, Button, IsTouch)
 end
 
 function Element:SetCloseable(Closeable)
