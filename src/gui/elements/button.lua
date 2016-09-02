@@ -2,11 +2,30 @@ local gui = ...
 local Element = gui.register("Button", "Element")
 local Button
 
-Element.Image = love.image.newImageData(1, 20)
-for y = 0, 19 do
-	Element.Image:setPixel(0, y, 255 * 9/11 + 255 * (19 - y) * 2/11 * 1/19, 255 * 9/11 + 255 * (19 - y) * 2/11 * 1/19, 255 * 9/11 + 255 * (19 - y) * 2/11 * 1/19)
-end
-Element.Image = love.graphics.newImage(Element.Image)
+Element.Gradient = love.graphics.newMesh(
+	{
+		{
+			0, 0,
+			0, 0,
+			255, 255, 255
+		},
+		{
+			1, 0,
+			1, 0,
+			255, 255, 255
+		},
+		{
+			1, 1,
+			1, 1,
+			208.63636363636, 208.63636363636, 208.63636363636
+		},
+		{
+			0, 1,
+			0, 1,
+			208.63636363636, 208.63636363636, 208.63636363636
+		}
+	}
+, "fan", "static")
 Element.TextFont = love.graphics.newFont(gui.Fonts["Kanit Light"], 13)
 Element.TextColor = {80, 80, 80, 255}
 
@@ -42,7 +61,7 @@ end
 function Element:Init()
 	Element.Base.Init(self)
 	
-	self.Layout.Image = Element.Image
+	self.Layout.Gradient = Element.Gradient
 	self.Layout.Color = Element.Color
 	self.Layout.ColorHover = Element.ColorHover
 	self.Layout.ColorPressed = Element.ColorPressed
@@ -105,15 +124,15 @@ function Element:RenderSkin()
 		love.graphics.setColor(self.Layout.ColorPressed)
 		
 		if self.Layout.Rounded then
-			if self.Layout.Image then
+			if self.Layout.Gradient then
 				love.graphics.setStencilTest("greater", 0)
-				love.graphics.draw(self.Layout.Image, 0, 0, 0, Width, Height/20)
+				love.graphics.draw(self.Layout.Gradient, 0, 0, 0, Width, Height)
 				love.graphics.setStencilTest()
 			else
 				gui.graphics.roundedbox("fill", Radius, 1, 1, Width - 2, Height - 2)
 			end
 		else
-			love.graphics.draw(self.Layout.Image, 1, 1, 0, Width - 2, (Height - 2)/20)
+			love.graphics.draw(self.Layout.Gradient, 1, 1, 0, Width - 2, Height - 2)
 		end
 		
 		if self.Image then
@@ -126,15 +145,15 @@ function Element:RenderSkin()
 		love.graphics.setColor(self.Layout.ColorHover)
 		
 		if self.Layout.Rounded then
-			if self.Layout.Image then
+			if self.Layout.Gradient then
 				love.graphics.setStencilTest("greater", 0)
-				love.graphics.draw(self.Layout.Image, 0, 0, 0, Width, Height/20)
+				love.graphics.draw(self.Layout.Gradient, 0, 0, 0, Width, Height)
 				love.graphics.setStencilTest()
 			else
 				gui.graphics.roundedbox("fill", Radius, 1, 1, Width - 2, Height - 2)
 			end
 		else
-			love.graphics.draw(self.Layout.Image, 1, 1, 0, Width - 2, (Height - 3)/20)
+			love.graphics.draw(self.Layout.Gradient, 1, 1, 0, Width - 2, Height - 3)
 		end
 		
 		if self.Image then
@@ -147,15 +166,15 @@ function Element:RenderSkin()
 		love.graphics.setColor(self.Layout.Color)
 		
 		if self.Layout.Rounded then
-			if self.Layout.Image then
+			if self.Layout.Gradient then
 				love.graphics.setStencilTest("greater", 0)
-				love.graphics.draw(self.Layout.Image, 0, 0, 0, Width, Height/20)
+				love.graphics.draw(self.Layout.Gradient, 0, 0, 0, Width, Height)
 				love.graphics.setStencilTest()
 			else
 				gui.graphics.roundedbox("fill", Radius, 1, 1, Width - 2, Height - 2)
 			end
 		else
-			love.graphics.draw(self.Layout.Image, 1, 1, 0, Width - 2, (Height - 3)/20)
+			love.graphics.draw(self.Layout.Gradient, 1, 1, 0, Width - 2, Height - 3)
 		end
 		
 		if self.Image then
