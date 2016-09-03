@@ -1,8 +1,5 @@
 PLAY2D = require("src")
 
---PHYSFS_addToSearchPath(const char *newDir, int appendToPath)
---int PHYSFS_setWriteDir	(	const char * 	newDir	 ) 	
-
 function love.load(...)
 	PLAY2D.load(...)
 end

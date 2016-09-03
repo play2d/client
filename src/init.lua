@@ -8,6 +8,15 @@ function PLAY2D.Require(Name, ...)
 	return assert(love.filesystem.load(Path.."/"..Name..".lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
 end
 
+PLAY2D.Socket = require "socket"
+PLAY2D.FFI = require "ffi"
+PLAY2D.FFI.cdef [[
+void PHYSFS_addToSearchPath(const char *newDir, int appendToPath);
+int PHYSFS_setWriteDir ( const char *  newDir  );
+]]
+PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
+
+PLAY2D.filesystem = PLAY2D.Require("filesystem")
 PLAY2D.Terminal = PLAY2D.Require("terminal")
 PLAY2D.Commands = PLAY2D.Require("commands")
 PLAY2D.Configuration = PLAY2D.Require("configuration")
