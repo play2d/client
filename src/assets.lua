@@ -73,7 +73,7 @@ function Assets.draw(...)
 		local ProgressBarHeight = 40
 
 		LG.setColor(0, 0, 0)
-		LG.rectangle("fill", 0, 0, winHeight, winWidth)
+		LG.rectangle("fill", 0, 0, winWidth, winHeight)
 		LG.setColor(129, 129, 129)
 		LG.rectangle("line", (winWidth / 2) - (ProgressBarWidth / 2) - 5, (winHeight / 2) - (ProgressBarHeight / 2) - 5, ProgressBarWidth + 10, ProgressBarHeight + 10)
 		LG.rectangle("fill", (winWidth / 2) - (ProgressBarWidth / 2), (winHeight / 2) - (ProgressBarHeight / 2), math.floor(ProgressBarWidth * (Loaded/Total)), ProgressBarHeight)
