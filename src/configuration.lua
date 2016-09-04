@@ -14,17 +14,21 @@ function Configuration.load()
 	PLAY2D.Filesystem.GotoGameDir()
 	
 	if DefaultFile then
+		
 		Configuration.ParseConfig(DefaultFile)
 
 	else
+		
 		error("Default \"sys/config.cfg\" is missing, cannot start the game without the default configuration file")
 
 	end
 
 	if UserFile then
+		
 		Configuration.ParseConfig(UserFile)
-
+		
 	else
+		
 		Configuration.save()
 		
 	end
@@ -37,6 +41,7 @@ function Configuration.ParseConfig(File)
 	local Count = 0
 	
 	for Line in File:lines() do
+		
 		if Line:sub(1, 2) ~= "//" then
 
 			if PLAY2D.Console:Execute(Line) then
