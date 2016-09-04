@@ -5,7 +5,7 @@ Command.Category = "Local"
 local Dir = love.filesystem.getSaveDirectory():sub(1,-8)
 
 function Command:Execute(Terminal, String)
-	local newDir = String and (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
+	local newDir = String
 	
 	if newDir then
 		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.SaveGameDir, String)
@@ -26,7 +26,11 @@ end
 
 function Command:Set(String)
 	if String then
-		local newDir = String.."/play2d"
+		local newDir = (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
+		if newDir:sub(-6) ~= "play2d" then
+			newDir = newDir.."/play2d"
+		end
+
 		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.ChangeWorkingDir, PLAY2D.Commands.List["gameDir"]:GetString(), newDir)
 
 		if Ok then
