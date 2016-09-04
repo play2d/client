@@ -9,7 +9,7 @@ Element.TitleHeight = 25
 Element.TitleColor = {255, 255, 255, 255}
 Element.TitleBackgroundColor = {255, 255, 255, 255}
 Element.TitleDividerColor = {100, 100, 100, 255}
---Element.CloseImage = love.graphics.newImage(Path.."/Delete-16.png")
+Element.CloseImage = love.graphics.newImage(gui.Path.."/Images/Delete-16.png")
 
 Element.BackgroundColor = {245, 245, 245, 255}
 Element.BorderColor1 = {100, 100, 100}

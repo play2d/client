@@ -1,6 +1,7 @@
 local Path = (...):gsub("%p", "/")
 local gui = {}
 
+gui.Path = Path
 gui.Skin = Path.."/skins/cyan/"
 gui.Elements = {}
 gui.Fonts = {}
