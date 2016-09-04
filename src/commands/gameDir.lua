@@ -8,7 +8,7 @@ function Command:Execute(Terminal, String)
 	local newDir = String and (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
 	
 	if newDir then
-		local Ok, ErrorOrValue = pcall(Configuration.SavePointer, String)
+		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.SaveGameDir, String)
 
 		if Ok then
 			-- Prompt user to restart game
@@ -27,7 +27,7 @@ end
 function Command:Set(String)
 	if String then
 		local newDir = String.."/play2d"
-		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.changeWorkingDir, newDir)
+		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.ChangeWorkingDir, PLAY2D.Commands.List["gameDir"]:GetString(), newDir)
 
 		if Ok then
 			Dir = newDir

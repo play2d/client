@@ -11,6 +11,7 @@ end
 PLAY2D.Socket = require "socket"
 PLAY2D.FFI = require "ffi"
 PLAY2D.FFI.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]];
+PLAY2D.FFI.cdef[[ int PHYSFS_removeFromSearchPath(const char *newDir); ]];
 PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath); ]]; 
 
 PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C

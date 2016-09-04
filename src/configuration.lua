@@ -5,40 +5,55 @@ function Configuration.load()
 	
 	PLAY2D.Console = PLAY2D.Terminal.Create(PLAY2D.Commands.List)
 
-	Configuration.LoadPointer()
-	local File = io.open("sys/config.cfg", "r")
+	PLAY2D.Filesystem.GotoGameDir()
+	local UserFile = love.filesystem.newFile("sys/config.cfg", "r")
 
-	if File then
-		local Count = 0
-		
-		for Line in File:lines() do
-			if Line:sub(1, 2) ~= "//" then
-				
-				if PLAY2D.Console:Execute(Line) then
-					
-					print("Command error (line "..Count.."): "..PLAY2D.Console.Error)
-					
-				end
-				
-			end
-			
-			Count = Count + 1
-		end
-		
-		File:close()
-	
+	PLAY2D.Filesystem.GotoRootDir()
+	local DefaultFile = love.filesystem.newFile("sys/config.cfg", "r")
+
+	PLAY2D.Filesystem.GotoGameDir()
+
+	if DefaultFile then
+		Configuration.ParseConfig(DefaultFile)
+
 	else
-		
-		error('"sys/config.cfg" is missing, cannot start the game without the configuration file')
-		
+		error("Default \"sys/config.cfg\" is missing, cannot start the game without the default configuration file")
+
+	end
+
+	if UserFile then
+		Configuration.ParseConfig(UserFile)
+	else
+
 	end
 	
 	Configuration.load = nil
 end
 
-function Configuration.save()
+function Configuration.ParseConfig(File)
+
+	local Count = 0
 	
-	local File = io.open("sys/config.cfg", "w")
+	for Line in File:lines() do
+		if Line:sub(1, 2) ~= "//" then
+			
+			if PLAY2D.Console:Execute(Line) then
+				
+				print("Command error (line "..Count.."): "..PLAY2D.Console.Error)
+				
+			end
+			
+		end
+		
+		Count = Count + 1
+	end
+	
+	File:close()
+end
+
+function Configuration.save()
+
+	local File = love.filesystem.newFile("sys/config.cfg", "w")
 	
 	if File then
 		
@@ -91,30 +106,6 @@ function Configuration.save()
 		
 	end
 	
-end
-
-function Configuration.LoadPointer()
-	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "r")
-
-	if File then
-		PLAY2D.Commands.List["gameDir"]:Set(File:read("*all"))
-		File:close()
-	else
-		Configuration.SavePointer()
-		PLAY2D.Commands.List["gameDir"]:Set(PLAY2D.Commands.List["gameDir"].GetString())
-	end
-end
-
-function Configuration.SavePointer(Dir)
-	local Dir = Dir or PLAY2D.Commands.List["gameDir"]:GetString()
-	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "w")
-
-	if File then
-		File:write(Dir)
-		File:close()
-	else
-		-- Err
-	end
 end
 
 return Configuration
