@@ -19,7 +19,7 @@ function Filesystem.GotoGameDir()
 
 		local Dir = File:read("*all")
 
-		if Dir =~ PLAY2D.Commands.List["gameDir"]:GetString() then
+		if Dir ~= PLAY2D.Commands.List["gameDir"]:GetString() then
 			PLAY2D.Commands.List["gameDir"]:Set(Dir)
 		end
 		
@@ -52,7 +52,7 @@ end
 function Filesystem.GotoRootDir()
 	local Dir = love.filesystem.getRealDirectory("main.lua")
 
-	if Dir =~ PLAY2D.Commands.List["gameDir"]:GetString() then
+	if Dir ~= PLAY2D.Commands.List["gameDir"]:GetString() then
 	
 		PLAY2D.Commands.List["gameDir"]:Set(Dir)
 		PLAY2D.Filesystem.ChangeWorkingDir(PLAY2D.Commands.List["gameDir"]:GetString(), Dir)
