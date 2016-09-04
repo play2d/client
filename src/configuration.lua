@@ -5,12 +5,14 @@ function Configuration.load()
 	
 	PLAY2D.Console = PLAY2D.Terminal.Create(PLAY2D.Commands.List)
 
-	PLAY2D.Filesystem.ExitGameDir()
+	PLAY2D.Filesystem.GotoGameDir()
 	local DefaultFile = love.filesystem.newFile("sys/config.cfg", "r")
 
-	PLAY2D.Filesystem.GotoGameDir()
+	PLAY2D.Filesystem.ExitGameDir()
 	local UserFile = love.filesystem.newFile("sys/config.cfg", "r")
 
+	PLAY2D.Filesystem.GotoGameDir()
+	
 	if DefaultFile then
 		Configuration.ParseConfig(DefaultFile)
 
@@ -36,7 +38,7 @@ function Configuration.ParseConfig(File)
 	
 	for Line in File:lines() do
 		if Line:sub(1, 2) ~= "//" then
-			
+
 			if PLAY2D.Console:Execute(Line) then
 				
 				print("Command error (line "..Count.."): "..PLAY2D.Console.Error)

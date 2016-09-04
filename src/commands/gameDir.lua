@@ -8,7 +8,7 @@ function Command:Execute(Terminal, String)
 	local newDir = String
 	
 	if newDir then
-		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.SaveGameDir, String)
+		local Ok, ErrorOrValue = pcall(self:Save())
 
 		if Ok then
 			-- Prompt user to restart game
@@ -24,21 +24,41 @@ function Command:GetString()
 	return Dir
 end
 
-function Command:Set(String, Force)
+function Command:Set(String, Formatted)
 	if String then
-		local newDir = (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
-		if newDir:sub(-6) ~= "play2d" and not Force then
-			newDir = newDir.."/play2d"
-		end
 
-		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.ChangeWorkingDir, PLAY2D.Commands.List["gameDir"]:GetString(), newDir)
+		local newDir = (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
+		newDir = (newDir:sub(-6) ~= "play2d" and not Formatted and newDir.."/play2d") or newDir
+
+		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.GotoDir, newDir)
 
 		if Ok then
+			PLAY2D.Filesystem.ExitDir(self:GetString())
 			Dir = newDir
 			return true
+
 		else
 			-- Err
 			return false
+
 		end
+
+	end
+
+end
+
+function Command:Save(Dir)
+	local Dir = Dir or Self:GetString()
+	local File = love.filesystem.newFile("sys/"..socket.dns.gethostname()..".cfg", "w")
+
+	if File then
+		
+		File:write(Dir)
+		File:close()
+		
+	else
+		
+		-- Err
+		
 	end
 end

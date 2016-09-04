@@ -1,77 +1,59 @@
 local Path, PLAY2D = ...
 local Filesystem = {}
 
-Filesystem.InGameDir = false
+Filesystem.Paths = {}
 
-function Filesystem.ChangeWorkingDir(OldDir, Dir)
-	if Dir and Filesystem.InGameDir then
-		PLAY2D.C.PHYSFS_removeFromSearchPath(OldDir)
-		OldDir = Dir
-	end
+function Filesystem.load()
+	local LFS = love.filesystem
 
-	local Dir = OldDir
+	Filesystem.Paths.RootDir = (LFS.isFused() and LFS.getSourceBaseDirectory()) or LFS.getRealDirectory("main.lua")
+
+	Filesystem.ExitDir(Filesystem.Paths.RootDir)
+	Filesystem.ExitDir(LFS.getSaveDirectory())
+
+	-- Don't remove this line, makes the root directory have priority over others
+	Filesystem.GotoDir(Filesystem.Paths.RootDir)
+end
+
+function Filesystem.GotoDir(Dir)
 	PLAY2D.C.PHYSFS_setWriteDir(Dir)
 	PLAY2D.C.PHYSFS_mount(Dir, nil, 0)
 end
 
-function Filesystem.GotoGameDir()
-	Filesystem.InGameDir = true
+function Filesystem.ExitDir(Dir)
+	PLAY2D.C.PHYSFS_removeFromSearchPath(Dir)
+end
 
-	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "r")
+function Filesystem.GetGameDir()
+	local LFS = love.filesystem
+	local FilePath = "sys/"..socket.dns.gethostname()..".cfg"
+	local File = LFS.newFile(FilePath, "r")
 
 	if File then
+		local Path = File:read()
+		File:close()
 
-		local Dir = File:read("*all")
+		return Path
 
-		if Dir ~= PLAY2D.Commands.List["gameDir"]:GetString() then
-			PLAY2D.Commands.List["gameDir"]:Set(Dir)
+	else
+		local File = LFS.newFile(FilePath, "w")
+
+		if File then
+			File:write(LFS.getSaveDirectory())
+			File:close()
 		end
 		
-		File:close()
-		
-	else
-		
-		PLAY2D.Filesystem.SaveGameDir()
-		PLAY2D.Commands.List["gameDir"]:Set(PLAY2D.Commands.List["gameDir"]:GetString())
-		
+		return
+
 	end
+end
+
+function Filesystem.GotoGameDir()
+	Filesystem.GotoDir(PLAY2D.Commands.List["gameDir"]:GetString())
 end
 
 function Filesystem.ExitGameDir()
-	Filesystem.InGameDir = false
-	PLAY2D.C.PHYSFS_removeFromSearchPath(PLAY2D.Commands.List["gameDir"]:GetString())
-end
-
-function Filesystem.SaveGameDir(Dir)
-	Filesystem.GotoRootDir()
-
-	local Dir = Dir or PLAY2D.Commands.List["gameDir"]:GetString()
-	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "w")
-
-	if File then
-		
-		File:write(Dir)
-		File:close()
-		
-	else
-		
-		-- Err
-		
-	end
-
-	Filesystem.GotoGameDir()
-end
-
-function Filesystem.GotoRootDir()
-	Filesystem.InGameDir = false
-	local Dir = love.filesystem.getRealDirectory("main.lua")
-
-	if Dir ~= PLAY2D.Commands.List["gameDir"]:GetString() then
-
-		PLAY2D.Commands.List["gameDir"]:Set(Dir, true)
-
-	end
-	
+	Filesystem.ExitDir(PLAY2D.Commands.List["gameDir"]:GetString())
 end
 
 return Filesystem
