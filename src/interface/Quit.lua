@@ -5,9 +5,13 @@ function Quit.load()
 	Quit.Label = Interface.Desktop.CreateLabel(Interface.Language:Get("label_quit"), 30, 420)
 	
 	function Quit.Label:OnMouseReleased()
+		
 		if Quit.Label.IsHover then
+			
 			Quit.Window.Hidden = nil
+			
 		end
+		
 	end
 	
 	Quit.Window = PLAY2D.gui.create("Window", Interface.Language:Get("label_quit"), PLAY2D.Main:GetWidth()/2 - 150, PLAY2D.Main:GetHeight()/2 - 50, 300, 100, PLAY2D.Main)
@@ -18,15 +22,23 @@ function Quit.load()
 	Quit.Window.Hidden = true
 	
 	function Quit.Yes:OnMouseReleased()
+		
 		if self.IsHover then
+			
 			love.event.quit()
+			
 		end
+		
 	end
 	
 	function Quit.No:OnMouseReleased()
+		
 		if self.IsHover then
+			
 			Quit.Window.Hidden = true
+			
 		end
+		
 	end
 	
 	Quit.load = nil
