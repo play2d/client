@@ -23,8 +23,10 @@ function Configuration.load()
 
 	if UserFile then
 		Configuration.ParseConfig(UserFile)
-	else
 
+	else
+		Configuration.save()
+		
 	end
 	
 	Configuration.load = nil
