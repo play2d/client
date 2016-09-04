@@ -4,11 +4,11 @@ Command.Category = "Multiplayer"
 
 local Name = "Player"
 
-function Command.Execute(Terminal, String)
+function Command:Execute(Terminal, String)
 	Name = tostring(String)
 end
 
-function Command.GenerateConfiguration()
+function Command:GenerateConfiguration()
 	return "name "..Name
 end
 

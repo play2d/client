@@ -24,7 +24,7 @@ function Terminal:Execute(Command)
 			
 			elseif type(Function) == "table" and type(Function.Execute) == "function" then
 				
-				pcall(Function.Execute, self, unpack(Instruction.Arguments) )
+				pcall(Function.Execute, Function, self, unpack(Instruction.Arguments) )
 			
 			else
 				

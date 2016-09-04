@@ -9,11 +9,9 @@ function Configuration.load()
 	local File = io.open("sys/config.cfg", "r")
 
 	if File then
-	
 		local Count = 0
 		
 		for Line in File:lines() do
-			
 			if Line:sub(1, 2) ~= "//" then
 				
 				if PLAY2D.Console:Execute(Line) then
@@ -48,7 +46,7 @@ function Configuration.save()
 		
 		for Name, Command in pairs(PLAY2D.Commands.List) do
 			
-			local Configuration = Command.GenerateConfiguration()
+			local Configuration = Command:GenerateConfiguration()
 			
 			if Configuration then
 			
@@ -99,16 +97,16 @@ function Configuration.LoadPointer()
 	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "r")
 
 	if File then
-		PLAY2D.Commands.List["gameDir"].Set(File:read("*all"))
+		PLAY2D.Commands.List["gameDir"]:Set(File:read("*all"))
 		File:close()
 	else
 		Configuration.SavePointer()
-		PLAY2D.Commands.List["gameDir"].Set(PLAY2D.Commands.List["gameDir"].GetString())
+		PLAY2D.Commands.List["gameDir"]:Set(PLAY2D.Commands.List["gameDir"].GetString())
 	end
 end
 
 function Configuration.SavePointer(Dir)
-	local Dir = Dir or PLAY2D.Commands.List["gameDir"].GetString()
+	local Dir = Dir or PLAY2D.Commands.List["gameDir"]:GetString()
 	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "w")
 
 	if File then

@@ -6,10 +6,10 @@ local CommandMT = {__index = Command}
 
 Command.Category = ""
 
-function Command.Execute(Terminal)
+function Command:Execute(Terminal)
 end
 
-function Command.GenerateConfiguration()
+function Command:GenerateConfiguration()
 end
 
 function Command:GetString()

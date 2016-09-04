@@ -2,10 +2,10 @@ local Command = ...
 
 Command.Category = "Local"
 
-local Dir = love.filesystem.getWorkingDirectory():sub(1,-8)
+local Dir = love.filesystem.getSaveDirectory():sub(1,-8)
 
-function Command.Execute(Terminal, String)
-	local newDir = String and tostring(String)
+function Command:Execute(Terminal, String)
+	local newDir = String and (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
 	
 	if newDir then
 		local Ok, ErrorOrValue = pcall(Configuration.SavePointer, String)
@@ -25,10 +25,9 @@ function Command:GetString()
 end
 
 function Command:Set(String)
-	print(String)
 	if String then
 		local newDir = String.."/play2d"
-		local Ok, ErrorOrValue = pcall(Filesystem.changeWorkingDir, newDir)
+		local Ok, ErrorOrValue = pcall(PLAY2D.Filesystem.changeWorkingDir, newDir)
 
 		if Ok then
 			Dir = newDir
