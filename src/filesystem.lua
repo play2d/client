@@ -23,8 +23,7 @@ function Filesystem.GotoGameDir()
 		
 	else
 		
-		-- This part was broken for me, try it yourself
-		--PLAY2D.Configuration.SavePointer()
+		PLAY2D.Filesystem.SaveGameDir()
 		PLAY2D.Commands.List["gameDir"]:Set(PLAY2D.Commands.List["gameDir"]:GetString())
 		
 	end
