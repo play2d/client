@@ -23,27 +23,35 @@ PLAY2D.Configuration = PLAY2D.Require("configuration")
 PLAY2D.Language = PLAY2D.Require("language")
 PLAY2D.gui = PLAY2D.Require("gui")
 PLAY2D.Interface = PLAY2D.Require("interface")
+PLAY2D.Assets = PLAY2D.Require("assets")
 
 function PLAY2D.load()
-	
+	PLAY2D.Filesystem.load()
+
 	-- If we don't load the commands, we can't load the configuration
 	PLAY2D.Commands.load()
 	PLAY2D.Configuration.load()
 	
 	-- It's necessary to load the language translations first before loading the interface
 	PLAY2D.Language.load()
-	
+
 	-- The interface requires the gui functions
 	PLAY2D.gui.load()
 	PLAY2D.Interface.load()
+
+	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/hold.png"} -- (For testing ^-^)
+	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/silenced.png"} -- (For testing ^-^)
+	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/drop.png"} -- (For testing ^-^)
 end
 
 function PLAY2D.update(dt)
 	PLAY2D.gui.update(dt)
+	PLAY2D.Assets.update(dt)
 end
 
 function PLAY2D.draw()
 	PLAY2D.gui.draw()
+	PLAY2D.Assets.draw()
 end
 
 function PLAY2D.mousepressed(...)
