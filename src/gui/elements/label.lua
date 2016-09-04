@@ -1,6 +1,9 @@
 local gui = ...
 local Element = gui.register("Label", "Element")
 
+Element.TextFont = love.graphics.newFont(gui.Fonts["Kanit Light"], 13)
+Element.TextColor = {80, 80, 80, 255}
+
 function Element:Create(Text, x, y, Width, Height, Parent)
 	Parent = Parent or gui.Desktop
 
@@ -11,6 +14,32 @@ function Element:Create(Text, x, y, Width, Height, Parent)
 	self:Init()
 	
 	return self
+end
+
+function Element:Init()
+	Element.Base.Init(self)
+	
+	self.Layout.TextFont = Element.TextFont
+	self.Layout.TextColor = Element.TextColor
+	
+	self.Text:SetFont(self.Layout.TextFont)
+	self.Text:SetColor(unpack(self.Layout.TextColor))
+end
+
+function Element:UpdateLayout()
+	self.Text:SetFont(self.Layout.TextFont)
+	self.Text:SetColor(unpack(self.Layout.TextColor))
+end
+
+function Element:RenderSkin(dt)
+	love.graphics.setCanvas(self.Canvas)
+	love.graphics.clear(0, 0, 0, 0)
+	
+	self:UpdateLayout()
+	
+	self.Text:Draw(0, 0)
+	
+	love.graphics.setCanvas()
 end
 
 function Element:SetText(Text)
