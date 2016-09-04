@@ -16,9 +16,10 @@ function Filesystem.GotoGameDir()
 	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "r")
 
 	if File then
+
 		local Dir = File:read("*all")
 
-		if PLAY2D.Commands.List["gameDir"]:GetString() =~ Dir then
+		if Dir =~ PLAY2D.Commands.List["gameDir"]:GetString() then
 			PLAY2D.Commands.List["gameDir"]:Set(Dir)
 		end
 		
@@ -49,11 +50,14 @@ function Filesystem.SaveGameDir(Dir)
 end
 
 function Filesystem.GotoRootDir()
-	
 	local Dir = love.filesystem.getRealDirectory("main.lua")
+
+	if Dir =~ PLAY2D.Commands.List["gameDir"]:GetString() then
 	
-	PLAY2D.Commands.List["gameDir"]:Set(Dir)
-	PLAY2D.Filesystem.ChangeWorkingDir(PLAY2D.Commands.List["gameDir"]:GetString(), Dir)
+		PLAY2D.Commands.List["gameDir"]:Set(Dir)
+		PLAY2D.Filesystem.ChangeWorkingDir(PLAY2D.Commands.List["gameDir"]:GetString(), Dir)
+
+	end
 	
 end
 
