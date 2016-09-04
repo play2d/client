@@ -1,0 +1,91 @@
+-- Play2D directory structure
+
+game_dir = {
+	assets = {
+		gfx = {
+			sprays = {
+				"banana.png";
+			};
+
+			characters = {
+				visual = {
+					"terroristSuitA.png";
+					"terroristSuitB.png";
+					"cTerroristSuitA.png";
+					"cTerroristSuitB.png";
+				};
+
+				"human.png";
+				"zombie.png";
+				"alien.png";
+			};
+
+			armors = {
+				["Vest"] = {
+					"hold.png";
+					"drop.png";
+					"side.png";
+				};
+			};
+
+			weapons = {
+				["M4AI"] = {
+					"hold.png";
+					"drop.png";
+					"side.png";
+					"silenced.png";
+				};
+			};
+
+			lighting = {
+				"blendmap.png";
+			};
+
+			GUI = {
+				"titlebar.png";
+			};
+		};
+
+		sfx = {
+			GUI = {
+				"tick.ogg";
+			};
+
+			weapons = {
+				["M4A1"] = {
+					"shot.ogg";
+					"silenced.ogg";
+					"reload.ogg";
+				};
+			};
+		};
+
+		fonts = {
+			"standard.tft";
+		};
+	};
+
+	system = {
+		language = {
+			"english.txt";
+		};
+
+		lua = {
+			server = {
+				"init.lua";
+			};
+		};
+
+		core = {
+			"version.txt";
+		};
+	};
+
+	config = {
+		"game.config";
+	};
+
+	"playlauncher(.exe)";
+	"play2d(.exe)";
+	"play2d_dedicated(.exe)";
+};
