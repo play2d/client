@@ -54,7 +54,7 @@ function Filesystem.GotoRootDir()
 
 	if Dir ~= PLAY2D.Commands.List["gameDir"]:GetString() then
 	
-		PLAY2D.Commands.List["gameDir"]:Set(Dir)
+		PLAY2D.Commands.List["gameDir"]:Set(Dir, true)
 		PLAY2D.Filesystem.ChangeWorkingDir(PLAY2D.Commands.List["gameDir"]:GetString(), Dir)
 
 	end

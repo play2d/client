@@ -24,10 +24,10 @@ function Command:GetString()
 	return Dir
 end
 
-function Command:Set(String)
+function Command:Set(String, Force)
 	if String then
 		local newDir = (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
-		if newDir:sub(-6) ~= "play2d" then
+		if newDir:sub(-6) ~= "play2d" and not Force then
 			newDir = newDir.."/play2d"
 		end
 
