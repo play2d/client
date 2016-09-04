@@ -5,13 +5,11 @@ function Configuration.load()
 	
 	PLAY2D.Console = PLAY2D.Terminal.Create(PLAY2D.Commands.List)
 
-	PLAY2D.Filesystem.GotoGameDir()
-	local UserFile = love.filesystem.newFile("sys/config.cfg", "r")
-
-	PLAY2D.Filesystem.GotoRootDir()
+	PLAY2D.Filesystem.ExitGameDir()
 	local DefaultFile = love.filesystem.newFile("sys/config.cfg", "r")
 
 	PLAY2D.Filesystem.GotoGameDir()
+	local UserFile = love.filesystem.newFile("sys/config.cfg", "r")
 
 	if DefaultFile then
 		Configuration.ParseConfig(DefaultFile)
