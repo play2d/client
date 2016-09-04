@@ -16,8 +16,11 @@ function Filesystem.GotoGameDir()
 	local File = io.open("sys/"..socket.dns.gethostname()..".pointer", "r")
 
 	if File then
-		
-		PLAY2D.Commands.List["gameDir"]:Set(File:read("*all"))
+		local Dir = File:read("*all")
+
+		if PLAY2D.Commands.List["gameDir"]:GetString() =~ Dir then
+			PLAY2D.Commands.List["gameDir"]:Set(Dir)
+		end
 		
 		File:close()
 		
