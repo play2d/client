@@ -276,7 +276,17 @@ end
 
 function Element:Update(dt)
 	if self.Changed then
-		self:RenderSkin()
+		if self.Canvas then
+			gui.Current = self
+			
+			love.graphics.setCanvas(self.Canvas)
+			love.graphics.clear(0, 0, 0, 0)
+		
+			self:UpdateLayout()
+			self:RenderSkin()
+			
+			love.graphics.setCanvas()
+		end
 		self.Changed = nil
 	end
 end
@@ -284,13 +294,7 @@ end
 function Element:RenderSkin()
 	local Skin = self:GetSkin()
 	if Skin.Render then
-		self:UpdateLayout()
-		if self.Canvas then
-			love.graphics.setCanvas(self.Canvas)
-			love.graphics.clear(0, 0, 0, 0)
-			Skin.Render(self)
-			love.graphics.setCanvas()
-		end
+		Skin.Render(self)
 	end
 end
 

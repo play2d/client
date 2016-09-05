@@ -71,9 +71,6 @@ function Element:MouseExit(...)
 end
 
 function Element:RenderSkin()
-	love.graphics.setCanvas(self.Canvas)
-	love.graphics.clear(0, 0, 0, 0)
-	
 	local Width, Height = self:GetDimensions()
 
 	if self.IsHover then
@@ -89,6 +86,4 @@ function Element:RenderSkin()
 	end
 	
 	self.Text:Draw(Height + 3, (Height - self.Text:getHeight())/2)
-	
-	love.graphics.setCanvas()
 end

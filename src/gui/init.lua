@@ -9,8 +9,8 @@ gui.Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
 
 assert(love.filesystem.load(Path.."/fonts/init.lua"))(Path.."/fonts/", gui)
 assert(love.filesystem.load(Path.."/string.lua"))(Path, gui)
-assert(love.filesystem.load(Path.."/graphics.lua"))(Path, gui)
 assert(love.filesystem.load(Path.."/text.lua"))(Path, gui)
+assert(love.filesystem.load(Path.."/stencil.lua"))(Path, gui)
 
 function gui.create(Name, ...)
 	local Class = gui.Elements[Name]

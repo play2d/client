@@ -32,14 +32,7 @@ function Element:UpdateLayout()
 end
 
 function Element:RenderSkin(dt)
-	love.graphics.setCanvas(self.Canvas)
-	love.graphics.clear(0, 0, 0, 0)
-	
-	self:UpdateLayout()
-	
 	self.Text:Draw(0, 0)
-	
-	love.graphics.setCanvas()
 end
 
 function Element:SetText(Text)

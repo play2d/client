@@ -1,25 +1,9 @@
 local gui = ...
 local Element = gui.register("Window", "Container")
-local Window
 
 Element.Closeable = true
 
-Element.TitleFont = love.graphics.newFont(gui.Fonts["Kanit Light"], 14)
-Element.TitleHeight = 25
-Element.TitleColor = {255, 255, 255, 255}
-Element.TitleBackgroundColor = {255, 255, 255, 255}
-Element.TitleDividerColor = {100, 100, 100, 255}
-Element.CloseImage = love.graphics.newImage(gui.Path.."/Images/Delete-16.png")
-
-Element.BackgroundColor = {245, 245, 245, 255}
-Element.BorderColor1 = {100, 100, 100}
-Element.BorderColor2 = {110, 160, 255}
-
-Element.CloseButtonColor = {255, 80, 80, 255}
-Element.CloseButtonColorHover = {255, 120, 120, 255}
-Element.CloseButtonColorPressed = {200, 50, 50, 255}
-
-Element.TitleImage = love.graphics.newMesh(
+Element.TitleGradient = love.graphics.newMesh(
 	{
 		{
 			0, 0,
@@ -44,20 +28,26 @@ Element.TitleImage = love.graphics.newMesh(
 	}
 , "fan", "static")
 
-local function CloseButton(Button)
-	local Window = Button.Parent
-	if Window.Closeable and Button.IsHover then
-		Window.Hidden = true
-	end
-end
+Element.TitleFont = love.graphics.newFont(gui.Fonts["Kanit Light"], 14)
+Element.TitleHeight = 25
+Element.TitleColor = {255, 255, 255, 255}
+Element.TitleBackgroundColor = {255, 255, 255, 255}
+Element.TitleDividerColor = {100, 100, 100, 255}
+Element.CloseImage = love.graphics.newImage(gui.Path.."/Images/Delete-16.png")
 
-local function BackgroundStencil()
-	local Width = Window:GetWidth()
-	
-	love.graphics.arc("fill", 5, 5, 5, -math.pi, -math.pi/2, 4)
-	love.graphics.arc("fill", Width - 5, 5, 5, -math.pi/2, 0, 4)
-	love.graphics.rectangle("fill", 5, 0, Width - 10, 5)
-	love.graphics.rectangle("fill", 0, 5, Width, Window.Layout.TitleHeight)
+Element.BackgroundColor = {245, 245, 245, 255}
+Element.BorderColor1 = {100, 100, 100}
+Element.BorderColor2 = {110, 160, 255}
+
+Element.CloseButtonColor = {255, 80, 80, 255}
+Element.CloseButtonColorHover = {255, 120, 120, 255}
+Element.CloseButtonColorPressed = {200, 50, 50, 255}
+
+local function CloseButton(Button)
+	local self = Button.Parent
+	if self.Closeable and Button.IsHover then
+		self.Hidden = true
+	end
 end
 
 -- GUI object
@@ -79,7 +69,7 @@ function Element:Init()
 	
 	self.Text:SetFont(Element.TitleFont)
 	
-	self.Layout.TitleImage = Element.TitleImage
+	self.Layout.TitleGradient = Element.TitleGradient
 	self.Layout.TitleHeight = Element.TitleHeight
 	self.Layout.TitleFont = Element.TitleFont
 	self.Layout.TitleColor = Element.TitleColor
@@ -112,21 +102,23 @@ function Element:UpdateLayout()
 	self.Layout.CloseButton.Visible = self.Closeable
 end
 
+function Element:BackgroundStencil()
+	local Width = self:GetWidth()
+	
+	love.graphics.arc("fill", 5, 5, 5, -math.pi, -math.pi/2, 4)
+	love.graphics.arc("fill", Width - 5, 5, 5, -math.pi/2, 0, 4)
+	love.graphics.rectangle("fill", 5, 0, Width - 10, 5)
+	love.graphics.rectangle("fill", 0, 5, Width, self.Layout.TitleHeight)
+end
+
 function Element:RenderSkin(dt)
-	love.graphics.setCanvas(self.Canvas)
-	love.graphics.clear(0, 0, 0, 0)
-	
-	self:UpdateLayout()
-	
 	local Width, Height = self:GetDimensions()
 	
-	Window = self
-	
-	love.graphics.stencil(BackgroundStencil, "replace", 1)
+	gui.stencil(self.BackgroundStencil, "replace", 1)
 	love.graphics.setStencilTest("greater", 0)
 	
 	love.graphics.setColor(self.Layout.TitleBackgroundColor)
-	love.graphics.draw(self.Layout.TitleImage, 0, 0, 0, Width, self.Layout.TitleHeight)
+	love.graphics.draw(self.Layout.TitleGradient, 0, 0, 0, Width, self.Layout.TitleHeight)
 	love.graphics.setStencilTest()
 	
 	love.graphics.setColor(self.Layout.TitleDividerColor)
@@ -146,8 +138,6 @@ function Element:RenderSkin(dt)
 	love.graphics.line(0, Height, Width, Height)
 
 	self.Text:Draw(5, (self.Layout.TitleHeight - self.Text:getHeight())/2)
-	
-	love.graphics.setCanvas()
 end
 
 function Element:MouseDrag(x, y, dx, dy)
