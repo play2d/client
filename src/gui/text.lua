@@ -166,13 +166,14 @@ function Text:GetPosition(x, y)
 end
 
 function Text:CalculateDimensions()
-	self.Line = {}
-	self.Line[1] = {
-		Text = "",
-		Start = 1,
-		Width = 0,
-		Height = 0,
-		Altitude = 0,
+	self.Line = {
+		{
+			Text = "",
+			Start = 1,
+			Width = 0,
+			Height = 0,
+			Altitude = 0,
+		}
 	}
 	
 	self.Width = 0
