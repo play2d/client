@@ -4,7 +4,9 @@ local LanguageObject = {}
 local LanguageMT = {__index = LanguageObject}
 
 function LanguageObject:Get(Code)
+	
 	return self.Translation[Code]
+	
 end
 
 function Language.Create(Name)

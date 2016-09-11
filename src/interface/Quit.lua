@@ -2,6 +2,7 @@ local Path, PLAY2D, Interface = ...
 local Quit = {}
 
 function Quit.load()
+	
 	Quit.Label = Interface.Desktop.CreateLabel(Interface.Language:Get("label_quit"), 30, 420)
 	
 	function Quit.Label:OnMouseReleased()
@@ -42,6 +43,7 @@ function Quit.load()
 	end
 	
 	Quit.load = nil
+	
 end
 
 return Quit

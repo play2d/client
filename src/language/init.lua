@@ -8,6 +8,7 @@ Language.TranslationLink = PLAY2D.Require("language/translation_link", Language)
 Language.LanguageLink = PLAY2D.Require("language/language_link", Language)
 
 function Language.load()
+	
 	Language.List = {}
 	
 	for Index, File in pairs(love.filesystem.getDirectoryItems("sys/language")) do
@@ -57,6 +58,7 @@ function Language.load()
 	end
 	
 	Language.load = nil
+	
 end
 
 return Language

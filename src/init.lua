@@ -2,10 +2,15 @@ local PLAY2D = {}
 local Path = ...
 
 function PLAY2D.Require(Name, ...)
+	
 	if love.filesystem.isDirectory(Path.."/"..Name) then
+		
 		return assert(love.filesystem.load(Path.."/"..Name.."/init.lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
+		
 	end
+	
 	return assert(love.filesystem.load(Path.."/"..Name..".lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
+	
 end
 
 PLAY2D.Socket = require "socket"
@@ -26,6 +31,7 @@ PLAY2D.Interface = PLAY2D.Require("interface")
 PLAY2D.Assets = PLAY2D.Require("assets")
 
 function PLAY2D.load()
+	
 	PLAY2D.Filesystem.load()
 
 	-- If we don't load the commands, we can't load the configuration
@@ -42,40 +48,57 @@ function PLAY2D.load()
 	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/hold.png"} -- (For testing ^-^)
 	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/silenced.png"} -- (For testing ^-^)
 	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/drop.png"} -- (For testing ^-^)
+	
 end
 
 function PLAY2D.update(dt)
+	
 	PLAY2D.gui.update(dt)
 	PLAY2D.Assets.update(dt)
+	
 end
 
 function PLAY2D.draw()
+	
 	PLAY2D.gui.draw()
 	PLAY2D.Assets.draw()
+	
 end
 
 function PLAY2D.mousepressed(...)
+	
 	PLAY2D.gui.mousepressed(...)
+	
 end
 
 function PLAY2D.mousereleased(...)
+	
 	PLAY2D.gui.mousereleased(...)
+	
 end
 
 function PLAY2D.mousemoved(...)
+	
 	PLAY2D.gui.mousemoved(...)
+	
 end
 
 function PLAY2D.wheelmoved(...)
+	
 	PLAY2D.gui.wheelmoved(...)
+	
 end
 
 function PLAY2D.keypressed(...)
+	
 	PLAY2D.gui.keypressed(...)
+	
 end
 
 function PLAY2D.textinput(...)
+	
 	PLAY2D.gui.textinput(...)
+	
 end
 
 return PLAY2D

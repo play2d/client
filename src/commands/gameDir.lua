@@ -8,6 +8,7 @@ function Command:Execute(Terminal, String)
 	local newDir = String
 	
 	if newDir then
+		
 		local Ok, ErrorOrValue = pcall(self:Save())
 
 		if Ok then
@@ -15,16 +16,21 @@ function Command:Execute(Terminal, String)
 		else
 			-- Do not know how you want to deal with errors yet so will put an Err comment at each one of these
 		end
+		
 	else
 		-- Err
 	end
+	
 end
 
 function Command:GetString()
+	
 	return Dir
+	
 end
 
 function Command:Set(String, Formatted)
+	
 	if String then
 
 		local newDir = (String:sub(-1) ~= "/" and String) or String:sub(1, -1)
@@ -48,6 +54,7 @@ function Command:Set(String, Formatted)
 end
 
 function Command:Save(Dir)
+	
 	local Dir = Dir or Self:GetString()
 	local File = love.filesystem.newFile("sys/"..socket.dns.gethostname()..".cfg", "w")
 
@@ -61,4 +68,5 @@ function Command:Save(Dir)
 		-- Err
 		
 	end
+	
 end

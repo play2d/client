@@ -2,6 +2,7 @@ local Path, PLAY2D, Interface = ...
 local Options = {}
 
 function Options.load()
+	
 	Options.Label = Interface.Desktop.CreateLabel(Interface.Language:Get("label_options"), 30, 350)
 	
 	function Options.Label:OnMouseReleased()
@@ -18,6 +19,7 @@ function Options.load()
 	Options.Window.Hidden = true
 	
 	Options.load = nil
+	
 end
 
 return Options

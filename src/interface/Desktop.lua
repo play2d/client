@@ -20,6 +20,7 @@ end
 function Desktop.CreateLabel(Text, x, y)
 	
 	local Label = PLAY2D.gui.create("Label", Text, x, y, 120, 25, PLAY2D.Main)
+	
 	Label.Layout.TextColor = {150, 150, 150, 255}
 	Label.Layout.TextFont = LabelFont
 	Label.OnMouseEnter = LabelEnterColor

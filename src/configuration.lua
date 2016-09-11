@@ -34,6 +34,7 @@ function Configuration.load()
 	end
 	
 	Configuration.load = nil
+	
 end
 
 function Configuration.ParseConfig(File)
@@ -56,6 +57,7 @@ function Configuration.ParseConfig(File)
 	end
 	
 	File:close()
+	
 end
 
 function Configuration.save()

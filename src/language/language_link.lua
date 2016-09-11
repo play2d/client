@@ -4,6 +4,7 @@ local LanguageObject = {}
 local LanguageMT = {__index = LanguageObject}
 
 function LanguageObject:Get(Code)
+	
 	if self.Translation[Code] then
 		return self.Translation[Code]
 	end
@@ -13,6 +14,7 @@ function LanguageObject:Get(Code)
 	self.Translation[Code] = Translation
 	
 	return Translation
+	
 end
 
 function Language.CreateLink(LanguageName)

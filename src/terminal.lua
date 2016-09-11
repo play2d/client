@@ -4,6 +4,7 @@ local Terminal = {}
 local TerminalMT = {__index = Terminal}
 
 function Terminal:Execute(Command)
+	
 	local Instructions, Error = self:Parse(Command)
 	
 	self.Error = nil
@@ -44,6 +45,7 @@ function Terminal:Execute(Command)
 end
 
 function Terminal:Parse(Command)
+	
 	local Instructions = {}
 	local Arguments = {}
 	
@@ -193,11 +195,13 @@ function Terminal:Parse(Command)
 end
 
 local function CreateTerminal(Functions)
+	
 	local self = {}
 	
 	self.Function = Functions
 	
 	return setmetatable(self, TerminalMT)
+	
 end
 
 return {

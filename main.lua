@@ -7,8 +7,8 @@ function love.load(...)
 end
 
 function love.update(...)
-	PLAY2D.update(...)
 	
+	PLAY2D.update(...)
 	
 end
 
