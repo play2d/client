@@ -1,0 +1,6 @@
+*** GLSL
+- Don't use length() on vec2
+- Don't use the 'tc' field from the effect4 function if you're not drawing a texture (Image/Canvas/Mesh/etc), tc is always zero if you draw a polygon
+
+*** Practice
+- If you're dividing two (or more) values by one specific value, do a variable change A = 1 / Divisor and then multiply both variables by 'A' (division is nine times more expensive than a multiplication)

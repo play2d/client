@@ -1,3 +1,0 @@
-*** GLSL
-- Don't use length() on vec2
-- Don't use the 'tc' field from the effect4 function if you're not drawing a texture (Image/Canvas/Mesh/etc), tc is always zero if you draw a polygon
