@@ -5,11 +5,11 @@ function PLAY2D.Require(Name, ...)
 	
 	if love.filesystem.isDirectory(Path.."/"..Name) then
 		
-		return assert(love.filesystem.load(Path.."/"..Name.."/init.lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
+		return assert(love.filesystem.load(Path.."/"..Name.."/init.lua"))(Path.."/"..Name, PLAY2D, ...)
 		
 	end
 	
-	return assert(love.filesystem.load(Path.."/"..Name..".lua"))(Path:gsub("/", ".").."."..Name, PLAY2D, ...)
+	return assert(love.filesystem.load(Path.."/"..Name..".lua"))(Path.."/"..Name, PLAY2D, ...)
 	
 end
 

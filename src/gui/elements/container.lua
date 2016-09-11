@@ -22,8 +22,11 @@ function Element:Init()
 end
 
 function Element:MousePressed(x, y, Button, IsTouch)
+	
 	for Index, Child in pairs(self.Children) do
+		
 		Child:ParentMousePressed(x, y, Button, IsTouch)
+		
 	end
 	
 	self:OnMousePressed(x, y, Button, IsTouch)

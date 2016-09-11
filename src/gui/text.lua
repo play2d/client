@@ -5,7 +5,8 @@ local Text = {}
 local TextMetatable = {__index = Text}
 
 function gui.CreateText(String, Font, R, G, B, A)
-	local self = setmetatable({
+	
+	local self = {
 		Text = String or "",
 		Format = {},
 		Line = {},
@@ -13,7 +14,10 @@ function gui.CreateText(String, Font, R, G, B, A)
 		Height = 0,
 		Font = Font or love.graphics.getFont(),
 		Color = {R or 255, G or 255, B or 255, A or 255},
-	}, TextMetatable)
+	}
+	
+	setmetatable(self, TextMetatable)
+	
 	self:CalculateDimensions()
 
 	return self
@@ -27,8 +31,14 @@ function Text:SetColor(R, G, B, A)
 end
 
 function Text:SetFont(Font)
-	self.Font = Font
-	self:CalculateDimensions()
+	
+	if Font ~= self.Font then
+		
+		self.Font = Font
+		self:CalculateDimensions()
+		
+	end
+	
 end
 
 function Text:Add(Text, Font, R, G, B, A)

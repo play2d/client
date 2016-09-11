@@ -1,3 +1,4 @@
+options_player = "Player"
 label_yes = "Yes"
 label_no = "No"
 label_options = "Options"
