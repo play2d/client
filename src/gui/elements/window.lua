@@ -44,13 +44,16 @@ Element.CloseButtonColorHover = {255, 120, 120, 255}
 Element.CloseButtonColorPressed = {200, 50, 50, 255}
 
 local function CloseButton(Button)
+	
 	local self = Button.Parent
+	
 	if self.Closeable and Button.IsHover then
+		
 		self.Hidden = true
+		
 	end
+	
 end
-
--- GUI object
 
 function Element:Create(Text, x, y, Width, Height, Parent)
 	Parent = Parent or gui.Desktop
@@ -65,6 +68,7 @@ function Element:Create(Text, x, y, Width, Height, Parent)
 end
 
 function Element:Init()
+	
 	Element.Base.Init(self)
 	
 	self.Text:SetFont(Element.TitleFont)
@@ -93,25 +97,31 @@ function Element:Init()
 end
 
 function Element:UpdateLayout()
+	
 	self.Text:SetColor(unpack(self.Layout.TitleColor))
 	self.Text:SetFont(self.Layout.TitleFont)
 	
 	local Width, Height = self:GetDimensions()
+	
 	self.Layout.CloseButton:SetPosition(Width - 19, 3)
 	self.Layout.CloseButton.Image = self.Layout.CloseImage
 	self.Layout.CloseButton.Visible = self.Closeable
+	
 end
 
 function Element:BackgroundStencil()
+	
 	local Width = self:GetWidth()
 	
 	love.graphics.arc("fill", 5, 5, 5, -math.pi, -math.pi/2, 4)
 	love.graphics.arc("fill", Width - 5, 5, 5, -math.pi/2, 0, 4)
 	love.graphics.rectangle("fill", 5, 0, Width - 10, 5)
 	love.graphics.rectangle("fill", 0, 5, Width, self.Layout.TitleHeight)
+	
 end
 
 function Element:RenderSkin(dt)
+	
 	local Width, Height = self:GetDimensions()
 	
 	gui.stencil(self.BackgroundStencil, "replace", 1)
@@ -138,41 +148,57 @@ function Element:RenderSkin(dt)
 	love.graphics.line(0, Height, Width, Height)
 
 	self.Text:Draw(5, (self.Layout.TitleHeight - self.Text:getHeight())/2)
+	
 end
 
 function Element:MouseDrag(x, y, dx, dy)
+	
 	if self.GrabWindow and not self.Disabled then
+		
 		self:SetPosition(self:GetHorizontalPosition() + dx, self:GetVerticalPosition() + dy)
+		
 	end
+	
 	Element.Base.MouseDrag(self, x, y, dx, dy)
 end
 
 function Element:CanGrab(x, y, Button, IsTouch)
-	local Skin = self:GetSkin()
-	if Skin.CanGrab then
-		return Skin.CanGrab(x, y, Button, IsTouch)
-	end
+	
 	return y < 24
+	
 end
 
 function Element:MousePressed(x, y, Button, IsTouch)
+	
 	if not self.Disabled then
+		
 		if self:CanGrab(x, y, Button, IsTouch) then
+			
 			self.GrabWindow = true
+			
 		end
+		
 	end
+	
 	Element.Base.MousePressed(self, x, y, Button, IsTouch)
+	
 end
 
 function Element:MouseReleased(x, y, Button, IsTouch)
+	
 	self.GrabWindow = nil
 	Element.Base.MouseReleased(self, x, y, Button, IsTouch)
+	
 end
 
 function Element:SetCloseable(Closeable)
+	
 	self.Closeable = Closeable
+	
 end
 
 function Element:GetCloseable()
+	
 	return self.Closeable
+	
 end
