@@ -1,8 +1,8 @@
 local gui = ...
 local Element = gui.register("Tabber", "Container")
 
-Element.Left = love.graphics.newImage(gui.Path.."/Images/Left-14.png")
-Element.Right = love.graphics.newImage(gui.Path.."/Images/Right-14.png")
+Element.Left = love.graphics.newImage(gui.Path.."/images/Left-14.png")
+Element.Right = love.graphics.newImage(gui.Path.."/images/Right-14.png")
 
 Element.TextFont = love.graphics.newFont(gui.Fonts["Kanit Light"], 13)
 Element.TextColor = {80, 80, 80, 255}

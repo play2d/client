@@ -1,7 +1,7 @@
 local Path, PLAY2D, Interface = ...
 local Options = {}
 
-Options.Player = PLAY2D.Require("interface/Options/Player", Interface, Options)
+Options.Player = PLAY2D.Require("interface/options/player", Interface, Options)
 
 function Options.load()
 	

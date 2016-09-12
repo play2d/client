@@ -1,8 +1,8 @@
 local gui = ...
 local Element = gui.register("HSlider", "Container")
 
-Element.Left = love.graphics.newImage(gui.Path.."/Images/Left-14.png")
-Element.Right = love.graphics.newImage(gui.Path.."/Images/Right-14.png")
+Element.Left = love.graphics.newImage(gui.Path.."/images/Left-14.png")
+Element.Right = love.graphics.newImage(gui.Path.."/images/Right-14.png")
 
 Element.BorderColor = {80, 80, 80, 255}
 Element.BackgroundColor = {200, 200, 200, 255}
