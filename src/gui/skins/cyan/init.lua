@@ -12,7 +12,6 @@ return {
 	MenuSpacer = love.filesystem.load(Path.."menuspacer.lua")(Path, gui),
 	ProgressBar = love.filesystem.load(Path.."progressbar.lua")(Path, gui),
 	TextArea = love.filesystem.load(Path.."textarea.lua")(Path, gui),
-	TextField = love.filesystem.load(Path.."textfield.lua")(Path, gui),
 	TreeView = love.filesystem.load(Path.."treeview.lua")(Path, gui),
 	TreeViewNode = love.filesystem.load(Path.."treeviewnode.lua")(Path, gui),
 	VSlider = love.filesystem.load(Path.."vslider.lua")(Path, gui),

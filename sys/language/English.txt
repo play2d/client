@@ -1,4 +1,6 @@
 options_player = "Player"
+options_player_name = "Player name:"
+options_player_spraylogo = "Spraylogo:"
 options_controls = "Controls"
 options_game = "Game"
 options_graphics = "Graphics"

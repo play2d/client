@@ -10,6 +10,7 @@ function Element:Init()
 	self.Layout = {}
 	
 	local Skin = self:GetSkin()
+	
 	if Skin.Init then
 		
 		Skin.Init(self)
@@ -65,6 +66,7 @@ function Element:MouseReleased(x, y, Button, IsTouch)
 		Skin.MouseReleased(self, x, y, Button, IsTouch)
 		
 	end
+	
 end
 
 function Element:AddChild(Child)
@@ -160,12 +162,16 @@ function Element:RenderChildrenCanvas()
 		if not Child.Hidden then
 			
 			if Child.Changed then
+				
 				Child.Changed = nil
 				Child:RenderSkin()
+				
 			end
 			
 			if Child.RenderChildrenCanvas then
+				
 				Child:RenderChildrenCanvas()
+				
 			end
 			
 		end
@@ -177,27 +183,33 @@ end
 function Element:RenderChildren(x, y)
 	
 	local IntersectX, IntersectY, IntersectWidth, IntersectHeight = love.graphics.getScissor()
+	
 	for _, Child in pairs(self.ChildrenRender) do
 		
 		if not Child.Hidden then
 			
 			local Horizontal, Vertical = Child:GetPosition()
 			local ChildX, ChildY = Horizontal + x, Vertical + y
+			
 			if Child.Intersect then
 				
 				local Width, Height = Child:GetDimensions()
 				if Width and Height then
+					
 					love.graphics.intersectScissor(ChildX, ChildY, Width, Height)
+					
 				end
 				
 			end
 
 			Child:Render(ChildX, ChildY)
+			
 			if Child.RenderChildren then
 				
 				Child:RenderChildren(ChildX, ChildY)
 				
 			end
+			
 			love.graphics.setScissor(IntersectX, IntersectY, IntersectWidth, IntersectHeight)
 			
 		end
@@ -214,6 +226,7 @@ function Element:FindMouseHoverChild(x, y)
 		local x, y = x - Horizontal, y - Vertical
 		
 		local Element
+		
 		for Index, Child in pairs(self.ChildrenRender) do
 			
 			if not Child.Hidden then
