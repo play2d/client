@@ -306,52 +306,84 @@ function Element:Paint(x, y)
 end
 
 function Element:Render(x, y)
+	
 	if self.Canvas then
+		
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.draw(self.Canvas, x, y)
+		
 	end
+	
 	self:Paint(x, y)
+	
 end
 
 function Element:SetHover()
+	
 	if self.Parent then
+		
 		local ChildrenRender = {}
+		
 		for _, Child in pairs(self.Parent.ChildrenRender) do
+			
 			if Child ~= self then
+				
 				table.insert(ChildrenRender, Child)
+				
 			end
+			
 		end
+		
 		table.insert(ChildrenRender, self)
 		
 		self.Parent.ChildrenRender = ChildrenRender
 		self.Parent:SetHover()
+		
 	end
+	
 end
 
 function Element:MakePopup()
+	
 	local Skin = self:GetSkin()
+	
 	if Skin.MakePopup then
+		
 		Skin.MakePopup(self)
+		
 	end
+	
 end
 
 function Element:MakePulldown(TopElement)
+	
 	local Skin = self:GetSkin()
+	
 	if Skin.MakePulldown then
+		
 		Skin.MakePulldown(self, TopElement)
+		
 	end
+	
 end
 
 function Element:LocalPointInArea(x, y)
+	
 	local Width, Height = self:GetDimensions()
+	
 	return Width and Height and x > 0 and y > 0 and x < Width and y < Height
+	
 end
 
 function Element:SetLayoutStyle(Style, Value)
+	
 	self.Layout[Style] = Value
 	self.Changed = true
+	
 end
 
 function Element:GetLayoutStyle(Style)
+	
 	return self.Layout[Style]
+	
 end

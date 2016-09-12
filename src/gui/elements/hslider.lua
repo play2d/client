@@ -12,6 +12,7 @@ Element.Min = 1
 Element.Value = 0
 
 function Element:Create(x, y, Width, Height, Parent)
+	
 	Parent = Parent or gui.Desktop
 
 	self:SetParent(Parent)
@@ -20,6 +21,7 @@ function Element:Create(x, y, Width, Height, Parent)
 	self:Init()
 	
 	return self
+	
 end
 
 local function SliderButtonDrag(Button, x, y, dx, dy)

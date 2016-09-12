@@ -13,18 +13,30 @@ Element.SelectedColor = {255, 255, 255, 255}
 Element.HoverColor = {255, 255, 255, 255}
 Element.DefaultColor = {220, 220, 220, 255}
 
-Element.Image = love.image.newImageData(1, 20)
-for y = 0, 19 do
-	
-	Element.Image:setPixel(0, y,
-		255 * 9/11 + 255 * (19 - y) * 2/11 * 1/19,
-		255 * 9/11 + 255 * (19 - y) * 2/11 * 1/19,
-		255 * 9/11 + 255 * (19 - y) * 2/11 * 1/19
-	)
-	
-end
-
-Element.Image = love.graphics.newImage(Element.Image)
+Element.Gradient = love.graphics.newMesh(
+	{
+		{
+			0, 0,
+			0, 0,
+			255, 255, 255
+		},
+		{
+			1, 0,
+			1, 0,
+			255, 255, 255
+		},
+		{
+			1, 1,
+			1, 1,
+			208, 208, 208
+		},
+		{
+			0, 1,
+			0, 1,
+			208, 208, 208
+		}
+	}
+, "fan", "static")
 
 Element.Selected = 0
 
@@ -88,6 +100,8 @@ function Element:Init()
 	self.Layout.Right = gui.create("Button", "", 0, 2, 12, Height - 2.5, self)
 	self.Layout.Right:SetIcon(Element.Right)
 	self.Layout.Right.Update = TabberButtonR
+	
+	self.Layout.Gradient = Element.Gradient
 	
 	self.Item = {}
 	
@@ -232,6 +246,7 @@ function Element:RenderSkin()
 				
 				love.graphics.setColor(self.Layout.SelectedColor)
 				love.graphics.rectangle("fill", WidthOffset, 1, ItemWidth + 9, Height - 2)
+				
 				Item:Draw(WidthOffset + 2, (Height - Item:getHeight())/2)
 				
 			elseif self.IsHover and self.IsHover.x > WidthOffset and self.IsHover.x <= WidthOffset + ItemWidth + 10 then
@@ -240,7 +255,8 @@ function Element:RenderSkin()
 				love.graphics.rectangle("line", WidthOffset, 3, ItemWidth + 9, Height - 4)
 				
 				love.graphics.setColor(self.Layout.HoverColor)
-				love.graphics.draw(Element.Image, WidthOffset, 3, 0, ItemWidth + 9, (Height - 4)/20)
+				love.graphics.draw(self.Layout.Gradient, WidthOffset, 3, 0, ItemWidth + 9, Height - 4)
+				
 				Item:Draw(WidthOffset + 2, (Height + 2 - Item:getHeight())/2)
 				
 			else
@@ -249,7 +265,8 @@ function Element:RenderSkin()
 				love.graphics.rectangle("line", WidthOffset, 3, ItemWidth + 9, Height - 4)
 				
 				love.graphics.setColor(self.Layout.DefaultColor)
-				love.graphics.draw(Element.Image, WidthOffset, 3, 0, ItemWidth + 9, (Height - 4)/20)
+				love.graphics.draw(self.Layout.Gradient, WidthOffset, 3, 0, ItemWidth + 9, Height - 4)
+				
 				Item:Draw(WidthOffset + 2, (Height + 2 - Item:getHeight())/2)
 				
 			end
