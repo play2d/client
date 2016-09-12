@@ -171,8 +171,6 @@ end
 
 function Element:UpdateItems()
 	
-	table.sort(self.Item)
-	
 	self.Layout.ItemsWidth = 1
 	self.Changed = true
 	
