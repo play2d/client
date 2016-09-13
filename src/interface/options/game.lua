@@ -15,6 +15,12 @@ function Game.load()
 	
 	Game.LanguageBox = PLAY2D.gui.create("ComboBox", 110, 110, 200, 20, Options.Panel[3])
 	
+	for Name, Language in pairs(PLAY2D.Language.List) do
+		
+		Game.LanguageBox:AddItem(Name)
+		
+	end
+	
 	Game.load = nil
 	
 end
