@@ -1,8 +1,22 @@
 options_player = "Player"
 options_player_name = "Player name:"
 options_player_spraylogo = "Spraylogo:"
+
 options_controls = "Controls"
+
 options_game = "Game"
+options_game_gore = "Level of Gore:"
+options_game_gore_very_low = "Very low"
+options_game_gore_low = "Low"
+options_game_gore_medium = "Medium"
+options_game_gore_high = "High"
+options_game_gore_very_high = "Very High"
+
+options_game_radar = "Radar:"
+options_game_radar_default = "Default"
+
+options_game_language = "Language:"
+
 options_graphics = "Graphics"
 options_sound = "Sound"
 options_net = "Net"
