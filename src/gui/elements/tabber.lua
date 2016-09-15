@@ -221,9 +221,9 @@ function Element:UpdateLayout()
 end
 
 function Element:RenderSkin()
-	local Width, Height = self:GetDimensions()
 	
-	local WidthOffset = -self.Layout.Offset + 1
+	local Width, Height = self:GetDimensions()
+	local WidthOffset = 1 - self.Layout.Offset
 	
 	for i, Item in pairs(self.Item) do
 		

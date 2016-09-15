@@ -438,7 +438,7 @@ function Element:Update(dt)
 			
 			love.graphics.setCanvas(self.Canvas)
 			love.graphics.clear(0, 0, 0, 0)
-		
+			
 			self:UpdateLayout()
 			self:RenderSkin()
 			

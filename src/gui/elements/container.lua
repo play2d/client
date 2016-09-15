@@ -155,31 +155,6 @@ function Element:UpdateChildren(dt)
 	
 end
 
-function Element:RenderChildrenCanvas()
-	
-	for _, Child in pairs(self.ChildrenRender) do
-		
-		if not Child.Hidden then
-			
-			if Child.Changed then
-				
-				Child.Changed = nil
-				Child:RenderSkin()
-				
-			end
-			
-			if Child.RenderChildrenCanvas then
-				
-				Child:RenderChildrenCanvas()
-				
-			end
-			
-		end
-		
-	end
-	
-end
-
 function Element:RenderChildren(x, y)
 	
 	local IntersectX, IntersectY, IntersectWidth, IntersectHeight = love.graphics.getScissor()

@@ -117,18 +117,19 @@ function Element:RoundedStencil()
 	
 	local Radius = self.Layout.ArcRadius
 	
-	love.graphics.rectangle("fill", 0, 0, self:GetWidth(), self:GetHeight(), Radius, Radius, Radius)
+	love.graphics.rectangle("fill", 1, 1, self:GetWidth() - 2, self:GetHeight() - 2, Radius, Radius, Radius * 2)
 	
 end
 
 function Element:RenderSkin()
+	
 	local Width, Height = self:GetDimensions()
 	local Radius = self.Layout.ArcRadius
 	
 	if self.Layout.Rounded then
 		
 		love.graphics.setColor(self.Layout.BorderColor)
-		love.graphics.rectangle("line", 0, 0, Width, Height, self.Layout.ArcRadius, self.Layout.ArcRadius, self.Layout.ArcRadius)
+		love.graphics.rectangle("line", 0, 0, Width, Height, Radius, Radius, Radius * 2)
 		
 		gui.stencil(self.RoundedStencil)
 		
@@ -153,7 +154,7 @@ function Element:RenderSkin()
 				
 			else
 				
-				gui.graphics.roundedbox("fill", Radius, 1, 1, Width - 2, Height - 2)
+				love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius * 2)
 				
 			end
 			
@@ -186,7 +187,7 @@ function Element:RenderSkin()
 				
 			else
 				
-				gui.graphics.roundedbox("fill", Radius, 1, 1, Width - 2, Height - 2)
+				love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius * 2)
 				
 			end
 			
@@ -219,7 +220,7 @@ function Element:RenderSkin()
 				
 			else
 				
-				gui.graphics.roundedbox("fill", Radius, 1, 1, Width - 2, Height - 2)
+				love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius * 2)
 				
 			end
 			

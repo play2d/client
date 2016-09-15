@@ -89,7 +89,6 @@ function Element:Render(dt, x, y)
 	
 	local Width, Height = self:GetDimensions()
 	
-	self:RenderChildrenCanvas()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setScissor(x, y, Width, Height)
 	

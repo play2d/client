@@ -5,7 +5,11 @@ local StencilFunctionOverride
 
 function StencilFunctionOverride()
 	
-	StencilFunction(gui.Current)
+	if StencilFunction then
+		
+		StencilFunction(gui.Current)
+		
+	end
 	
 end
 
