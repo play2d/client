@@ -12,3 +12,8 @@ CONSOLE: everything
 CHAT: everything
 
 GAMEPLAY: everything
+
+NETWORKING: enet
+1. Master server connection & protocols
+2. Server list connection & protocols
+3. Server (gameplay) connection & protocols
