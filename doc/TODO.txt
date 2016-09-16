@@ -1,6 +1,7 @@
 SERVERLIST:
 1. The menu
 2. Connection protocols (enet)
+3. Master server connection
 
 OPTIONS MENU:
 1. It doesn't load/save yet
