@@ -17,3 +17,4 @@ NETWORKING: enet
 1. Master server connection & protocols
 2. Server list connection & protocols
 3. Server (gameplay) connection & protocols
+4. UDP server object (a wrapper in case that we want to switch from engine)
