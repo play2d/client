@@ -45,24 +45,33 @@ function PLAY2D.load()
 	PLAY2D.gui.load()
 	PLAY2D.Interface.load()
 
-	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/hold.png"} -- (For testing ^-^)
-	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/silenced.png"} -- (For testing ^-^)
-	--PLAY2D.Assets.Load{"image","gfx/weapons/Five Seven/drop.png"} -- (For testing ^-^)
+	-- Example and Demonstration
+	FiveSevenQueue = PLAY2D.Assets.CreateQueue{"image","gfx/weapons/Five Seven/hold.png"}
+	FiveSevenQueue:AddToQueue({"image","gfx/weapons/Five Seven/silenced.png"}, {"image","gfx/weapons/Five Seven/drop.png"})
 	
 end
 
 function PLAY2D.update(dt)
 	
 	PLAY2D.gui.update(dt)
-	PLAY2D.Assets.update(dt)
+	if not FiveSevenQueue:IsDone() then FiveSevenQueue:Update() end
 	
 end
 
 function PLAY2D.draw()
-	
-	PLAY2D.gui.draw()
-	PLAY2D.Assets.draw()
-	
+	if not FiveSevenQueue:IsDone() then
+		love.graphics.setLineWidth(3)
+		local tq = FiveSevenQueue:GetTotalQueuedAssets()
+		local tl =  FiveSevenQueue:GetTotalLoadedAssets()
+		local rad = (math.pi * 2) * (tl / tq)
+		
+		love.graphics.arc("line", 400, 300, 20, 0, rad)
+		love.timer.sleep(0.6)
+		
+	else
+		PLAY2D.gui.draw()
+		
+	end
 end
 
 function PLAY2D.mousepressed(...)
