@@ -49,15 +49,25 @@ function PLAY2D.load()
 	PLAY2D.Interface.load()
 
 	-- Example and Demonstration of the Assets loading and queuing system
-	FiveSevenQueue = PLAY2D.Assets.CreateQueue("assets")
-	FiveSevenQueue:AddToQueue({"image","gfx/weapons/Five Seven/silenced.png"}, {"image","gfx/weapons/Five Seven/drop.png"})
+	FiveSevenQueue = PLAY2D.Assets.CreateQueue("assets", "Game content")
+	FiveSevenQueue:AddToQueue(
+		{"image", "gfx/weapons/Five Seven/silenced.png"},
+		{"image", "gfx/weapons/Five Seven/drop.png"},
+		{"sound", "sfx/weapons/Five Seven/shot.wav"},
+		{"sound", "sfx/weapons/Five Seven/silenced.wav"}
+	)
 	
 end
 
 function PLAY2D.update(dt)
 	
+	if not FiveSevenQueue:IsDone() then
+		
+		FiveSevenQueue:Update()
+		
+	end
+	
 	PLAY2D.gui.update(dt)
-	if not FiveSevenQueue:IsDone() then FiveSevenQueue:Update() end
 	
 end
 
@@ -65,15 +75,7 @@ function PLAY2D.draw()
 	
 	if not FiveSevenQueue:IsDone() then
 		
-		love.graphics.clear(0, 0, 0, 255)
-		
-		love.graphics.setLineWidth(3)
-		local tq = FiveSevenQueue:GetTotalQueuedAssets()
-		local tl =  FiveSevenQueue:GetTotalLoadedAssets()
-		local rad = (math.pi * 2) * (tl / tq)
-		
-		love.graphics.arc("line", 400, 300, 20, 0, rad)
-		love.timer.sleep(0.6)
+		FiveSevenQueue:Draw()
 		
 	else
 		
