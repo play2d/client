@@ -5,8 +5,8 @@ Element.TextFont = love.graphics.newFont(gui.Fonts["Kanit Light"], 13)
 Element.TextColor = {80, 80, 80, 255}
 Element.Color = {220, 220, 220, 255}
 Element.HoverColor = {255, 255, 255, 255}
-Element.CheckImage = love.graphics.newImage(gui.Path.."/Images/Checked Checkbox-24.png")
-Element.UncheckImage = love.graphics.newImage(gui.Path.."/Images/Unchecked Checkbox-24.png")
+Element.CheckImage = love.graphics.newImage(gui.Path.."/images/Checked Checkbox-24.png")
+Element.UncheckImage = love.graphics.newImage(gui.Path.."/images/Unchecked Checkbox-24.png")
 
 function Element:Create(Text, x, y, Width, Height, Parent)
 	Parent = Parent or gui.Desktop
