@@ -31,7 +31,10 @@ PLAY2D.Interface = PLAY2D.Require("interface")
 PLAY2D.Assets = PLAY2D.Require("assets")
 
 function PLAY2D.load()
+	-- Cap the framerate
+	-- love.graphics.maxFramerate = 60
 	
+	-- It's necessary to load the filesystem lib for proper file accessing and writting (thus, configuration system needs it)
 	PLAY2D.Filesystem.load()
 
 	-- If we don't load the commands, we can't load the configuration
@@ -45,7 +48,7 @@ function PLAY2D.load()
 	PLAY2D.gui.load()
 	PLAY2D.Interface.load()
 
-	-- Example and Demonstration
+	-- Example and Demonstration of the Assets loading and queuing system
 	FiveSevenQueue = PLAY2D.Assets.CreateQueue{"image","gfx/weapons/Five Seven/hold.png"}
 	FiveSevenQueue:AddToQueue({"image","gfx/weapons/Five Seven/silenced.png"}, {"image","gfx/weapons/Five Seven/drop.png"})
 	

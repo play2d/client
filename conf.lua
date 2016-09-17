@@ -39,3 +39,75 @@ function love.conf(t)
 	t.modules.window = true			 -- Enable the window module (boolean)
 	t.modules.thread = true			 -- Enable the thread module (boolean)
 end
+
+function love.run()
+	love.math.setRandomSeed(os.time())
+
+	love.load(arg)
+	
+	local tim = love.timer
+	local graphs = love.graphics
+	local even = love.event
+	
+	local delta = 0
+	
+	local defaultFont = graphs.newFont(12)
+	
+	tim.step()
+	
+	-- Main loop time.
+	while true do
+		local startTime = tim.getTime()
+		
+		-- Process events.
+		even.pump()	
+		for name, a, b, c, d, e, f in even.poll() do
+			if name == "quit" then
+				if not love.quit or not love.quit() then
+					return love.audio.stop()
+				end
+			end
+			
+			love.handlers[name](a, b, c, d, e, f)
+		end
+ 
+		-- Update dt, as we'll be passing it to update
+		tim.step()
+		delta = tim.getDelta()
+ 
+		-- Call update and draw
+		love.update(delta)
+ 
+		if graphs and graphs.isActive() then
+			graphs.clear(graphs.getBackgroundColor())
+			graphs.origin()
+			love.draw()
+			
+			local r, g, b, a = graphs.getColor()
+			local font = graphs.getFont()
+
+			graphs.setColor(200, 200, 200, 175)
+			graphs.setFont(defaultFont)
+			graphs.print("FPS: "..math.floor(1 / delta + 0.5), 0, 0)
+			
+			graphs.setColor(r, g, b, a)
+			graphs.setFont(font)
+			graphs.present()
+		end
+		
+		local endTime = tim.getTime()
+		local deltaF = endTime - startTime
+
+		if graphs.maxFramerate then
+			local maxDelta = 1 / graphs.maxFramerate
+			local sleep = maxDelta - deltaF
+
+			if sleep >= 0.001 then
+				tim.sleep(sleep)
+			end
+		else
+			tim.sleep(0.001)
+		end
+	end
+
+end
