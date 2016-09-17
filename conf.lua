@@ -51,7 +51,7 @@ function love.run()
 	
 	local delta = 0
 	
-	local defaultFont = graphs.newFont(12)
+	local defaultFont = graphs.newFont(8)
 	
 	tim.step()
 	
@@ -83,12 +83,13 @@ function love.run()
 			graphs.origin()
 			love.draw()
 			
+			local stats = love.graphics.getStats()
 			local r, g, b, a = graphs.getColor()
 			local font = graphs.getFont()
 
 			graphs.setColor(200, 200, 200, 175)
 			graphs.setFont(defaultFont)
-			graphs.print("FPS: "..math.floor(1 / delta + 0.5), 0, 0)
+			graphs.print("FPS: "..math.floor(1 / delta).."\nDrawcalls: "..stats.drawcalls.."\nUsed VRAM: "..string.format("%.2f MB", stats.texturememory / 1024 / 1024), 0, 0)
 			
 			graphs.setColor(r, g, b, a)
 			graphs.setFont(font)
