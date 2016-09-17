@@ -13,6 +13,8 @@ Element.SelectedColor = {255, 255, 255, 255}
 Element.HoverColor = {255, 255, 255, 255}
 Element.DefaultColor = {220, 220, 220, 255}
 
+Element.LineWidth = 1
+
 Element.Gradient = love.graphics.newMesh(
 	{
 		{
@@ -102,6 +104,8 @@ function Element:Init()
 	self.Layout.Right.Update = TabberButtonR
 	
 	self.Layout.Gradient = Element.Gradient
+	
+	self.Layout.LineWidth = Element.LineWidth
 	
 	self.Item = {}
 	
@@ -201,6 +205,8 @@ end
 
 function Element:UpdateLayout()
 	
+	love.graphics.setLineWidth(self.Layout.LineWidth)
+	
 	local Width, Height = self:GetDimensions()
 	
 	for i, Item in pairs(self.Item) do
@@ -245,7 +251,7 @@ function Element:RenderSkin()
 				love.graphics.setColor(self.Layout.SelectedColor)
 				love.graphics.rectangle("fill", WidthOffset, 1, ItemWidth + 9, Height - 2)
 				
-				Item:Draw(WidthOffset + 2, (Height - Item:getHeight())/2)
+				Item:Draw(WidthOffset + 2, ( Height - Item:getHeight() ) / 2)
 				
 			elseif self.IsHover and self.IsHover.x > WidthOffset and self.IsHover.x <= WidthOffset + ItemWidth + 10 then
 				
@@ -255,7 +261,7 @@ function Element:RenderSkin()
 				love.graphics.setColor(self.Layout.HoverColor)
 				love.graphics.draw(self.Layout.Gradient, WidthOffset, 3, 0, ItemWidth + 9, Height - 4)
 				
-				Item:Draw(WidthOffset + 2, (Height + 2 - Item:getHeight())/2)
+				Item:Draw(WidthOffset + 2, ( Height + 2 - Item:getHeight() ) / 2)
 				
 			else
 				
@@ -265,7 +271,7 @@ function Element:RenderSkin()
 				love.graphics.setColor(self.Layout.DefaultColor)
 				love.graphics.draw(self.Layout.Gradient, WidthOffset, 3, 0, ItemWidth + 9, Height - 4)
 				
-				Item:Draw(WidthOffset + 2, (Height + 2 - Item:getHeight())/2)
+				Item:Draw(WidthOffset + 2, ( Height + 2 - Item:getHeight() ) / 2)
 				
 			end
 			

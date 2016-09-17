@@ -37,6 +37,8 @@ Element.ImageColor = {255, 255, 255, 255}
 Element.Rounded = false
 Element.ArcRadius = 4
 
+Element.LineWidth = 1
+
 function Element:Create(Text, x, y, Width, Height, Parent)
 	
 	Parent = Parent or gui.Desktop
@@ -72,6 +74,8 @@ function Element:Init()
 	self.Layout.TextFont = Element.TextFont
 	self.Layout.Rounded = Element.Rounded
 	self.Layout.ArcRadius = Element.ArcRadius
+	
+	self.Layout.LineWidth = Element.LineWidth
 	
 	self.Text:SetColor(unpack(self.Layout.TextColor))
 	self.Text:SetFont(self.Layout.TextFont)
@@ -117,11 +121,13 @@ function Element:RoundedStencil()
 	
 	local Radius = self.Layout.ArcRadius
 	
-	love.graphics.rectangle("fill", 1, 1, self:GetWidth() - 2, self:GetHeight() - 2, Radius, Radius, Radius * 2)
+	love.graphics.rectangle("fill", 1, 1, self:GetWidth() - 2, self:GetHeight() - 2, Radius, Radius, Radius)
 	
 end
 
 function Element:RenderSkin()
+	
+	love.graphics.setLineWidth(self.Layout.LineWidth)
 	
 	local Width, Height = self:GetDimensions()
 	local Radius = self.Layout.ArcRadius
@@ -129,7 +135,7 @@ function Element:RenderSkin()
 	if self.Layout.Rounded then
 		
 		love.graphics.setColor(self.Layout.BorderColor)
-		love.graphics.rectangle("line", 0, 0, Width, Height, Radius, Radius, Radius * 2)
+		love.graphics.rectangle("line", 0, 0, Width, Height, Radius, Radius, Radius)
 		
 		gui.stencil(self.RoundedStencil)
 		
@@ -154,7 +160,7 @@ function Element:RenderSkin()
 				
 			else
 				
-				love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius * 2)
+				love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius)
 				
 			end
 			
@@ -220,7 +226,7 @@ function Element:RenderSkin()
 				
 			else
 				
-				love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius * 2)
+				love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius)
 				
 			end
 			

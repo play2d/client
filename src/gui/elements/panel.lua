@@ -6,6 +6,8 @@ Element.BorderColor = {200, 200, 200, 255}
 
 Element.SplashColor = {255, 255, 255, 255}
 
+Element.LineWidth = 1
+
 function Element:Create(x, y, Width, Height, Parent)
 	
 	self:SetPosition(x, y)
@@ -26,9 +28,13 @@ function Element:Init()
 	
 	self.Layout.SplashColor = Element.SplashColor
 	
+	self.Layout.LineWidth = Element.LineWidth
+	
 end
 
 function Element:Paint(x, y)
+	
+	love.graphics.setLineWidth(self.Layout.LineWidth)
 	
 	local Width, Height = self:GetDimensions()
 	

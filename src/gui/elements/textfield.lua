@@ -10,6 +10,8 @@ Element.HintColor = {140, 140, 140, 255}
 Element.BackgroundColor = {255, 255, 255, 255}
 Element.BorderColor = {80, 80, 80, 255}
 
+Element.LineWidth = 1
+
 function Element:Create(x, y, Width, Height, Parent)
 	
 	Parent = Parent or gui.Desktop
@@ -40,6 +42,8 @@ function Element:Init()
 	self.Text:SetColor(unpack(self.Layout.TextColor))
 	self.HintText:SetFont(self.Layout.TextFont)
 	self.HintText:SetColor(unpack(self.Layout.HintColor))
+	
+	self.Layout.LineWidth = Element.LineWidth
 	
 	self.Layout.Offset = 0
 	
@@ -469,6 +473,8 @@ function Element:UpdateLayout()
 end
 
 function Element:RenderSkin()
+	
+	love.graphics.setLineWidth(self.Layout.LineWidth)
 	
 	local Width, Height = self:GetDimensions()
 	

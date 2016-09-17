@@ -9,6 +9,7 @@ Element.CheckImage = love.graphics.newImage(gui.Path.."/images/Checked Checkbox-
 Element.UncheckImage = love.graphics.newImage(gui.Path.."/images/Unchecked Checkbox-24.png")
 
 function Element:Create(Text, x, y, Width, Height, Parent)
+	
 	Parent = Parent or gui.Desktop
 
 	self:SetParent(Parent)
@@ -18,9 +19,11 @@ function Element:Create(Text, x, y, Width, Height, Parent)
 	self:Init()
 	
 	return self
+	
 end
 
 function Element:Init()
+	
 	Element.Base.Init(self)
 	
 	self.Layout.TextFont = CheckBox.TextFont
@@ -32,58 +35,89 @@ function Element:Init()
 	
 	self.Text:SetColor(unpack(self.Layout.TextColor))
 	self.Text:SetFont(self.Layout.TextFont)
+	
 end
 
 function Element:UpdateLayout()
+	
 	self.Text:SetColor(unpack(self.Layout.TextColor))
 	self.Text:SetFont(self.Layout.TextFont)
+	
 end
 
 function Element:IsChecked()
+	
 	return self.Status ~= nil
+	
 end
 
 function Element:SetChecked(Checked)
+	
 	if Checked then
+		
 		self.Status = true
+		
 	else
+		
 		self.Status = nil
+		
 	end
+	
 	self.Changed = true
+	
 end
 
 function Element:MousePressed(...)
+	
 	if not self.Disabled then
+		
 		self.Status = not self.Status
 		self.Changed = true
+		
 	end
+	
 	Element.Base.MousePressed(self, ...)
+	
 end
 
 function Element:MouseEnter(...)
+	
 	self.Changed = true
 	Element.Base.MouseEnter(self, ...)
+	
 end
 
 function Element:MouseExit(...)
+	
 	self.Changed = true
 	Element.Base.MouseExit(self, ...)
+	
 end
 
 function Element:RenderSkin()
+	
 	local Width, Height = self:GetDimensions()
 
 	if self.IsHover then
+		
 		love.graphics.setColor(self.Layout.HoverColor)
+		
 	else
+		
 		love.graphics.setColor(self.Layout.Color)
+		
 	end
 	
 	if self.Status then
-		love.graphics.draw(self.Layout.CheckImage, 0, 0, 0, Height/24, Height/24)
+		
+		love.graphics.draw(self.Layout.CheckImage, 0, 0, 0, Height / 24, Height / 24)
+		
 	else
-		love.graphics.draw(self.Layout.UncheckImage, 0, 0, 0, Height/24, Height/24)
+		
+		love.graphics.draw(self.Layout.UncheckImage, 0, 0, 0, Height / 24, Height / 24)
+		
 	end
 	
-	self.Text:Draw(Height + 3, (Height - self.Text:getHeight())/2)
+	self.Text:Draw(Height + 3, ( Height - self.Text:getHeight() ) / 2)
+	
 end

@@ -43,6 +43,8 @@ Element.CloseButtonColor = {255, 80, 80, 255}
 Element.CloseButtonColorHover = {255, 120, 120, 255}
 Element.CloseButtonColorPressed = {200, 50, 50, 255}
 
+Element.LineWidth = 1
+
 local function CloseButton(Button)
 	
 	local self = Button.Parent
@@ -94,6 +96,8 @@ function Element:Init()
 	self.Layout.CloseButton.Layout.ArcRadius = 4
 	self.Layout.CloseButton.OnMouseReleased = CloseButton
 	
+	self.Layout.LineWidth = Element.LineWidth
+	
 end
 
 function Element:UpdateLayout()
@@ -121,6 +125,8 @@ function Element:BackgroundStencil()
 end
 
 function Element:RenderSkin(dt)
+	
+	love.graphics.setLineWidth(self.Layout.LineWidth)
 	
 	local Width, Height = self:GetDimensions()
 	

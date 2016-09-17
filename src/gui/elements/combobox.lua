@@ -15,6 +15,8 @@ Element.BackgroundColor = {255, 255, 255, 255}
 Element.SelectedColor = {200, 200, 200, 255}
 Element.HoverColor = {220, 220, 220, 255}
 
+Element.LineWidth = 1
+
 function Element:Create(x, y, Width, Height, Parent)
 	
 	Parent = Parent or gui.Desktop
@@ -42,6 +44,8 @@ function Element:Init()
 	
 	self.Layout.SelectedColor = Element.SelectedColor
 	self.Layout.HoverColor = Element.HoverColor
+	
+	self.Layout.LineWidth = Element.LineWidth
 	
 	self.Item = {}
 	
@@ -198,6 +202,8 @@ function Element:UpdateLayout()
 end
 
 function Element:RenderSkin()
+	
+	love.graphics.setLineWidth(self.Layout.LineWidth)
 	
 	local Width, Height = self.Width, self.Height
 	

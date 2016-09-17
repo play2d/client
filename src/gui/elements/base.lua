@@ -481,7 +481,7 @@ function Element:Render(x, y)
 	if self.Canvas then
 		
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.draw(self.Canvas, x, y)
+		love.graphics.draw(self.Canvas, math.floor(x), math.floor(y))
 		
 	end
 	
