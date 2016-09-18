@@ -1,19 +1,7 @@
 local PLAY2D = {}
-local Path = ...
+local Path = (...):gsub("%p", "/")
 
 function PLAY2D.Require(Name, ...)
-	
-	if love.filesystem.isDirectory(Path.."/"..Name) then
-		
-		return assert( love.filesystem.load(Path.."/"..Name.."/init.lua") ) (Path.."/"..Name, PLAY2D, ...)
-		
-	end
-	
-	return assert( love.filesystem.load(Path.."/"..Name..".lua") ) (Path.."/"..Name, PLAY2D, ...)
-	
-end
-
-function PLAY2D.Require2(Name, ...)
 	
 	if love.filesystem.isDirectory(Name) then
 		
@@ -33,15 +21,15 @@ PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, i
 
 PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
 
-PLAY2D.Connection = PLAY2D.Require("connection")
-PLAY2D.Resources = PLAY2D.Require("resources")
-PLAY2D.Filesystem = PLAY2D.Require("filesystem")
-PLAY2D.Terminal = PLAY2D.Require("terminal")
-PLAY2D.Commands = PLAY2D.Require("commands")
-PLAY2D.Configuration = PLAY2D.Require("configuration")
-PLAY2D.Language = PLAY2D.Require("language")
-PLAY2D.gui = PLAY2D.Require("gui")
-PLAY2D.Interface = PLAY2D.Require("interface")
+PLAY2D.Connection = PLAY2D.Require(Path.."/connection")
+PLAY2D.Resources = PLAY2D.Require(Path.."/resources")
+PLAY2D.Filesystem = PLAY2D.Require(Path.."/filesystem")
+PLAY2D.Terminal = PLAY2D.Require(Path.."/terminal")
+PLAY2D.Commands = PLAY2D.Require(Path.."/commands")
+PLAY2D.Configuration = PLAY2D.Require(Path.."/configuration")
+PLAY2D.Language = PLAY2D.Require(Path.."/language")
+PLAY2D.gui = PLAY2D.Require(Path.."/gui")
+PLAY2D.Interface = PLAY2D.Require(Path.."/interface")
 
 function PLAY2D.load()
 	-- Cap the framerate

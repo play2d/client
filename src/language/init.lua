@@ -1,11 +1,11 @@
 local Path, PLAY2D = ...
 local Language = {}
 
-Language.Translation = PLAY2D.Require("language/translation", Language)
-Language.Language = PLAY2D.Require("language/language", Language)
+Language.Translation = PLAY2D.Require(Path.."/translation", Language)
+Language.Language = PLAY2D.Require(Path.."/language", Language)
 
-Language.TranslationLink = PLAY2D.Require("language/translation_link", Language)
-Language.LanguageLink = PLAY2D.Require("language/language_link", Language)
+Language.TranslationLink = PLAY2D.Require(Path.."/translation_link", Language)
+Language.LanguageLink = PLAY2D.Require(Path.."/language_link", Language)
 
 function Language.load()
 	
