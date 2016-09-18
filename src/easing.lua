@@ -16,7 +16,7 @@ function Easing.new(Type, Duration, Options, UpdateFunction, DoneFunction)
 		self.Duration = Duration
 		
 		self.Options = {
-				Ping = Options.Ping or false
+				Ping = Options and Options.Ping or false
 		}
 		
 		self.Functions = {
@@ -74,9 +74,9 @@ function Easing:getState()
 
 end
 
-function Easing:getProgress()
+function Easing:getProgress(Measure)
 
-	return math.floor((self.Clock / self.Duration) * 100)
+	return (self.Clock / self.Duration) * (Measure or 100)
 
 end
 

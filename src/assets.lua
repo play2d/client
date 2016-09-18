@@ -78,33 +78,45 @@ function Assets.CreateQueue(Path, Name)
 		Total = 0
 	}
 	
+	self.LoadingEffect = false
+		
 	return setmetatable(self, AssetsMT)
 	
 end
 
-function Assets:Update(...)
+function Assets:Update(Delta)
 	
-	local Queue = self.Queue
-	local List = Queue.List
+	if not self.LoadingEffect or self.LoadingEffect:IsDone() then
+	
+		self.Delay = 0
+		
+		local Queue = self.Queue
+		local List = Queue.List
 
-	if #Queue.Loaded < Queue.Total then
-		
-		local Asset = List[1]
-		local AssetType = Asset[1]
-		
-		local Function = Assets.Function[AssetType]
-		
-		if Function then
+		if #Queue.Loaded < Queue.Total then
 			
-			Function(self, Asset)
+			local Asset = List[1]
+			local AssetType = Asset[1]
 			
-		end
+			local Function = Assets.Function[AssetType]
+			
+			if Function then
+				
+				Function(self, Asset)
+				
+			end
+			
+			table.insert(Queue.Loaded, Asset[2])
+			table.remove(List, 1)
+			
+			-- The second parameter represents the loading delay, change it and see what happens
+			self.LoadingEffect = PLAY2D.Easing.new("linear", 0.065)
 		
-		table.insert(Queue.Loaded, Asset[2])
-		table.remove(List, 1)
-
+		end	
+	
 	end
 	
+	self.LoadingEffect:Update(Delta)
 end
 
 function Assets:GetCurrentAsset()
@@ -127,7 +139,7 @@ end
 
 function Assets:IsDone()
 	
-	return #self.Queue.Loaded == self.Queue.Total
+	return #self.Queue.Loaded == self.Queue.Total and (not self.LoadingEffect or self.LoadingEffect:IsDone())
 	
 end
 
@@ -172,7 +184,8 @@ function Assets:Draw()
 	
 	local tq = self:GetTotalQueuedAssets()
 	local tl =  self:GetTotalLoadedAssets()
-	local rad = math.pi * 2 * (tl / tq)
+	
+	local rad = (math.pi * 2 * ((tl - 1) / tq)) + (math.pi * 2 * (1 / tq) * (self.LoadingEffect:getProgress(1) or 1))
 
 	LG.setLineWidth(3)
 	LG.stencil(Assets.Function.DrawStencil, "replace", 1)
@@ -189,8 +202,6 @@ function Assets:Draw()
 		LG.print(Text, math.floor( (w - self.Font:getWidth(Text) ) / 2), (h - self.Font:getHeight(Text) ) / 2 + 50)
 		
 	end
-	
-	love.timer.sleep(0.6)
 	
 end
 

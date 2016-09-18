@@ -33,6 +33,7 @@ PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, i
 
 PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
 
+PLAY2D.Easing = PLAY2D.Require("easing")
 PLAY2D.Connection = PLAY2D.Require("connection")
 PLAY2D.Filesystem = PLAY2D.Require("filesystem")
 PLAY2D.Terminal = PLAY2D.Require("terminal")
@@ -72,15 +73,15 @@ function PLAY2D.load()
 	
 end
 
-function PLAY2D.update(dt)
+function PLAY2D.update(Delta)
 	
 	if not FiveSevenQueue:IsDone() then
 		
-		FiveSevenQueue:Update()
+		FiveSevenQueue:Update(Delta)
 		
 	end
 	
-	PLAY2D.gui.update(dt)
+	PLAY2D.gui.update(Delta)
 	
 end
 
