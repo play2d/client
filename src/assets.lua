@@ -17,7 +17,10 @@ function Assets.Function:image(Asset)
 		
 	end
 	
-	Assets.Buffer[AssetFile] = love.graphics.newImage(AssetFile)
+	local Resource = love.graphics.newImage(AssetFile)
+	
+	Assets.Buffer[AssetFile] = Resource
+	Asset.Resource = Resource
 	
 end
 
@@ -31,7 +34,10 @@ function Assets.Function:font(Asset)
 		
 	end
 	
-	Assets.Buffer[AssetFile] = love.graphics.newFont(AssetFile, Asset[3])
+	local Resource = love.graphics.newFont(AssetFile, Asset[3])
+	
+	Assets.Buffer[AssetFile] = Resource
+	Asset.Resource = Resource
 	
 end
 
@@ -45,7 +51,10 @@ function Assets.Function:sound(Asset)
 		
 	end
 	
-	Assets.Buffer[AssetFile] = love.sound.newSoundData(AssetFile)
+	local Resource = love.sound.newSoundData(AssetFile)
+	
+	Assets.Buffer[AssetFile] = Resource
+	Asset.File = Resource
 	
 end
 
@@ -57,7 +66,11 @@ function Assets.CreateQueue(Path, Name)
 	
 	self.Path = Path
 	self.Name = Name
-	self.Queue =  { List = {}, Loaded = {}, Total = 0 }
+	self.Queue = {
+		List = {},
+		Loaded = {},
+		Total = 0
+	}
 	
 	return setmetatable(self, AssetsMT)
 	
@@ -114,29 +127,35 @@ end
 
 function Assets:AddToQueue(...)
 	
-	local Buffer = Assets.Buffer
-
 	for Num, Asset in pairs({...}) do
 		
-		if tostring(Asset[1]) and tostring(Asset[2]) then
+		self:AddSingle(Asset)
+		
+	end
+	
+end
+
+function Assets:AddSingle(Asset)
+	
+	if Asset[1] and Asset[2] then
+		
+		local AssetPath = self.Path .. "/" .. Asset[2]
+		
+		if not love.filesystem.exists(AssetPath) then
 			
-			local AssetPath = self.Path .. "/" .. Asset[2]
-
-			if not love.filesystem.exists(AssetPath) then
-				
-				print("Err, "..AssetPath.." not found on both Game and Root directories")
-
-			else
-				
-				self.Queue.Total = self.Queue.Total + 1
-				
-				table.insert(self.Queue.List, Asset)
-				
-			end
+			print("Err, "..AssetPath.." not found on both Game and Root directories")
+		
+		else
+			
+			self.Queue.Total = self.Queue.Total + 1
+			
+			table.insert(self.Queue.List, Asset)
 			
 		end
 		
 	end
+	
+	return Asset
 	
 end
 
@@ -148,7 +167,7 @@ function Assets:Draw()
 	
 	local tq = self:GetTotalQueuedAssets()
 	local tl =  self:GetTotalLoadedAssets()
-	local rad = (math.pi * 2) * (tl / tq)
+	local rad = math.pi * 2 * (tl / tq)
 	
 	love.graphics.arc("line", math.floor(w * 0.5), math.floor(h * 0.5), 20, 0, rad)
 	
@@ -162,7 +181,7 @@ function Assets:Draw()
 		
 	end
 	
-	love.timer.sleep(0.6)
+	love.timer.sleep(0.5)
 	
 end
 

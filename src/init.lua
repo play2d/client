@@ -5,11 +5,23 @@ function PLAY2D.Require(Name, ...)
 	
 	if love.filesystem.isDirectory(Path.."/"..Name) then
 		
-		return assert(love.filesystem.load(Path.."/"..Name.."/init.lua"))(Path.."/"..Name, PLAY2D, ...)
+		return assert( love.filesystem.load(Path.."/"..Name.."/init.lua") ) (Path.."/"..Name, PLAY2D, ...)
 		
 	end
 	
-	return assert(love.filesystem.load(Path.."/"..Name..".lua"))(Path.."/"..Name, PLAY2D, ...)
+	return assert( love.filesystem.load(Path.."/"..Name..".lua") ) (Path.."/"..Name, PLAY2D, ...)
+	
+end
+
+function PLAY2D.Require2(Name, ...)
+	
+	if love.filesystem.isDirectory(Name) then
+		
+		return assert( love.filesystem.load(Name.."/init.lua") ) (Name, PLAY2D, ...)
+		
+	end
+	
+	return assert( love.filesystem.load(Name..".lua") ) (Name, PLAY2D, ...)
 	
 end
 
@@ -21,6 +33,7 @@ PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, i
 
 PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
 
+PLAY2D.Connection = PLAY2D.Require("connection")
 PLAY2D.Filesystem = PLAY2D.Require("filesystem")
 PLAY2D.Terminal = PLAY2D.Require("terminal")
 PLAY2D.Commands = PLAY2D.Require("commands")

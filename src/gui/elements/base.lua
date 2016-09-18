@@ -323,13 +323,13 @@ end
 
 function Element:GetHorizontalPosition()
 	
-	return math.floor(self.x)
+	return self.x
 	
 end
 
 function Element:GetVerticalPosition()
 	
-	return math.floor(self.y)
+	return self.y
 	
 end
 

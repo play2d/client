@@ -60,9 +60,9 @@ local function ButtonLeft(self, ...)
 			local Button = Slider.Layout.Button
 			local Width = Slider:GetWidth()
 			local Max = math.max(Width - (Width -  30) * Slider.Min / Slider.Max - 30, 1)
-			local Position = math.min(math.max(self:GetHorizontalPosition() - 2, 15), Max + 15)
+			local Position = math.min(math.max(Slider.Layout.Button:GetHorizontalPosition() - love.timer.getDelta() * 200, 15), Max + 15)
 			
-			Slider.Layout.Button:SetHorizontalPosition(math.floor(Position))
+			Slider.Layout.Button:SetHorizontalPosition( Position )
 			Slider.Value = (Position - 15) / Max * Slider.Max
 			Slider:OnValue(Slider.Value)
 			
@@ -84,9 +84,9 @@ local function ButtonRight(self, ...)
 			local Button = Slider.Layout.Button
 			local Width = Slider:GetWidth()
 			local Max = math.max(Width - (Width -  30) * Slider.Min / Slider.Max - 30, 1)
-			local Position = math.min(math.max(self:GetHorizontalPosition() + 2, 15), Max + 15)
+			local Position = math.min(math.max(Slider.Layout.Button:GetHorizontalPosition() + love.timer.getDelta() * 200, 15), Max + 15)
 			
-			Slider.Layout.Button:SetHorizontalPosition(math.floor(Position))
+			Slider.Layout.Button:SetHorizontalPosition( Position )
 			Slider.Value = (Position - 15) / Max * Slider.Max
 			Slider:OnValue(Slider.Value)
 			
@@ -222,6 +222,6 @@ function Element:RenderSkin(dt)
 	love.graphics.rectangle("line", 0, 0, Width, Height, Radius, Radius, Radius)
 	
 	love.graphics.setColor(self.Layout.BackgroundColor)
-	love.graphics.rectangle("fill", 0, 0, Width, Height, Radius, Radius, Radius)
+	love.graphics.rectangle("fill", 1, 1, Width - 2, Height - 2, Radius, Radius, Radius)
 	
 end
