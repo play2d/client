@@ -58,6 +58,12 @@ function Assets.Function:sound(Asset)
 	
 end
 
+function Assets.Function:DrawStencil()
+
+   love.graphics.circle("fill", 400, 300, 18)
+   
+end
+
 -- Class functions
 function Assets.CreateQueue(Path, Name)
 	
@@ -160,28 +166,31 @@ function Assets:AddSingle(Asset)
 end
 
 function Assets:Draw()
+	local LG = love.graphics
 	
-	love.graphics.setLineWidth(3)
-	
-	local w, h = love.graphics.getDimensions()
+	local w, h = LG.getDimensions()
 	
 	local tq = self:GetTotalQueuedAssets()
 	local tl =  self:GetTotalLoadedAssets()
 	local rad = math.pi * 2 * (tl / tq)
-	
-	love.graphics.arc("line", math.floor(w * 0.5), math.floor(h * 0.5), 20, 0, rad)
+
+	LG.setLineWidth(3)
+	LG.stencil(Assets.Function.DrawStencil, "replace", 1)
+	LG.setStencilTest("equal", 0)
+	LG.arc("line", math.floor(w * 0.5), math.floor(h * 0.5), 20, 0, rad)
+	LG.setStencilTest()	
 	
 	if self.Name then
 		
-		love.graphics.setFont(self.Font)
+		LG.setFont(self.Font)
 		
 		local Text = "Loading " .. self.Name .. "..."
 		
-		love.graphics.print(Text, math.floor( (w - self.Font:getWidth(Text) ) / 2), (h - self.Font:getHeight(Text) ) / 2 + 50)
+		LG.print(Text, math.floor( (w - self.Font:getWidth(Text) ) / 2), (h - self.Font:getHeight(Text) ) / 2 + 50)
 		
 	end
 	
-	love.timer.sleep(0.5)
+	love.timer.sleep(0.6)
 	
 end
 
