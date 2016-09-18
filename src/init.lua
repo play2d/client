@@ -33,8 +33,8 @@ PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, i
 
 PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
 
-PLAY2D.Easing = PLAY2D.Require("easing")
 PLAY2D.Connection = PLAY2D.Require("connection")
+PLAY2D.Resources = PLAY2D.Require("resources")
 PLAY2D.Filesystem = PLAY2D.Require("filesystem")
 PLAY2D.Terminal = PLAY2D.Require("terminal")
 PLAY2D.Commands = PLAY2D.Require("commands")
@@ -42,7 +42,6 @@ PLAY2D.Configuration = PLAY2D.Require("configuration")
 PLAY2D.Language = PLAY2D.Require("language")
 PLAY2D.gui = PLAY2D.Require("gui")
 PLAY2D.Interface = PLAY2D.Require("interface")
-PLAY2D.Assets = PLAY2D.Require("assets")
 
 function PLAY2D.load()
 	-- Cap the framerate

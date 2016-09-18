@@ -1,10 +1,10 @@
 local Path, PLAY2D = ...
 local Interface = {}
 
-Interface.Desktop = PLAY2D.Require("interface/desktop", Interface)
-Interface.Servers = PLAY2D.Require("interface/servers", Interface)
-Interface.Options = PLAY2D.Require("interface/options", Interface)
-Interface.Quit = PLAY2D.Require("interface/quit", Interface)
+Interface.Desktop = PLAY2D.Require2(Path.."/desktop", Interface)
+Interface.Servers = PLAY2D.Require2(Path.."/servers", Interface)
+Interface.Options = PLAY2D.Require2(Path.."/options", Interface)
+Interface.Quit = PLAY2D.Require2(Path.."/quit", Interface)
 
 function Interface.load()
 	

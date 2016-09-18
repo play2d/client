@@ -8,7 +8,7 @@ Element.Right = love.graphics.newImage(gui.Path.."/images/Right-14.png")
 Element.BorderColor = {80, 80, 80, 255}
 Element.BackgroundColor = {200, 200, 200, 255}
 
-Element.ArcRadius = 5
+Element.ArcRadius = 6
 
 Element.Max = 1
 Element.Min = 1

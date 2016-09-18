@@ -11,7 +11,7 @@ function Game.load()
 	
 	Game.GoreLabel = PLAY2D.gui.create("Label", Interface.Language:Get("options_game_gore"), 10, 50, 100, 20, Options.Panel[3])
 	
-	Game.GoreSlider = PLAY2D.gui.create("HSlider", 110, 50, 200, 50, Options.Panel[3])
+	Game.GoreSlider = PLAY2D.gui.create("HSlider", 110, 50, 200, 20, Options.Panel[3])
 	
 	-- Radar
 	

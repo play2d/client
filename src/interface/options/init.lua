@@ -1,13 +1,13 @@
 local Path, PLAY2D, Interface = ...
 local Options = {}
 
-Options.Player = PLAY2D.Require("interface/options/player", Interface, Options)
-Options.Controls = PLAY2D.Require("interface/options/controls", Interface, Options)
-Options.Game = PLAY2D.Require("interface/options/game", Interface, Options)
-Options.Graphics = PLAY2D.Require("interface/options/graphics", Interface, Options)
-Options.Sound = PLAY2D.Require("interface/options/sound", Interface, Options)
-Options.Net = PLAY2D.Require("interface/options/net", Interface, Options)
-Options.More = PLAY2D.Require("interface/options/more", Interface, Options)
+Options.Player = PLAY2D.Require2(Path.."/player", Interface, Options)
+Options.Controls = PLAY2D.Require2(Path.."/controls", Interface, Options)
+Options.Game = PLAY2D.Require2(Path.."/game", Interface, Options)
+Options.Graphics = PLAY2D.Require2(Path.."/graphics", Interface, Options)
+Options.Sound = PLAY2D.Require2(Path.."/sound", Interface, Options)
+Options.Net = PLAY2D.Require2(Path.."/net", Interface, Options)
+Options.More = PLAY2D.Require2(Path.."/more", Interface, Options)
 
 function Options.load()
 	

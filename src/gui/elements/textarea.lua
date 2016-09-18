@@ -5,6 +5,7 @@ Element.Selected = 1
 Element.SelectedLength = 0
 
 function Element:Create(x, y, Width, Height, Parent)
+	
 	Parent = Parent or gui.Desktop
 
 	self:SetParent(Parent)
@@ -14,10 +15,13 @@ function Element:Create(x, y, Width, Height, Parent)
 	self:Init()
 	
 	return self
+	
 end
 
 function Element:Filter(Text, Position, Length, Line)
+	
 	return true
+	
 end
 
 function Element:CanDelete(Position, Length, Line)
