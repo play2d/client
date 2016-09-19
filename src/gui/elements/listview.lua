@@ -1,5 +1,5 @@
 local gui = ...
-local Element = gui.register("ListBox", "Container")
+local Element = gui.register("ListView", "Container")
 
 Element.TextFont = love.graphics.newFont(gui.Fonts["Kanit Light"], 13)
 Element.TextColor = {80, 80, 80, 255}

@@ -18,6 +18,7 @@ function Options.load()
 		if self.IsHover then
 			
 			Options.Window.Hidden = false
+			Options.Window:SetHover()
 			
 		end
 		

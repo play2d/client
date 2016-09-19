@@ -39,7 +39,7 @@ local function ButtonDrag(self, x, y, dx, dy, ...)
 		local Max = math.max(Height - (Height -  30) * Slider.Min / Slider.Max - 30, 1)
 		local Position = math.min(math.max(self:GetVerticalPosition() + dy, 15), Max + 15)
 		
-		self:SetVerticalPosition(math.floor(Position))
+		self:SetVerticalPosition( Position )
 		Slider.Value = (Position - 15) / Max * Slider.Max
 		Slider:OnValue(Slider.Value)
 		
