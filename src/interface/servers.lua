@@ -20,9 +20,12 @@ function Servers.load()
 	Servers.Window.Hidden = true
 	
 	Servers.List = PLAY2D.gui.create("ListView", 10, 60, Servers.Window:GetWidth() - 20, Servers.Window:GetHeight() - 70, Servers.Window)
+	local c1 = Servers.List:CreateColumn("Test", 200)
+	local c2 =Servers.List:CreateColumn("Another", 300)
 	
 	for i = 1, 200 do
-		Servers.List:AddItem("Item: "..i)
+		Servers.List:AddItem(c1, "Item: "..i)
+		Servers.List:AddItem(c2, "Another "..i)
 	end
 	
 	Servers.load = nil

@@ -109,7 +109,7 @@ end
 
 function Element:WheelMoved(x, y)
 	
-	Element.Base.MouseMoved(x, y)
+	Element.Base.WheelMoved(self, x, y)
 	self.Layout.Slider:SetValue(self.Layout.Slider.Value - y * 5 * self.Layout.Slider.Max / self.Height)
 	self.Changed = true
 	

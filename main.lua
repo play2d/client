@@ -1,7 +1,5 @@
 PLAY2D = require("src")
 
-print = nil
-
 function love.load(...)
 	
 	PLAY2D.load(...)

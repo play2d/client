@@ -46,21 +46,45 @@ function Element:Init()
 	self.Layout.ArcRadius = Element.ArcRadius
 	
 	self.Selected = 0
-	self.Item = {}
+	self.Column = {}
 	
 end
 
-function Element:SetItem(Index, Text)
+function Element:CreateColumn(Text, Width)
+	
+	local Column = {
+		Text = Text,
+		Width = Width,
+		Items = {},
+	}
+	
+	local Index = #self.Column + 1
+	
+	self.Column[Index] = Column
+	
+	return Index
+	
+end
+
+function Element:SetItem(Column, Index, Text)
 	
 	if type(Text) == "string" then
 		
-		self.Item[Index] = gui.CreateText(Text, self.Layout.TextFont, unpack(self.Layout.TextColor))
-		self:UpdateItems()
+		if self.Column[Column] then
+		
+			self.Column[Column].Items[Index] = gui.CreateText(Text, self.Layout.TextFont, unpack(self.Layout.TextColor))
+			self:UpdateItems()
+			
+		end
 		
 	elseif Text == nil then
 		
-		self.Item[Index] = nil
-		self:UpdateItems()
+		if self.Column[Column] then
+		
+			self.Column[Column].Items[Index] = nil
+			self:UpdateItems()
+			
+		end
 		
 	end
 	
@@ -76,9 +100,15 @@ function Element:RoundedScissor()
 	
 end
 
-function Element:AddItem(Text)
+function Element:AddItem(Column, Text)
 	
-	return self:SetItem(#self.Item + 1, Text)
+	local ColumnTable = self.Column[Column]
+	
+	if ColumnTable then
+	
+		return self:SetItem(Column, #ColumnTable.Items + 1, Text)
+		
+	end
 	
 end
 
@@ -109,7 +139,7 @@ end
 
 function Element:WheelMoved(x, y)
 	
-	Element.Base.MouseMoved(x, y)
+	Element.Base.WheelMoved(self, x, y)
 	self.Layout.Slider:SetValue(self.Layout.Slider.Value - y * 5 * self.Layout.Slider.Max / self.Height)
 	self.Changed = true
 	
@@ -122,23 +152,58 @@ function Element:MousePressed(MouseX, MouseY, Button, IsTouch)
 		local Width, Height = self:GetDimensions()
 		local HeightOffset = 2 - self.Layout.Slider:GetValue() * (self.Layout.Slider.Max - Height) / self.Layout.Slider.Max
 		
-		for i, Item in pairs(self.Item) do
+		local ItemCount = 0
+		
+		for n, Column in pairs(self.Column) do
 			
-			local ItemHeight = Item:getHeight()
+			if #Column.Items > ItemCount then
+				
+				ItemCount = #Column.Items
+				
+			end
+			
+		end
+		
+		for i = 1, ItemCount do
+			
+			local ItemHeight = 0
+		
+			for n, Column in pairs(self.Column) do
+				
+				local ColumnItem = Column.Items[i]
+				
+				if ColumnItem then
+				
+					local ColumnItemHeight = ColumnItem:getHeight()
+					
+					if ColumnItemHeight > ItemHeight then
+						
+						ItemHeight = ColumnItemHeight
+						
+					end
+					
+				end
+				
+			end
+				
 			
 			if HeightOffset >= -ItemHeight then
 				
-				if HeightOffset > Height then
+				for n, Column in pairs(self.Column) do
 					
-					break
-					
-				elseif MouseY > HeightOffset and MouseY <= HeightOffset + ItemHeight then
-					
-					self:OnSelect(i)
-					self.Selected = i
-					self.Changed = true
-					
-					break
+					if HeightOffset > Height then
+						
+						return
+						
+					elseif MouseY > HeightOffset and MouseY <= HeightOffset + ItemHeight then
+						
+						self:OnSelect(i)
+						self.Selected = i
+						self.Changed = true
+						
+						return
+						
+					end
 					
 				end
 				
@@ -154,16 +219,28 @@ end
 
 function Element:UpdateItems()
 	
-	local HeightOffset = 0
+	local TotalHeightOffset = 0
 	
-	for i, Item in pairs(self.Item) do
+	for n, Column in pairs(self.Column) do
+	
+		local HeightOffset = 0
+	
+		for i, Item in pairs(Column.Items) do
+			
+			HeightOffset = HeightOffset + Item:getHeight()
+			
+		end
 		
-		HeightOffset = HeightOffset + Item:getHeight()
+		if HeightOffset > TotalHeightOffset then
+			
+			TotalHeightOffset = HeightOffset
+			
+		end
 		
 	end
 	
 	self.Layout.Slider.Min = self:GetHeight()
-	self.Layout.Slider.Max = math.max(self.Layout.Slider.Min, HeightOffset + 4)
+	self.Layout.Slider.Max = math.max(self.Layout.Slider.Min, TotalHeightOffset + 4)
 	self.Changed = true
 	
 end
@@ -172,9 +249,15 @@ function Element:UpdateLayout()
 	
 	local Width, Height = self:GetDimensions()
 	
-	for i, Item in pairs(self.Item) do
-		Item:SetFont(self.Layout.TextFont)
-		Item:SetColor(unpack(self.Layout.TextColor))
+	for n, Column in pairs(self.Column) do
+	
+		for i, Item in pairs(Column.Items) do
+			
+			Item:SetFont(self.Layout.TextFont)
+			Item:SetColor(unpack(self.Layout.TextColor))
+			
+		end
+		
 	end
 	
 	self.Layout.Slider:SetDimensions(15, Height)
@@ -199,29 +282,71 @@ function Element:RenderSkin()
 	
 	local HeightOffset = 2 - self.Layout.Slider:GetValue() * (self.Layout.Slider.Max - Height) / self.Layout.Slider.Max
 	
-	for i, Item in pairs(self.Item) do
+	local ItemCount = 0
+	
+	for n, Column in pairs(self.Column) do
 		
-		local ItemHeight = Item:getHeight()
-		
-		if HeightOffset > -ItemHeight then
+		if #Column.Items > ItemCount then
 			
-			if HeightOffset > Height then
+			ItemCount = #Column.Items
+			
+		end
+		
+	end
+	
+	for i = 1, ItemCount do
+		
+		local ItemHeight = 0
+		
+		for n, Column in pairs(self.Column) do
+			
+			local ColumnItem = Column.Items[i]
+			
+			if ColumnItem then
+			
+				local ColumnItemHeight = ColumnItem:getHeight()
 				
-				break
+				if ColumnItemHeight > ItemHeight then
+					
+					ItemHeight = ColumnItemHeight
+					
+				end
 				
 			end
 			
-			Item:Draw(5, HeightOffset)
+		end
+		
+		if HeightOffset > -ItemHeight then
 			
-			if self.Selected == i then
+			local WidthOffset = 0
+			
+			for n, Column in pairs(self.Column) do
+			
+				if Column.Items[i] then
 				
-				love.graphics.setColor(0, 0, 0, 70)
-				love.graphics.rectangle("fill", 0, HeightOffset, Width, ItemHeight)
+					if HeightOffset > Height then
+						
+						break
+						
+					end
+					
+					Column.Items[i]:Draw(WidthOffset + 5, HeightOffset)
+					
+					if self.Selected == i then
+						
+						love.graphics.setColor(0, 0, 0, 70)
+						love.graphics.rectangle("fill", WidthOffset, HeightOffset, Column.Width, ItemHeight)
+						
+					elseif self.IsHover and self.IsHover.y > HeightOffset and self.IsHover.y <= HeightOffset + ItemHeight then
+						
+						love.graphics.setColor(75, 75, 75, 70)
+						love.graphics.rectangle("fill", WidthOffset, HeightOffset, Column.Width, ItemHeight)
+						
+					end
+					
+				end
 				
-			elseif self.IsHover and self.IsHover.y > HeightOffset and self.IsHover.y <= HeightOffset + ItemHeight then
-				
-				love.graphics.setColor(75, 75, 75, 70)
-				love.graphics.rectangle("fill", 0, HeightOffset, Width, ItemHeight)
+				WidthOffset = WidthOffset + Column.Width
 				
 			end
 			
