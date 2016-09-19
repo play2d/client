@@ -10,6 +10,7 @@ function Quit.load()
 		if Quit.Label.IsHover then
 			
 			Quit.Window.Hidden = nil
+			Quit.Window:SetHover()
 			
 		end
 		

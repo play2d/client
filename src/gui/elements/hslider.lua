@@ -60,9 +60,9 @@ local function ButtonLeft(self, ...)
 			local Button = Slider.Layout.Button
 			local Width = Slider:GetWidth()
 			local Max = math.max(Width - (Width -  30) * Slider.Min / Slider.Max - 30, 1)
-			local Position = math.min(math.max(Slider.Layout.Button:GetHorizontalPosition() - love.timer.getDelta() * 200, 15), Max + 15)
+			local Position = math.min(math.max(Button:GetHorizontalPosition() - love.timer.getDelta() * 200, 15), Max + 15)
 			
-			Slider.Layout.Button:SetHorizontalPosition( Position )
+			Button:SetHorizontalPosition( Position )
 			Slider.Value = (Position - 15) / Max * Slider.Max
 			Slider:OnValue(Slider.Value)
 			
@@ -71,6 +71,7 @@ local function ButtonLeft(self, ...)
 	end
 	
 	Button.Base.Update(self, ...)
+	
 end
 
 local function ButtonRight(self, ...)
@@ -84,9 +85,9 @@ local function ButtonRight(self, ...)
 			local Button = Slider.Layout.Button
 			local Width = Slider:GetWidth()
 			local Max = math.max(Width - (Width -  30) * Slider.Min / Slider.Max - 30, 1)
-			local Position = math.min(math.max(Slider.Layout.Button:GetHorizontalPosition() + love.timer.getDelta() * 200, 15), Max + 15)
+			local Position = math.min(math.max(Button:GetHorizontalPosition() + love.timer.getDelta() * 200, 15), Max + 15)
 			
-			Slider.Layout.Button:SetHorizontalPosition( Position )
+			Button:SetHorizontalPosition( Position )
 			Slider.Value = (Position - 15) / Max * Slider.Max
 			Slider:OnValue(Slider.Value)
 			
@@ -109,13 +110,13 @@ function Element:Init()
 	
 	self.Layout.ArcRadius = Element.ArcRadius
 	
-	self.Layout.Left = gui.create("Button", "", 0, 0, 16, Height, self)
+	self.Layout.Left = gui.create("Button", "", 0, 0, 15, Height, self)
 	self.Layout.Left.Layout.Rounded = true
 	self.Layout.Left.Layout.ArcRadius = self.Layout.ArcRadius
 	self.Layout.Left:SetIcon(Element.Left)
 	self.Layout.Left.Update = ButtonLeft
 	
-	self.Layout.Right = gui.create("Button", "", 0, 0, 16, Height, self)
+	self.Layout.Right = gui.create("Button", "", 0, 0, 15, Height, self)
 	self.Layout.Right.Layout.Rounded = true
 	self.Layout.Right.Layout.ArcRadius = self.Layout.ArcRadius
 	self.Layout.Right:SetIcon(Element.Right)
@@ -146,6 +147,7 @@ function Element:SetMax(Max)
 	end
 	
 	return self
+	
 end
 
 function Element:SetMin(Min)
@@ -192,9 +194,9 @@ function Element:UpdateLayout()
 	
 	local Width, Height = self:GetDimensions()
 	
-	self.Layout.Left:SetDimensions(16, Height)
-	self.Layout.Right:SetDimensions(16, Height)
-	self.Layout.Right:SetPosition(Width - 16, 0)
+	self.Layout.Left:SetDimensions(15, Height)
+	self.Layout.Right:SetDimensions(15, Height)
+	self.Layout.Right:SetPosition(Width - 15, 0)
 	self.Layout.Button:SetDimensions(math.floor( (Width - 30) * self.Min / self.Max), Height)
 	
 	local ArcRadius = self.Layout.ArcRadius
