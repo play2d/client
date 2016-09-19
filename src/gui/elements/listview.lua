@@ -8,6 +8,32 @@ Element.BorderColor = {80, 80, 80, 255}
 Element.BackgroundColor = {255, 255, 255, 255}
 
 Element.ArcRadius = 6
+Element.LineWidth = 1
+
+Element.Gradient = love.graphics.newMesh(
+	{
+		{
+			0, 0,
+			0, 0,
+			180, 180, 180
+		},
+		{
+			1, 0,
+			1, 0,
+			180, 180, 180
+		},
+		{
+			1, 1,
+			1, 1,
+			208, 208, 208
+		},
+		{
+			0, 1,
+			0, 1,
+			208, 208, 208
+		}
+	}
+, "fan", "static")
 
 function Element:Create(x, y, Width, Height, Parent)
 	
@@ -44,6 +70,9 @@ function Element:Init()
 	self.Layout.Slider.OnValue = SliderMoved
 	
 	self.Layout.ArcRadius = Element.ArcRadius
+	self.Layout.LineWidth = Element.LineWidth
+	
+	self.Layout.Gradient = Element.Gradient
 	
 	self.Selected = 0
 	self.Column = {}
@@ -96,7 +125,7 @@ function Element:RoundedScissor()
 	
 	local ArcRadius = self.Layout.ArcRadius
 	
-	love.graphics.rectangle("fill", 0, 0, self:GetWidth(), self:GetHeight(), ArcRadius, ArcRadius, ArcRadius)
+	love.graphics.rectangle("fill", 1, 1, self:GetWidth() - 2, self:GetHeight() - 2, ArcRadius, ArcRadius, ArcRadius)
 	
 end
 
@@ -150,7 +179,7 @@ function Element:MousePressed(MouseX, MouseY, Button, IsTouch)
 	if Button == 1 then
 		
 		local Width, Height = self:GetDimensions()
-		local HeightOffset = 2 - self.Layout.Slider:GetValue() * (self.Layout.Slider.Max - Height) / self.Layout.Slider.Max
+		local HeightOffset = 2 + self.Layout.TextFont:getHeight() - self.Layout.Slider:GetValue() * (self.Layout.Slider.Max - Height) / self.Layout.Slider.Max
 		
 		local ItemCount = 0
 		
@@ -223,7 +252,7 @@ function Element:UpdateItems()
 	
 	for n, Column in pairs(self.Column) do
 	
-		local HeightOffset = 0
+		local HeightOffset = self.Layout.TextFont:getHeight()
 	
 		for i, Item in pairs(Column.Items) do
 			
@@ -268,6 +297,8 @@ end
 
 function Element:RenderSkin()
 	
+	love.graphics.setLineWidth(self.Layout.LineWidth)
+	
 	local Width, Height = self:GetDimensions()
 	local ArcRadius = self.Layout.ArcRadius
 	
@@ -280,9 +311,10 @@ function Element:RenderSkin()
 	gui.stencil(self.RoundedScissor)
 	love.graphics.setStencilTest("greater", 0)
 	
-	local HeightOffset = 2 - self.Layout.Slider:GetValue() * (self.Layout.Slider.Max - Height) / self.Layout.Slider.Max
+	local HeightOffset = 2 + self.Layout.TextFont:getHeight() - self.Layout.Slider:GetValue() * (self.Layout.Slider.Max - Height) / self.Layout.Slider.Max
 	
 	local ItemCount = 0
+	local WidthOffset = 0
 	
 	for n, Column in pairs(self.Column) do
 		
@@ -291,6 +323,15 @@ function Element:RenderSkin()
 			ItemCount = #Column.Items
 			
 		end
+		
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.draw(self.Layout.Gradient, WidthOffset, 0, 0, Column.Width, self.Layout.TextFont:getHeight())
+		
+		love.graphics.setColor(self.Layout.TextColor)
+		love.graphics.setFont(self.Layout.TextFont)
+		love.graphics.print(Column.Text, WidthOffset + 5, 0)
+		
+		WidthOffset = WidthOffset + Column.Width
 		
 	end
 	
@@ -330,6 +371,11 @@ function Element:RenderSkin()
 						
 					end
 					
+					love.graphics.setScissor(WidthOffset, 0, Column.Width, Height)
+					
+					love.graphics.setColor(self.Layout.BorderColor)
+					love.graphics.line(WidthOffset + Column.Width, 0, WidthOffset + Column.Width, Height)
+					
 					Column.Items[i]:Draw(WidthOffset + 5, HeightOffset)
 					
 					if self.Selected == i then
@@ -356,6 +402,7 @@ function Element:RenderSkin()
 		
 	end
 	
+	love.graphics.setScissor()
 	love.graphics.setStencilTest()
 	
 end
