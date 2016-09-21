@@ -42,6 +42,8 @@ function Configuration.ParseConfig(File)
 	local Count = 0
 	
 	for Line in File:lines() do
+	
+		File:seek(File:tell() + #Line + 1)
 		
 		if Line:sub(1, 2) ~= "//" then
 
