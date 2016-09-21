@@ -15,22 +15,22 @@ Element.Gradient = love.graphics.newMesh(
 		{
 			0, 0,
 			0, 0,
-			180, 180, 180
+			180, 180, 180, 255
 		},
 		{
 			1, 0,
 			1, 0,
-			180, 180, 180
+			180, 180, 180, 255
 		},
 		{
 			1, 1,
 			1, 1,
-			208, 208, 208
+			208, 208, 208, 255
 		},
 		{
 			0, 1,
 			0, 1,
-			208, 208, 208
+			208, 208, 208, 255
 		}
 	}
 , "fan", "static")
@@ -314,7 +314,6 @@ function Element:RenderSkin()
 	local HeightOffset = 2 + self.Layout.TextFont:getHeight() - self.Layout.Slider:GetValue() * (self.Layout.Slider.Max - Height) / self.Layout.Slider.Max
 	
 	local ItemCount = 0
-	local WidthOffset = 0
 	
 	for n, Column in pairs(self.Column) do
 		
@@ -323,15 +322,6 @@ function Element:RenderSkin()
 			ItemCount = #Column.Items
 			
 		end
-		
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.draw(self.Layout.Gradient, WidthOffset, 0, 0, Column.Width, self.Layout.TextFont:getHeight())
-		
-		love.graphics.setColor(self.Layout.TextColor)
-		love.graphics.setFont(self.Layout.TextFont)
-		love.graphics.print(Column.Text, WidthOffset + 5, 0)
-		
-		WidthOffset = WidthOffset + Column.Width
 		
 	end
 	
@@ -373,9 +363,6 @@ function Element:RenderSkin()
 					
 					love.graphics.setScissor(WidthOffset, 0, Column.Width, Height)
 					
-					love.graphics.setColor(self.Layout.BorderColor)
-					love.graphics.line(WidthOffset + Column.Width, 0, WidthOffset + Column.Width, Height)
-					
 					Column.Items[i]:Draw(WidthOffset + 5, HeightOffset)
 					
 					if self.Selected == i then
@@ -403,6 +390,29 @@ function Element:RenderSkin()
 	end
 	
 	love.graphics.setScissor()
+	
+	local WidthOffset = 0
+	local TextHeight = self.Layout.TextFont:getHeight()
+	
+	for n, Column in pairs(self.Column) do
+		
+		love.graphics.setColor(self.Layout.BorderColor)
+		love.graphics.line(WidthOffset, TextHeight, WidthOffset + Column.Width - 1, TextHeight)
+		
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.draw(self.Layout.Gradient, WidthOffset + 1, 0, 0, Column.Width, TextHeight)
+		
+		love.graphics.setColor(self.Layout.BorderColor)
+		love.graphics.line(WidthOffset + Column.Width, 0, WidthOffset + Column.Width, Height)
+		
+		love.graphics.setColor(self.Layout.TextColor)
+		love.graphics.setFont(self.Layout.TextFont)
+		love.graphics.print(Column.Text, WidthOffset + 5, 0)
+		
+		WidthOffset = WidthOffset + Column.Width
+		
+	end
+	
 	love.graphics.setStencilTest()
 	
 end

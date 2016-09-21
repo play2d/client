@@ -31,9 +31,15 @@ function gui.get(Name)
 	
 	if not gui.Elements[Name] then
 		
-		table.insert(gui.LoadQueue, coroutine.running())
+		local Coroutine = coroutine.running()
 		
-		coroutine.yield()
+		if Coroutine then
+		
+			table.insert(gui.LoadQueue, Coroutine)
+			
+			coroutine.yield()
+			
+		end
 		
 	end
 	
@@ -59,11 +65,17 @@ function gui.register(Name, BaseClass)
 		
 		if not Class then
 			
-			table.insert(gui.LoadQueue, coroutine.running())
+			local Coroutine = coroutine.running()
 			
-			coroutine.yield()
+			if Coroutine then
+				
+				table.insert(gui.LoadQueue, Coroutine)
 			
-			Class = gui.Elements[BaseClass]
+				coroutine.yield()
+				
+				Class = gui.Elements[BaseClass]
+				
+			end
 			
 		end
 		

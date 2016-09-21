@@ -18,9 +18,19 @@ for _, File in pairs(love.filesystem.getDirectoryItems(Path)) do
 	
 end
 
-for _, Coroutine in pairs(gui.LoadQueue) do
-	
-	coroutine.resume(Coroutine)
+while next(gui.LoadQueue) do
+
+	for i, Coroutine in pairs(gui.LoadQueue) do
+		
+		coroutine.resume(Coroutine)
+		
+		if coroutine.status(Coroutine) == "dead" then
+			
+			gui.LoadQueue[i] = nil
+			
+		end
+		
+	end
 	
 end
 
