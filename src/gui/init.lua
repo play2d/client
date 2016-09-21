@@ -6,6 +6,7 @@ gui.Skin = Path.."/skins/cyan/"
 gui.Elements = {}
 gui.Fonts = {}
 gui.Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
+gui.LoadQueue = {}
 
 assert(love.filesystem.load(Path.."/fonts/init.lua"))(Path.."/fonts/", gui)
 assert(love.filesystem.load(Path.."/string.lua"))(Path, gui)
@@ -28,6 +29,14 @@ end
 
 function gui.get(Name)
 	
+	if not gui.Elements[Name] then
+		
+		table.insert(gui.LoadQueue, coroutine.running())
+		
+		coroutine.yield()
+		
+	end
+	
 	return gui.Elements[Name]
 	
 end
@@ -47,6 +56,16 @@ function gui.register(Name, BaseClass)
 	if BaseClass then
 		
 		local Class = gui.Elements[BaseClass]
+		
+		if not Class then
+			
+			table.insert(gui.LoadQueue, coroutine.running())
+			
+			coroutine.yield()
+			
+			Class = gui.Elements[BaseClass]
+			
+		end
 		
 		if Class then
 			

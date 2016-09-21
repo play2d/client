@@ -1,31 +1,27 @@
 local Path, gui = ...
 
-love.filesystem.load(Path.."base.lua")(gui)
-love.filesystem.load(Path.."element.lua")(gui)
-love.filesystem.load(Path.."container.lua")(gui)
+for _, File in pairs(love.filesystem.getDirectoryItems(Path)) do
+	
+	if love.filesystem.isDirectory(Path .. File) then
+		
+		local Coroutine = coroutine.create(love.filesystem.load(Path .. File.. "/init.lua"))
+		
+		coroutine.resume(Coroutine, gui)
+		
+	elseif File ~= "init.lua" then
+		
+		local Coroutine = coroutine.create(love.filesystem.load(Path .. File))
+		
+		coroutine.resume(Coroutine, gui)
+		
+	end
+	
+end
 
-love.filesystem.load(Path.."button.lua")(gui)
-love.filesystem.load(Path.."checkbox.lua")(gui)
-love.filesystem.load(Path.."collapsiblecategory.lua")(gui)
-love.filesystem.load(Path.."collapsiblenode.lua")(gui)
-love.filesystem.load(Path.."combobox.lua")(gui)
-love.filesystem.load(Path.."desktop.lua")(gui)
-love.filesystem.load(Path.."hslider.lua")(gui)
-love.filesystem.load(Path.."label.lua")(gui)
-love.filesystem.load(Path.."listbox.lua")(gui)
-love.filesystem.load(Path.."listview.lua")(gui)
-love.filesystem.load(Path.."menu.lua")(gui)
-love.filesystem.load(Path.."menubutton.lua")(gui)
-love.filesystem.load(Path.."menupanel.lua")(gui)
-love.filesystem.load(Path.."menuspacer.lua")(gui)
-love.filesystem.load(Path.."panel.lua")(gui)
-love.filesystem.load(Path.."progressbar.lua")(gui)
-love.filesystem.load(Path.."tabber.lua")(gui)
-love.filesystem.load(Path.."textarea.lua")(gui)
-love.filesystem.load(Path.."textfield.lua")(gui)
-love.filesystem.load(Path.."treeview.lua")(gui)
-love.filesystem.load(Path.."treeviewnode.lua")(gui)
-love.filesystem.load(Path.."vslider.lua")(gui)
-love.filesystem.load(Path.."window.lua")(gui)
+for _, Coroutine in pairs(gui.LoadQueue) do
+	
+	coroutine.resume(Coroutine)
+	
+end
 
-love.filesystem.load(Path.."console.lua")(gui)
+gui.LoadQueue = nil
