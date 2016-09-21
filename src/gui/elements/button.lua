@@ -55,7 +55,7 @@ end
 
 function Element:SetIcon(Image)
 	
-	self.Image = Image
+	self.Layout.Image = Image
 	self.Changed = true
 	
 end
@@ -77,15 +77,23 @@ function Element:Init()
 	
 	self.Layout.LineWidth = Element.LineWidth
 	
-	self.Text:SetColor(unpack(self.Layout.TextColor))
-	self.Text:SetFont(self.Layout.TextFont)
+	if self.Text then
+		
+		self.Text:SetColor(unpack(self.Layout.TextColor))
+		self.Text:SetFont(self.Layout.TextFont)
+		
+	end
 	
 end
 
 function Element:UpdateLayout()
 	
-	self.Text:SetColor(unpack(self.Layout.TextColor))
-	self.Text:SetFont(self.Layout.TextFont)
+	if self.Text then
+	
+		self.Text:SetColor(unpack(self.Layout.TextColor))
+		self.Text:SetFont(self.Layout.TextFont)
+		
+	end
 	
 end
 
@@ -170,14 +178,27 @@ function Element:RenderSkin()
 			
 		end
 		
-		if self.Image then
+		local Image = self.Layout.Image
+		local TextWidth = 0
+		
+		if self.Text then
 			
-			love.graphics.setColor(255, 255, 255, 255)
-			love.graphics.draw(self.Image, math.floor((Width - self.Image:getWidth() - self.Text:getWidth())/2), math.floor((Height - self.Image:getHeight())/2))
+			TextWidth = self.Text:getWidth()
 			
 		end
 		
-		self.Text:Draw(math.floor((Width - self.Text:getWidth())/2), math.floor((Height - self.Text:getHeight())/2))
+		if Image then
+			
+			love.graphics.setColor(self.Layout.ImageColor)
+			love.graphics.draw(Image, math.floor((Width - Image:getWidth() - TextWidth)/2), math.floor((Height - Image:getHeight())/2))
+			
+		end
+		
+		if self.Text then
+			
+			self.Text:Draw(math.floor((Width - TextWidth)/2), math.floor((Height - self.Text:getHeight())/2))
+			
+		end
 		
 	elseif self.IsHover then
 		
@@ -203,14 +224,27 @@ function Element:RenderSkin()
 			
 		end
 		
-		if self.Image then
+		local Image = self.Layout.Image
+		local TextWidth = 0
+		
+		if self.Text then
 			
-			love.graphics.setColor(255, 255, 255, 255)
-			love.graphics.draw(self.Image, math.floor((Width - self.Image:getWidth() - self.Text:getWidth())/2), math.floor((Height - self.Image:getHeight())/2))
+			TextWidth = self.Text:getWidth()
 			
 		end
 		
-		self.Text:Draw(math.floor((Width - self.Text:getWidth())/2), math.floor((Height - self.Text:getHeight())/2) - 1)
+		if Image then
+			
+			love.graphics.setColor(self.Layout.ImageColor)
+			love.graphics.draw(Image, math.floor((Width - Image:getWidth() - TextWidth)/2), math.floor((Height - Image:getHeight())/2))
+			
+		end
+		
+		if self.Text then
+			
+			self.Text:Draw(math.floor((Width - TextWidth)/2), math.floor((Height - self.Text:getHeight())/2) - 1)
+			
+		end
 		
 	else
 		
@@ -236,14 +270,27 @@ function Element:RenderSkin()
 			
 		end
 		
-		if self.Image then
+		local Image = self.Layout.Image
+		local TextWidth = 0
+		
+		if self.Text then
 			
-			love.graphics.setColor(255, 255, 255, 255)
-			love.graphics.draw(self.Image, math.floor((Width - self.Image:getWidth() - self.Text:getWidth())/2), math.floor((Height - self.Image:getHeight())/2))
+			TextWidth = self.Text:getWidth()
 			
 		end
 		
-		self.Text:Draw((Width - self.Text:getWidth())/2, (Height - self.Text:getHeight())/2 - 1)
+		if Image then
+			
+			love.graphics.setColor(self.Layout.ImageColor)
+			love.graphics.draw(Image, math.floor((Width - Image:getWidth() - TextWidth)/2), math.floor((Height - Image:getHeight())/2))
+			
+		end
+		
+		if self.Text then
+			
+			self.Text:Draw((Width - TextWidth)/2, (Height - self.Text:getHeight())/2 - 1)
+			
+		end
 		
 	end
 	

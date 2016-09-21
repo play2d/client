@@ -29,7 +29,7 @@ end
 
 function gui.get(Name)
 	
-	if not gui.Elements[Name] then
+	while not gui.Elements[Name] do
 		
 		local Coroutine = coroutine.running()
 		
@@ -38,6 +38,10 @@ function gui.get(Name)
 			table.insert(gui.LoadQueue, Coroutine)
 			
 			coroutine.yield()
+			
+		else
+			
+			break
 			
 		end
 		
@@ -63,7 +67,7 @@ function gui.register(Name, BaseClass)
 		
 		local Class = gui.Elements[BaseClass]
 		
-		if not Class then
+		while not Class do
 			
 			local Coroutine = coroutine.running()
 			
@@ -74,7 +78,11 @@ function gui.register(Name, BaseClass)
 				coroutine.yield()
 				
 				Class = gui.Elements[BaseClass]
+			
+			else
 				
+				break
+			
 			end
 			
 		end

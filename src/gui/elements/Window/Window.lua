@@ -33,29 +33,12 @@ Element.TitleHeight = 25
 Element.TitleColor = {255, 255, 255, 255}
 Element.TitleBackgroundColor = {255, 255, 255, 255}
 Element.TitleDividerColor = {100, 100, 100, 255}
-Element.CloseImage = love.graphics.newImage(gui.Path.."/images/Delete-16.png")
 
 Element.BackgroundColor = {245, 245, 245, 255}
 Element.BorderColor1 = {100, 100, 100}
 Element.BorderColor2 = {110, 160, 255}
 
-Element.CloseButtonColor = {255, 80, 80, 255}
-Element.CloseButtonColorHover = {255, 120, 120, 255}
-Element.CloseButtonColorPressed = {200, 50, 50, 255}
-
 Element.LineWidth = 1
-
-local function CloseButton(Button)
-	
-	local self = Button.Parent
-	
-	if self.Closeable and Button.IsHover then
-		
-		self.Hidden = true
-		
-	end
-	
-end
 
 function Element:Create(Text, x, y, Width, Height, Parent)
 	Parent = Parent or gui.Desktop
@@ -87,14 +70,7 @@ function Element:Init()
 	self.Layout.BorderColor1 = Element.BorderColor1
 	self.Layout.BorderColor2 = Element.BorderColor2
 	
-	self.Layout.CloseButton = gui.create("Button", "", 0, 0, 16, 16, self)
-	self.Layout.CloseButton.Image = self.Layout.CloseImage
-	self.Layout.CloseButton.Layout.Color = Element.CloseButtonColor
-	self.Layout.CloseButton.Layout.ColorHover = Element.CloseButtonColorHover
-	self.Layout.CloseButton.Layout.ColorPressed = Element.CloseButtonColorPressed
-	self.Layout.CloseButton.Layout.Rounded = true
-	self.Layout.CloseButton.Layout.ArcRadius = 4
-	self.Layout.CloseButton.OnMouseReleased = CloseButton
+	self.Layout.CloseButton = gui.create("WindowCloseButton", 0, 0, 16, 16, self)
 	
 	self.Layout.LineWidth = Element.LineWidth
 	
@@ -108,7 +84,6 @@ function Element:UpdateLayout()
 	local Width, Height = self:GetDimensions()
 	
 	self.Layout.CloseButton:SetPosition(Width - 19, 3)
-	self.Layout.CloseButton.Image = self.Layout.CloseImage
 	self.Layout.CloseButton.Visible = self.Closeable
 	
 end
@@ -193,6 +168,7 @@ end
 function Element:MouseReleased(x, y, Button, IsTouch)
 	
 	self.GrabWindow = nil
+	
 	Element.Base.MouseReleased(self, x, y, Button, IsTouch)
 	
 end
@@ -200,6 +176,7 @@ end
 function Element:SetCloseable(Closeable)
 	
 	self.Closeable = Closeable
+	self:UpdateLayout()
 	
 end
 

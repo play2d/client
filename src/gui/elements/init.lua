@@ -6,7 +6,7 @@ for _, File in pairs(love.filesystem.getDirectoryItems(Path)) do
 		
 		local Coroutine = coroutine.create(love.filesystem.load(Path .. File.. "/init.lua"))
 		
-		coroutine.resume(Coroutine, gui)
+		coroutine.resume(Coroutine, Path .. File.."/", gui)
 		
 	elseif File ~= "init.lua" then
 		
