@@ -21,6 +21,7 @@ PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, i
 
 PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
 
+PLAY2D.Utility = PLAY2D.Require(Path.."/utility")
 PLAY2D.Connection = PLAY2D.Require(Path.."/connection")
 PLAY2D.Resources = PLAY2D.Require(Path.."/resources")
 PLAY2D.Filesystem = PLAY2D.Require(Path.."/filesystem")

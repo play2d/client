@@ -1,0 +1,3 @@
+local Path, PLAY2D = ...
+
+PLAY2D.Require(Path.."/string")
