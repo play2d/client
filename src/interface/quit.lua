@@ -3,7 +3,7 @@ local Quit = {}
 
 function Quit.load()
 	
-	Quit.Label = Interface.Desktop.CreateLabel(Interface.Language:Get("label_quit"), 30, 420)
+	Quit.Label = Interface.Desktop.CreateLabel(Interface.Language:Get("label_quit"), 30, 470)
 	
 	function Quit.Label:OnMouseReleased()
 		

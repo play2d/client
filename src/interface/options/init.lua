@@ -11,7 +11,7 @@ Options.More = PLAY2D.Require(Path.."/more", Interface, Options)
 
 function Options.load()
 	
-	Options.Label = Interface.Desktop.CreateLabel(Interface.Language:Get("label_options"), 30, 350)
+	Options.Label = Interface.Desktop.CreateLabel(Interface.Language:Get("label_options"), 30, 400)
 	
 	function Options.Label:OnMouseReleased()
 		

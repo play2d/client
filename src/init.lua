@@ -31,6 +31,7 @@ PLAY2D.Configuration = PLAY2D.Require(Path.."/configuration")
 PLAY2D.Language = PLAY2D.Require(Path.."/language")
 PLAY2D.gui = PLAY2D.Require(Path.."/gui")
 PLAY2D.Interface = PLAY2D.Require(Path.."/interface")
+PLAY2D.Master = PLAY2D.Require(Path.."/masterserver")
 
 function PLAY2D.load()
 	-- Cap the framerate
