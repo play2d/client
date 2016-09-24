@@ -91,40 +91,40 @@ function Element:KeyPressed(Key, ScanCode, IsRepeat, ...)
 	
 	Element.Base.KeyPressed(self, Key, ScanCode, IsRepeat, ...)
 	
-	if not self.Disabled then
+	if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
 		
-		if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
+		if Key == "v" then
 			
-			if Key == "v" then
+			-- Paste
+			self:TextInput(love.system.getClipboardText())
+			
+		elseif Key == "c" then
+			
+			if not self.Text.Password then
 				
-				-- Paste
-				self:TextInput(love.system.getClipboardText())
-				
-			elseif Key == "c" then
-				
-				if not self.Text.Password then
-					
-					-- Copy
-					love.system.setClipboardText(self:GetSelectedText())
-					
-				end
-				
-			elseif Key == "a" then
-				
-				-- Select all
-				self.Selected = 1
-				self.SelectedLength = self.Text.Text:utf8len()
-				self.Changed = true
+				-- Copy
+				love.system.setClipboardText(self:GetSelectedText())
 				
 			end
 			
-		elseif Key == "return" then
+		elseif Key == "a" then
 			
-			-- New line
-			self:TextInput("\n")
+			-- Select all
+			self.Selected = 1
+			self.SelectedLength = self.Text.Text:utf8len()
+			self.Changed = true
 			
-		elseif Key == "backspace" then
-			
+		end
+		
+	elseif Key == "return" then
+		
+		-- New line
+		self:TextInput("\n")
+		
+	elseif Key == "backspace" then
+		
+		if not self.Disabled then
+		
 			-- Delete
 			if self.SelectedLength == 0 then
 				
@@ -134,7 +134,7 @@ function Element:KeyPressed(Key, ScanCode, IsRepeat, ...)
 				local LinePosition = 1
 				
 				for Index, Line in pairs(self.Text.Line) do
-					
+						
 					if Line.Start <= Min then
 						
 						LinePosition = Index
@@ -187,7 +187,11 @@ function Element:KeyPressed(Key, ScanCode, IsRepeat, ...)
 			
 			self:UpdateText(true)
 			
-		elseif Key == "delete" then
+		end
+		
+	elseif Key == "delete" then
+			
+		if not self.Disabled then
 			
 			-- Delete
 			if self.SelectedLength == 0 then
@@ -251,98 +255,98 @@ function Element:KeyPressed(Key, ScanCode, IsRepeat, ...)
 			
 			self:UpdateText(true)
 			
-		elseif Key == "left" then
+		end
+		
+	elseif Key == "left" then
+		
+		-- Move to the left
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
 			
-			-- Move to the left
-			if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			-- Shift pressed? select shorter string
+			self.SelectedLength = self.SelectedLength - 1
+			
+			if self.SelectedLength <= 0 then
 				
-				-- Shift pressed? select shorter string
-				self.SelectedLength = self.SelectedLength - 1
-				
-				if self.SelectedLength <= 0 then
+				if self.Selected + self.SelectedLength < 1 then
 					
-					if self.Selected + self.SelectedLength < 1 then
-						
-						self.SelectedLength = 1 - self.Selected
-						
-					end
-					
-				end
-				
-			else
-				
-				local Min = math.min(self.Selected, self.Selected + self.SelectedLength)
-				
-				-- If there's a selected text, unselect it
-				if self.SelectedLength ~= 0 then
-					
-					if Min > 0 then
-						
-						self.Selected = Min
-						
-					end
-					
-					self.SelectedLength = 0
-					
-				else
-					
-					-- Move to the left
-					self.Selected = math.max(Min - 1, 1)
+					self.SelectedLength = 1 - self.Selected
 					
 				end
 				
 			end
 			
-			self:UpdateText()
+		else
 			
-		elseif Key == "right" then
+			local Min = math.min(self.Selected, self.Selected + self.SelectedLength)
 			
-			-- Move to the right
-			
-			if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			-- If there's a selected text, unselect it
+			if self.SelectedLength ~= 0 then
 				
-				-- Select a longer string to the right
-				self.SelectedLength = self.SelectedLength + 1
-				
-				if self.SelectedLength >= 0 then
+				if Min > 0 then
 					
-					if self.Selected + self.SelectedLength > self.Text.Text:utf8len() + 1 then
-						
-						self.SelectedLength = self.Text.Text:utf8len() + 1 - self.Selected
-						
-					end
+					self.Selected = Min
 					
 				end
+				
+				self.SelectedLength = 0
 				
 			else
 				
-				local Max = math.max(self.Selected, self.Selected + self.SelectedLength)
-				
-				if self.SelectedLength ~= 0 then
-					
-					if Max > 0 then
-						
-						self.Selected = Max
-						
-					end
-					
-					self.SelectedLength = 0
-					
-				else
-					
-					self.Selected = math.min(Max + 1, self.Text.Text:utf8len() + 1)
-					
-				end
+				-- Move to the left
+				self.Selected = math.max(Min - 1, 1)
 				
 			end
-			
-			self:UpdateText()
 			
 		end
 		
-		return true
+		self:UpdateText()
+		
+	elseif Key == "right" then
+		
+		-- Move to the right
+		
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			
+			-- Select a longer string to the right
+			self.SelectedLength = self.SelectedLength + 1
+			
+			if self.SelectedLength >= 0 then
+				
+				if self.Selected + self.SelectedLength > self.Text.Text:utf8len() + 1 then
+					
+					self.SelectedLength = self.Text.Text:utf8len() + 1 - self.Selected
+					
+				end
+				
+			end
+			
+		else
+			
+			local Max = math.max(self.Selected, self.Selected + self.SelectedLength)
+			
+			if self.SelectedLength ~= 0 then
+				
+				if Max > 0 then
+					
+					self.Selected = Max
+					
+				end
+				
+				self.SelectedLength = 0
+				
+			else
+				
+				self.Selected = math.min(Max + 1, self.Text.Text:utf8len() + 1)
+				
+			end
+			
+		end
+		
+		self:UpdateText()
 		
 	end
+	
+	return true
 	
 end
 
@@ -462,7 +466,7 @@ function Element:MousePressed(x, y, Button, IsTouch, ...)
 	
 	Element.Base.MousePressed(self, x, y, Button, IsTouch, ...)
 	
-	if Button == 1 and not self.Disabled then
+	if Button == 1 then
 		
 		if Button == 1 then
 			
@@ -480,12 +484,8 @@ function Element:MouseDrag(x, y, dx, dy)
 	
 	Element.Base.MouseDrag(self, x, y, dx, dy)
 	
-	if not self.Disabled then
-		
-		self.SelectedLength = self:GetMousePosition(x, y) - self.Selected
-		self.Changed = true
-		
-	end
+	self.SelectedLength = self:GetMousePosition(x, y) - self.Selected
+	self.Changed = true
 	
 end
 

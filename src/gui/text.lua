@@ -25,10 +25,37 @@ end
 
 function Text:SetColor(R, G, B, A)
 	
-	self.Color[1] = R
-	self.Color[2] = G
-	self.Color[3] = B
-	self.Color[4] = A
+	if type(R) == "table" then
+		
+		self.Color = R
+		
+	else
+	
+		if R then
+			
+			self.Color[1] = R
+			
+		end
+		
+		if G then
+			
+			self.Color[2] = G
+			
+		end
+		
+		if B then
+			
+			self.Color[3] = B
+			
+		end
+		
+		if A then
+			
+			self.Color[4] = A
+			
+		end
+		
+	end
 	
 end
 
@@ -45,25 +72,35 @@ end
 
 function Text:Add(Text, Font, R, G, B, A)
 	
-	if Font and Color then
-		
-		local Start = self.Text:utf8len()
-		local Length = Text:utf8len()
-		local Format = {
-			Font = Font,
-			Color = {R, G, B, A},
-		}
-		
-		for i = Start, Start + Length do
+	if #Text > 0 then
+	
+		if Font or (R and G and B and A) then
 			
-			self.Format[i] = Format
+			local Start = self.Text:utf8len()
+			local Length = Text:utf8len()
+			
+			local Format = {}
+			
+			Format.Font = Font
+			
+			if R and G and B and A then
+				
+				Format.Color = {R, G, B, A}
+				
+			end
+			
+			for i = Start, Start + Length do
+				
+				self.Format[i] = Format
+				
+			end
 			
 		end
 		
+		self.Text = self.Text .. Text
+		self:CalculateDimensions()
+		
 	end
-	
-	self.Text = self.Text .. Text
-	self:CalculateDimensions()
 	
 end
 
@@ -92,6 +129,50 @@ function Text:SetText(Text, Position, Length)
 	
 end
 
+function Text:Remove(x, y)
+	
+	if x then
+	
+		local Text = self.Text
+		local Format = {}
+		
+		self.Text = Text:sub(1, x - 1)
+		
+		for i, F in pairs(self.Format) do
+			
+			if i < x then
+				
+				Format[i] = F
+				
+			end
+			
+		end
+		
+		if y then
+			
+			local Step = y - x + 1
+			
+			for i, F in pairs(self.Format) do
+				
+				if i > x then
+					
+					Format[i - Step] = F
+					
+				end
+				
+			end
+			
+			self.Text = self.Text .. Text:sub(y + 1)
+			
+		end
+		
+		self.Format = Format
+		self:CalculateDimensions()
+		
+	end
+	
+end
+
 function Text:Get()
 	
 	return self.Text
@@ -101,20 +182,16 @@ end
 function Text:SetFormat(Position, Length, Font, R, G, B, A)
 	
 	local Format
-	if Font or R or G or B or A then
+	
+	if Font or (R and G and B and A) then
 		
-		Format = {
-			Font = Font;
-		}
+		Format = {}
 		
-		if R or G or B or A then
+		Format.Font = Font
+		
+		if R and G and B and A then
 			
-			Format.Color = {
-				R or self.Color[1];
-				G or self.Color[2];
-				B or self.Color[3];
-				A or self.Color[4];
-			}
+			Format.Color = {R, G, B, A}
 			
 		end
 		
@@ -145,6 +222,7 @@ function Text:SetPassword(Password)
 		end
 		
 		self:CalculateDimensions()
+		
 	end
 	
 end
@@ -254,6 +332,7 @@ end
 function Text:CalculateDimensions()
 	
 	self.Line = {
+		
 		{
 			Text = "",
 			Start = 1,
@@ -261,6 +340,7 @@ function Text:CalculateDimensions()
 			Height = 0,
 			Altitude = 0,
 		}
+		
 	}
 	
 	self.Width = 0
@@ -268,6 +348,7 @@ function Text:CalculateDimensions()
 	
 	local Line = self.Line[1]
 	local LineNumber = 1
+	
 	if self.Password then
 		
 		for i = 1, self.Text:utf8len() do
@@ -415,10 +496,11 @@ function Text:Draw(x, y)
 				end
 
 				local Font = Format.Font or self.Font
+				local Color = Format.Color or self.Color
 				local CharWidth = Font:getWidth(Char)
 				local CharHeight = Font:getHeight(Char)
 				
-				love.graphics.setColor(Format and Format.Color or self.Color)
+				love.graphics.setColor(Color)
 				love.graphics.setFont(Font)
 				love.graphics.print(Char, math.floor(x + WidthOffset), math.floor(y + Line.Altitude + Line.Height - CharHeight))
 				
@@ -440,10 +522,11 @@ function Text:Draw(x, y)
 				local Char = Line.Text:utf8sub(i, i)
 
 				local Font = Format.Font or self.Font
+				local Color = Format.Color or self.Color
 				local CharWidth = Font:getWidth(Char)
 				local CharHeight = Font:getHeight(Char)
 				
-				love.graphics.setColor(Format and Format.Color or self.Color)
+				love.graphics.setColor(Color)
 				love.graphics.setFont(Font)
 				love.graphics.print(Char, math.floor(x + WidthOffset), math.floor(y + Line.Altitude + Line.Height - CharHeight))
 				
@@ -489,10 +572,11 @@ function Text:DrawOffset(x, y, Altitude, Height)
 					end
 
 					local Font = Format.Font or self.Font
+					local Color = Format.Color or self.Color
 					local CharWidth = Font:getWidth(Char)
 					local CharHeight = Font:getHeight(Char)
 					
-					love.graphics.setColor(Format and Format.Color or self.Color)
+					love.graphics.setColor(Color)
 					love.graphics.setFont(Font)
 					love.graphics.print(Char, math.floor(x + WidthOffset), math.floor(y + Line.Altitude + Line.Height - CharHeight))
 					
@@ -526,10 +610,11 @@ function Text:DrawOffset(x, y, Altitude, Height)
 					local Char = Line.Text:utf8sub(i, i)
 					
 					local Font = Format.Font or self.Font
+					local Color = Format.Color or self.Color
 					local CharWidth = Font:getWidth(Char)
 					local CharHeight = Font:getHeight(Char)
 					
-					love.graphics.setColor(Format and Format.Color or self.Color)
+					love.graphics.setColor(Color)
 					love.graphics.setFont(Font)
 					love.graphics.print(Char, math.floor(x + WidthOffset), math.floor(y + Line.Altitude + Line.Height - CharHeight))
 					

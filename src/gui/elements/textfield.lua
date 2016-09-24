@@ -65,7 +65,7 @@ function Element:TextInput(Text)
 	
 	if not self.Disabled then
 		
-		self:Write(Text)
+		self:Write( Text:gsub("\n", "") )
 		
 	end
 	
