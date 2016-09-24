@@ -50,6 +50,9 @@ function PLAY2D.load()
 	-- The interface requires the gui functions
 	PLAY2D.gui.load()
 	PLAY2D.Interface.load()
+	
+	-- The master server connection
+	PLAY2D.Master.load()
 
 	-- Example and Demonstration of the Assets loading and queuing system
 	FiveSevenQueue = PLAY2D.Assets.CreateQueue("assets", "Game content")
@@ -71,6 +74,7 @@ function PLAY2D.update(Delta)
 	end
 	
 	PLAY2D.gui.update(Delta)
+	PLAY2D.Master.update()
 	
 end
 

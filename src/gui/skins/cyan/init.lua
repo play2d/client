@@ -9,7 +9,6 @@ return {
 	MenuPanel = love.filesystem.load(Path.."menupanel.lua")(Path, gui),
 	MenuSpacer = love.filesystem.load(Path.."menuspacer.lua")(Path, gui),
 	ProgressBar = love.filesystem.load(Path.."progressbar.lua")(Path, gui),
-	TextArea = love.filesystem.load(Path.."textarea.lua")(Path, gui),
 	TreeView = love.filesystem.load(Path.."treeview.lua")(Path, gui),
 	TreeViewNode = love.filesystem.load(Path.."treeviewnode.lua")(Path, gui),
 }

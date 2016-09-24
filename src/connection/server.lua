@@ -4,11 +4,11 @@ local ENet = require("enet")
 local Server = {}
 local ServerMT = {__index = Server}
 
-function Connection.CreateServer(Port, Peers, Channels)
+function Connection.CreateServer(Address, Peers, Channels)
 	
 	local self = {
 		
-		Socket = ENet.host_create(Port, Peers or 64, 0, Channels or 1, 0)
+		Socket = ENet.host_create(Address, Peers or 64, 0, Channels or 1, 0)
 		
 	}
 	
