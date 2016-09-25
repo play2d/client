@@ -76,7 +76,7 @@ function Text:Add(Text, Font, R, G, B, A)
 	
 		if Font or (R and G and B and A) then
 			
-			local Start = self.Text:utf8len()
+			local Start = self.Text:utf8len() + 1
 			local Length = Text:utf8len()
 			
 			local Format = {}

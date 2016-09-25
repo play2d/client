@@ -24,20 +24,54 @@ function Console.load()
 	Console.Input = PLAY2D.gui.create("TextField", 10, Console.Area:GetHeight() + 40, Console.Window:GetWidth() - 150, 20, Console.Window)
 	Console.Send = PLAY2D.gui.create("Button", Interface.Language:Get("label_send"), Console.Window:GetWidth() - 130, Console.Area:GetHeight() + 40, 120, 20, Console.Window)
 	
-	Console.Area.Disabled = true
+	function Console.Input:Enter()
+		
+		local Command = Console.Input:GetText()
+		
+		Console.Input:SetText("")
+		Console.Print("> " .. Command)
+		
+		if PLAY2D.Console:Execute(Command) then
+			
+			Console.Print(PLAY2D.Console.Error, 255, 0, 0, 255)
+			
+		end
+		
+	end
 	
-	Console.Print("test1")
-	Console.Print("test2")
+	function Console.Send:OnMousePressed()
+		
+		local Command = Console.Input:GetText()
+		
+		Console.Input:SetText("")
+		Console.Print("> " .. Command)
+		
+		if PLAY2D.Console:Execute(Command) then
+			
+			Console.Print(PLAY2D.Console.Error, 255, 0, 0, 255)
+			
+		end
+		
+	end
+	
+	Console.Area.Disabled = true
 	
 	Console.load = nil
 	
 end
 
-function Console.Print(Message)
+function Console.Print(Message, R, G, B, A)
 	
 	local Max = Console.MaxLines:GetInt()
 	
-	Console.Area.Text:Add(Message.."\n")
+	if #Console.Area.Text.Line > Max then
+		
+		Console.Area.Text:Remove(1, Console.Area.Text:Get():find("\n"))
+		
+	end
+	
+	Console.Area.Text:Add(Message.."\n", nil, R, G, B, A)
+	Console.Area.Changed = true
 	
 end
 

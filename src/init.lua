@@ -33,6 +33,12 @@ PLAY2D.gui = PLAY2D.Require(Path.."/gui")
 PLAY2D.Interface = PLAY2D.Require(Path.."/interface")
 PLAY2D.Master = PLAY2D.Require(Path.."/masterserver")
 
+function PLAY2D.Print(...)
+	
+	PLAY2D.Interface.Console.Print(...)
+	
+end
+
 function PLAY2D.load()
 	-- Cap the framerate
 	-- love.graphics.maxFramerate = 60

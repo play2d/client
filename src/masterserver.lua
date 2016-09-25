@@ -5,7 +5,11 @@ function Master.load()
 	
 	Master.Socket = PLAY2D.Connection.CreateServer("*:0")
 	
-	print("Master server started: ".. tostring(Master.Socket))
+	if Master.Socket then
+		
+		PLAY2D.Print("Master server started: ".. tostring(Master.Socket), 0, 175, 0, 255)
+		
+	end
 	
 	Master.load = nil
 	

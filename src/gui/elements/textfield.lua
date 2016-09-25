@@ -73,6 +73,10 @@ function Element:TextInput(Text)
 	
 end
 
+function Element:Enter()
+	
+end
+
 function Element:SetPassword(Password)
 	
 	self.Text:SetPassword(Password)
@@ -81,30 +85,47 @@ function Element:SetPassword(Password)
 	
 end
 
-function Element:KeyPressed(Key, ScanCode, IsRepeat)
+function Element:KeyPressed(Key, ScanCode, IsRepeat, ...)
 	
-	Element.Base.KeyPressed(self, Key, ScanCode, IsRepeat)
+	Element.Base.KeyPressed(self, Key, ScanCode, IsRepeat, ...)
 	
-	if not self.Disabled then
+	if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
 		
-		if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
+		if Key == "v" then
 			
-			if Key == "v" then
+			-- Paste
+			self:TextInput(love.system.getClipboardText())
+			
+		elseif Key == "c" then
+			
+			if not self.Text.Password then
 				
-				self:TextInput(love.system.getClipboardText())
-				
-			elseif Key == "c" then
-				
-				if not self.Text.Password then
-					
-					love.system.setClipboardText(self:GetSelectedText())
-					
-				end
+				-- Copy
+				love.system.setClipboardText(self:GetSelectedText())
 				
 			end
 			
-		elseif Key == "backspace" then
+		elseif Key == "a" then
 			
+			-- Select all
+			self.Selected = 1
+			self.SelectedLength = self.Text.Text:utf8len()
+			self.Changed = true
+			
+		end
+		
+	elseif Key == "return" then
+		
+		if not self.Disabled then
+			
+			self:Enter()
+			
+		end
+		
+	elseif Key == "backspace" then
+	
+		if not self.Disabled then
+		
 			if self.SelectedLength == 0 then
 				
 				local Min = self.Selected - 1
@@ -135,8 +156,12 @@ function Element:KeyPressed(Key, ScanCode, IsRepeat)
 			
 			self:UpdateText()
 			
-		elseif Key == "delete" then
-			
+		end
+	
+	elseif Key == "delete" then
+		
+		if not self.Disabled then
+		
 			if self.SelectedLength == 0 then
 				
 				local Min = self.Selected
@@ -166,91 +191,91 @@ function Element:KeyPressed(Key, ScanCode, IsRepeat)
 			
 			self:UpdateText()
 			
-		elseif Key == "left" then
+		end
+		
+	elseif Key == "left" then
+		
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
 			
-			if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			self.SelectedLength = self.SelectedLength - 1
+			
+			if self.SelectedLength <= 0 then
 				
-				self.SelectedLength = self.SelectedLength - 1
-				
-				if self.SelectedLength <= 0 then
+				if self.Selected + self.SelectedLength < 1 then
 					
-					if self.Selected + self.SelectedLength < 1 then
-						
-						self.SelectedLength = 1 - self.Selected
-						
-					end
-					
-				end
-				
-			else
-				
-				local Min = math.min(self.Selected, self.Selected + self.SelectedLength)
-				
-				if self.SelectedLength ~= 0 then
-					
-					if Min > 0 then
-						
-						self.Selected = Min
-						
-					end
-					
-					self.SelectedLength = 0
-					
-				else
-					
-					self.Selected = math.max(Min - 1, 1)
+					self.SelectedLength = 1 - self.Selected
 					
 				end
 				
 			end
 			
-			self:UpdateText()
+		else
 			
-		elseif Key == "right" then
+			local Min = math.min(self.Selected, self.Selected + self.SelectedLength)
 			
-			if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			if self.SelectedLength ~= 0 then
 				
-				self.SelectedLength = self.SelectedLength + 1
-				
-				if self.SelectedLength >= 0 then
+				if Min > 0 then
 					
-					if self.Selected + self.SelectedLength > self.Text.Text:utf8len() + 1 then
-						
-						self.SelectedLength = self.Text.Text:utf8len() + 1 - self.Selected
-						
-					end
+					self.Selected = Min
 					
 				end
+				
+				self.SelectedLength = 0
 				
 			else
 				
-				local Max = math.max(self.Selected, self.Selected + self.SelectedLength)
-				
-				if self.SelectedLength ~= 0 then
-					
-					if Max > 0 then
-						
-						self.Selected = Max
-						
-					end
-					
-					self.SelectedLength = 0
-					
-				else
-					
-					self.Selected = math.min(Max + 1, self.Text.Text:utf8len() + 1)
-					
-				end
+				self.Selected = math.max(Min - 1, 1)
 				
 			end
-			
-			self:UpdateText()
 			
 		end
 		
-		return true
+		self:UpdateText()
+		
+	elseif Key == "right" then
+		
+		if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+			
+			self.SelectedLength = self.SelectedLength + 1
+			
+			if self.SelectedLength >= 0 then
+				
+				if self.Selected + self.SelectedLength > self.Text.Text:utf8len() + 1 then
+					
+					self.SelectedLength = self.Text.Text:utf8len() + 1 - self.Selected
+					
+				end
+				
+			end
+			
+		else
+			
+			local Max = math.max(self.Selected, self.Selected + self.SelectedLength)
+			
+			if self.SelectedLength ~= 0 then
+				
+				if Max > 0 then
+					
+					self.Selected = Max
+					
+				end
+				
+				self.SelectedLength = 0
+				
+			else
+				
+				self.Selected = math.min(Max + 1, self.Text.Text:utf8len() + 1)
+				
+			end
+			
+		end
+		
+		self:UpdateText()
 		
 	end
+	
+	return true
 	
 end
 
@@ -272,6 +297,9 @@ function Element:Write(Text)
 end
 
 function Element:SetText(Text)
+	
+	self.Selected = 1
+	self.SelectedLength = 0
 	
 	Element.Base.SetText(self, Text)
 	self:UpdateText()
@@ -496,17 +524,11 @@ function Element:RenderSkin()
 			
 			if self.Text.Password then
 				
+				local Char = "*"
+				
 				for i = 1, Min - 1 do
 					
 					local Format = self.Text.Format[i] or self.Text
-					local Char = self.Text.Text:utf8sub(i, i)
-					
-					if Char ~= "\n" then
-						
-						Char = "*"
-						
-					end
-					
 					local Font = Format.Font or self.Text.Font
 					local CharWidth = Font:getWidth(Char)
 					
@@ -533,15 +555,11 @@ function Element:RenderSkin()
 			
 			if self.Text.Password then
 				
+				local Char = "*"
+				
 				for i = Min, Max - 1 do
 					
 					local Format = self.Text.Format[i] or self.Text
-					local Char = self.Text.Text:utf8sub(i, i)
-					
-					if Char ~= "\n" then
-						Char = "*"
-					end
-					
 					local Font = Format.Font or self.Text.Font
 					local CharWidth = Font:getWidth(Char)
 					
@@ -575,15 +593,11 @@ function Element:RenderSkin()
 			
 			if self.Text.Password then
 				
+				local Char = "*"
+				
 				for i = 1, Min - 1 do
 					
-					local Format = self.Text.Format[i] or self.Text
-					local Char = self.Text.Text:utf8sub(i, i)
-					
-					if Char ~= "\n" then
-						Char = "*"
-					end
-					
+					local Format = self.Text.Format[i] or self.Text					
 					local Font = Format.Font or self.Text.Font
 					local CharWidth = Font:getWidth(Char)
 					

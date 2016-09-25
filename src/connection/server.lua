@@ -6,16 +6,22 @@ local ServerMT = {__index = Server}
 
 function Connection.CreateServer(Address, Peers, Channels)
 	
-	local self = {
-		
-		Socket = ENet.host_create(Address, Peers or 64, 0, Channels or 1, 0)
-		
-	}
+	local Socket = ENet.host_create(Address, Peers or 64, 0, Channels or 1, 0)
 	
-	self.Protocol = {}
-	self.Connection = {}
+	if Socket then
 	
-	return setmetatable(self, ServerMT)
+		local self = {
+			
+			Socket = Socket
+			
+		}
+		
+		self.Protocol = {}
+		self.Connection = {}
+		
+		return setmetatable(self, ServerMT)
+		
+	end
 	
 end
 
