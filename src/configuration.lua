@@ -4,32 +4,16 @@ local Configuration = {}
 function Configuration.load()
 	
 	PLAY2D.Console = PLAY2D.Terminal.Create(PLAY2D.Commands.List)
-
-	PLAY2D.Filesystem.GotoGameDir()
-	local DefaultFile = love.filesystem.newFile("sys/config.cfg", "r")
-
-	PLAY2D.Filesystem.ExitGameDir()
-	local UserFile = love.filesystem.newFile("sys/config.cfg", "r")
-
-	PLAY2D.Filesystem.GotoGameDir()
 	
-	if UserFile then
+	local ConfigFile = love.filesystem.newFile("sys/config.cfg", "r")
+	
+	if ConfigFile then
 		
-		Configuration.ParseConfig(UserFile)
+		Configuration.ParseConfig(ConfigFile)
 		
 	else
-	
-		if DefaultFile then
-			
-			Configuration.ParseConfig(DefaultFile)
-			
-		else
-			
-			error("Default \"sys/config.cfg\" is missing, cannot start the game without the default configuration file")
-			
-		end
 		
-		Configuration.save()
+		error("Default \"sys/config.cfg\" is missing, cannot start the game without the default configuration file")
 		
 	end
 	

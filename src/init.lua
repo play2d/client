@@ -15,16 +15,25 @@ end
 
 PLAY2D.Socket = require "socket"
 PLAY2D.FFI = require "ffi"
-PLAY2D.FFI.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]];
-PLAY2D.FFI.cdef[[ int PHYSFS_removeFromSearchPath(const char *newDir); ]];
-PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath); ]]; 
+PLAY2D.FFI.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]]
+PLAY2D.FFI.cdef[[ int PHYSFS_removeFromSearchPath(const char *newDir); ]]
+PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath); ]]
+PLAY2D.FFI.cdef[[ int PHYSFS_addToSearchPath (const char *newDir, int appendToPath); ]]
+
+PLAY2D.Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
 
 PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
+
+if not PLAY2D.Mobile then
+	
+	PLAY2D.C.PHYSFS_addToSearchPath(love.filesystem.getSourceBaseDirectory(), 0)
+	PLAY2D.C.PHYSFS_setWriteDir(love.filesystem.getWorkingDirectory())
+	
+end
 
 PLAY2D.Utility = PLAY2D.Require(Path.."/utility")
 PLAY2D.Connection = PLAY2D.Require(Path.."/connection")
 PLAY2D.Resources = PLAY2D.Require(Path.."/resources")
-PLAY2D.Filesystem = PLAY2D.Require(Path.."/filesystem")
 PLAY2D.Terminal = PLAY2D.Require(Path.."/terminal")
 PLAY2D.Commands = PLAY2D.Require(Path.."/commands")
 PLAY2D.Configuration = PLAY2D.Require(Path.."/configuration")
@@ -42,9 +51,6 @@ end
 function PLAY2D.load()
 	-- Cap the framerate
 	-- love.graphics.maxFramerate = 60
-	
-	-- It's necessary to load the filesystem lib for proper file accessing and writting (thus, configuration system needs it)
-	PLAY2D.Filesystem.load()
 
 	-- If we don't load the commands, we can't load the configuration
 	PLAY2D.Commands.load()
