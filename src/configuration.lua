@@ -5,32 +5,30 @@ function Configuration.load()
 	
 	PLAY2D.Console = PLAY2D.Terminal.Create(PLAY2D.Commands.List)
 
-	PLAY2D.Filesystem.GotoGameDir()
 	local DefaultFile = love.filesystem.newFile("sys/config.cfg", "r")
 
-	PLAY2D.Filesystem.ExitGameDir()
-	local UserFile = love.filesystem.newFile("sys/config.cfg", "r")
-
 	PLAY2D.Filesystem.GotoGameDir()
+	local UserFile = love.filesystem.newFile("sys/config.cfg", "r")
 	
-	if UserFile then
-		
-		Configuration.ParseConfig(UserFile)
+	if DefaultFile then
+	
+		Configuration.ParseConfig(DefaultFile)
 		
 	else
 	
-		if DefaultFile then
-			
-			Configuration.ParseConfig(DefaultFile)
-			
-		else
-			
-			error("Default \"sys/config.cfg\" is missing, cannot start the game without the default configuration file")
-			
-		end
+		error("Default \"sys/config.cfg\" is missing, cannot start the game without the default configuration file")
+	
+	end
+	
+	
+	if UserFile then
+	
+		Configuration.ParseConfig(UserFile)
+		
+	else
 		
 		Configuration.save()
-		
+	
 	end
 	
 	Configuration.load = nil
