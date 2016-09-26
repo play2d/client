@@ -8,9 +8,15 @@ function TranslationMT:__tostring()
 	
 	if Language then
 		
-		return Language.Translation[self.Code].String:gsub("$(%a+)", self.Arguments)
+		if Language.Translation[self.Code] then
+			
+			return Language.Translation[self.Code].String:gsub("$(%a+)", self.Arguments)
+			
+		end
 		
 	end
+	
+	return self.Code
 	
 end
 

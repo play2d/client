@@ -22,6 +22,13 @@ options_sound = "Sound"
 options_net = "Net"
 options_more = "More"
 
+servers_password = "Pass"
+servers_name = "Server name"
+servers_gamemode = "Game mode"
+servers_map = "Map"
+servers_players = "Players"
+servers_ping = "Ping"
+
 label_chat = "Chat"
 label_console = "Console"
 label_friends = "Friends"

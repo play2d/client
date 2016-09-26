@@ -407,7 +407,7 @@ function Element:RenderSkin()
 		
 		love.graphics.setColor(self.Layout.TextColor)
 		love.graphics.setFont(self.Layout.TextFont)
-		love.graphics.print(Column.Text, WidthOffset + 5, 0)
+		love.graphics.print( tostring(Column.Text) , WidthOffset + 5, 0)
 		
 		WidthOffset = WidthOffset + Column.Width
 		
