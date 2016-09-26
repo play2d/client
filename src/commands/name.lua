@@ -1,29 +1,24 @@
 local Command = ...
 
 Command.Category = "Multiplayer"
-
-local Name = "Player"
+Command.Value = "Player"
 
 function Command:Execute(Terminal, String)
 	
-	Name = tostring(String)
-	
-end
-
-function Command:GenerateConfiguration()
-	
-	return "name "..Name
-	
-end
-
-function Command:GetString()
-	
-	return Name
+	if type(String) == "string" and #String > 0 then
+		
+		self.Value = String
+		
+	end
 	
 end
 
 function Command:Set(String)
 	
-	Name = String
+	if type(String) == "string" and #String > 0 then
+		
+		self.Value = String
+		
+	end
 	
 end

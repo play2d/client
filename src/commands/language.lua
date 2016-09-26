@@ -1,38 +1,33 @@
 local Command = ...
 
 Command.Category = "Local"
-
-local Language = "English"
-local Link = PLAY2D.Language.CreateLink(Language)
+Command.Language = "English"
+Command.Link = PLAY2D.Language.CreateLink(Language)
 
 function Command:Execute(Terminal, String)
 	
-	Language = tostring(String)
-	Link.Language = Language
+	if type(String) == "string" and #String > 0 then
 	
-end
-
-function Command:GenerateConfiguration()
-	
-	return "language "..Language
-	
-end
-
-function Command:GetString()
-	
-	return Language
+		self.Value = String
+		self.Link.Language = String
+		
+	end
 	
 end
 
 function Command:Set(String)
 	
-	Language = tostring(String)
-	Link.Language = Language
+	if type(String) == "string" and #String > 0 then
+	
+		self.Value = String
+		self.Link.Language = String
+		
+	end
 	
 end
 
 function Command:GetLink()
 	
-	return Link
+	return self.Link
 	
 end

@@ -5,32 +5,51 @@ local Command = {}
 local CommandMT = {__index = Command}
 
 Command.Category = ""
+Command.Value = 0
 
 function Command:Execute(Terminal)
+	
 end
 
 function Command:GenerateConfiguration()
+	
+	return self.Name.." "..tostring(self.Value)
+	
 end
 
 function Command:GetString()
+	
+	return tostring(self.Value)
+	
 end
 
 function Command:GetInt()
+	
+	return math.floor(self.Value)
+	
 end
 
 function Command:GetNumber()
+	
+	return self.Value
+	
 end
 
 function Command:Set(Value)
+	
+	self.Value = Value
+	
 end
 
 function Commands.Create(Name)
 	
 	local self = {}
 	
+	self.Name = Name
+	
 	Commands.List[Name] = self
 	
-	return self
+	return setmetatable(self, CommandMT)
 	
 end
 
