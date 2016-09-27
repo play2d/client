@@ -7,7 +7,8 @@ function Connection.CreateClient(Peer)
 	
 	local self = {
 		
-		Peer = Peer
+		Peer = Peer,
+		Queue = {},
 		
 	}
 	
@@ -25,8 +26,24 @@ function Client:OnDisconnect()
 	
 end
 
-function Client:Send(Packet, Channel, Flag)
+function Client:Send(Packet, ...)
 	
-	self.Peer:send(Packet.Data, Channel, Flag)
+	if self.Queue then
+		
+		table.insert(self.Queue, {Packet, ...})
+		
+	else
+		
+		if type(Packet) == "table" then
+			
+			self.Peer:send(Packet.Data, ...)
+			
+		else
+			
+			self.Peer:send(Packet, ...)
+			
+		end
+		
+	end
 	
 end

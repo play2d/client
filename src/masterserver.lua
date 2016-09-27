@@ -3,7 +3,7 @@ local Master = {}
 
 function Master.load()
 	
-	Master.Socket = PLAY2D.Connection.CreateServer("*:" .. PLAY2D.Commands.List["masterport"]:GetInt())
+	Master.Socket = PLAY2D.Connection.CreateServer(PLAY2D.Commands.List["masterport"]:GetInt())
 	
 	if Master.Socket then
 		
@@ -21,7 +21,7 @@ end
 
 function Master.update()
 	
-	
+	Master.Socket:Update()
 	
 end
 

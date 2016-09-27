@@ -4,11 +4,13 @@ local ENet = require("enet")
 local Server = {}
 local ServerMT = {__index = Server}
 
-function Connection.CreateServer(Address, Peers, Channels)
+function Connection.CreateServer(Port, Channels)
 	
-	local Socket = ENet.host_create(Address, Peers or 64, 0, Channels or 1, 0)
+	local Socket = ENet.host_create("localhost:"..Port, 256)
 	
 	if Socket then
+		
+		Socket:channel_limit(1000)
 	
 		local self = {
 			
@@ -18,6 +20,7 @@ function Connection.CreateServer(Address, Peers, Channels)
 		
 		self.Protocol = {}
 		self.Connection = {}
+		self.Queue = {}
 		
 		return setmetatable(self, ServerMT)
 		
@@ -37,33 +40,55 @@ function Server:Update()
 	
 	repeat
 		
-		Event = self.Socket:service()
+		Event = self.Socket:service(0)
 		
-		if Event.type == "connect" then
-			
-			local Client = Connection.CreateClient(Event.peer)
-			
-			self.Connection[Event.peer:index()] = Client
-			self:OnConnected(Client)
-			
-		elseif Event.type == "disconnect" then
-			
-			local Index = Event.peer:index()
-			
-			self.Connection[Index]:OnDisconnect()
-			self.Connection[Index] = nil
-			
-		elseif Event.type == "receive" then
-			
-			local ID = Event.data:byte(1)
-			local Protocol = self.Protocol[ID]
-			
-			if Protocol then
-			
-				local Connection = self.Connection[Event.peer:index()]
-				local Packet = Connection.CreatePacket(Event.data:sub(2))
+		if Event then
+		
+			if Event.type == "connect" then
 				
-				Protocol(self, Connection, Packet)
+				local Index = Event.peer:index()
+				local Client = self.Connection[Index]
+				
+				if not Client then
+					
+					Client = Connection.CreateClient(Event.peer)
+					
+					self.Connection[Index] = Client
+					
+				end
+				
+				self:OnConnected(Client)
+				
+				local Packets = Client.Queue
+				
+				Client.Queue = nil
+				
+				for _, Packet in pairs(Packets) do
+					
+					Client:Send(unpack(Packet))
+					
+				end
+				
+			elseif Event.type == "disconnect" then
+				
+				local Index = Event.peer:index()
+				
+				self.Connection[Index]:OnDisconnect()
+				self.Connection[Index] = nil
+				
+			elseif Event.type == "receive" then
+				
+				local ID = Event.data:byte(1)
+				local Protocol = self.Protocol[ID]
+				
+				if Protocol then
+				
+					local Connection = self.Connection[Event.peer:index()]
+					local Packet = Connection.CreatePacket(Event.data:sub(2))
+					
+					Protocol(self, Connection, Packet)
+					
+				end
 				
 			end
 			
@@ -76,6 +101,34 @@ function Server:Update()
 end
 
 function Server:OnConnected(Client)
+	
+end
+
+function Server:GetIP()
+	
+	return self.Socket:get_socket_address():match("(.+)%:")
+	
+end
+
+function Server:GetPort()
+	
+	return tonumber(self.Socket:get_socket_address():match(":(%d+)")) or 0
+	
+end
+
+function Server:Connect(...)
+	
+	local Peer = self.Socket:connect(...)
+	
+	if Peer then
+		
+		local Connection = Connection.CreateClient(Peer)
+		
+		self.Connection[Peer:index()] = Connection
+		
+		return Connection
+		
+	end
 	
 end
 
