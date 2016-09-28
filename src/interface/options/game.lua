@@ -33,4 +33,12 @@ function Game.load()
 	
 end
 
+function Game.Okay()
+	
+end
+
+function Game.Cancel()
+	
+end
+
 return Game

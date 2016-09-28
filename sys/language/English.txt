@@ -22,6 +22,9 @@ options_sound = "Sound"
 options_net = "Net"
 options_more = "More"
 
+options_okay = "Okay"
+options_cancel = "Cancel"
+
 servers_password = "Pass"
 servers_name = "Server name"
 servers_gamemode = "Game mode"

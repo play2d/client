@@ -11,4 +11,12 @@ function Sound.load()
 	
 end
 
+function Sound.Okay()
+	
+end
+
+function Sound.Cancel()
+	
+end
+
 return Sound

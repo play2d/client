@@ -48,6 +48,12 @@ function Options.load()
 		
 	end
 	
+	Options.OkayButton = PLAY2D.gui.create("Button", Interface.Language:Get("options_okay"), 260, 535, 100, 20, Options.Window)
+	Options.CancelButton = PLAY2D.gui.create("Button", Interface.Language:Get("options_cancel"), 370, 535, 100, 20, Options.Window)
+	
+	Options.OkayButton.OnMouseReleased = Options.Okay
+	Options.CancelButton.OnMouseReleased = Options.Cancel
+	
 	Options.Player.load()
 	Options.Controls.load()
 	Options.Game.load()
@@ -65,6 +71,34 @@ function Options.load()
 	Options.Tab:Select(1)
 	
 	Options.load = nil
+	
+end
+
+function Options.Okay()
+	
+	Options.Player.Okay()
+	Options.Controls.Okay()
+	Options.Game.Okay()
+	Options.Graphics.Okay()
+	Options.Sound.Okay()
+	Options.Net.Okay()
+	Options.More.Okay()
+	
+	Options.Window.Hidden = true
+	
+end
+
+function Options.Cancel()
+	
+	Options.Player.Cancel()
+	Options.Controls.Cancel()
+	Options.Game.Cancel()
+	Options.Graphics.Cancel()
+	Options.Sound.Cancel()
+	Options.Net.Cancel()
+	Options.More.Cancel()
+	
+	Options.Window.Hidden = true
 	
 end
 

@@ -11,4 +11,12 @@ function Controls.load()
 	
 end
 
+function Controls.Okay()
+	
+end
+
+function Controls.Cancel()
+	
+end
+
 return Controls

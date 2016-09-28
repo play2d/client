@@ -16,4 +16,12 @@ function Player.load()
 	
 end
 
+function Player.Okay()
+	
+end
+
+function Player.Cancel()
+	
+end
+
 return Player

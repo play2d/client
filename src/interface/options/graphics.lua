@@ -11,4 +11,12 @@ function Graphics.load()
 	
 end
 
+function Graphics.Okay()
+	
+end
+
+function Graphics.Cancel()
+	
+end
+
 return Graphics

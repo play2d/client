@@ -11,4 +11,12 @@ function Net.load()
 	
 end
 
+function Net.Okay()
+	
+end
+
+function Net.Cancel()
+	
+end
+
 return Net

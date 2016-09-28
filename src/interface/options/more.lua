@@ -11,4 +11,12 @@ function More.load()
 	
 end
 
+function More.Okay()
+	
+end
+
+function More.Cancel()
+	
+end
+
 return More
