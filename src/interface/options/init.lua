@@ -51,8 +51,25 @@ function Options.load()
 	Options.OkayButton = PLAY2D.gui.create("Button", Interface.Language:Get("options_okay"), 260, 535, 100, 20, Options.Window)
 	Options.CancelButton = PLAY2D.gui.create("Button", Interface.Language:Get("options_cancel"), 370, 535, 100, 20, Options.Window)
 	
-	Options.OkayButton.OnMouseReleased = Options.Okay
-	Options.CancelButton.OnMouseReleased = Options.Cancel
+	function Options.OkayButton:OnMouseReleased()
+		
+		if self.IsHover then
+			
+			Options.Okay()
+			
+		end
+		
+	end
+	
+	function Options.CancelButton:OnMouseReleased()
+		
+		if self.IsHover then
+			
+			Options.Cancel()
+			
+		end
+		
+	end
 	
 	Options.Player.load()
 	Options.Controls.load()
@@ -85,6 +102,8 @@ function Options.Okay()
 	Options.More.Okay()
 	
 	Options.Window.Hidden = true
+	
+	PLAY2D.Configuration.save()
 	
 end
 
