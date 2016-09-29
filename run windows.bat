@@ -1,0 +1,1 @@
+"%PROGRAMFILES(x86)%\LOVE\love.exe" "%cd%"

@@ -18,11 +18,23 @@ function Connection.CreateServer(Port, Channels)
 			
 		}
 		
+		setmetatable(self, ServerMT)
+		
 		self.Protocol = {}
 		self.Connection = {}
 		self.Queue = {}
 		
-		return setmetatable(self, ServerMT)
+		if PLAY2D.Print then
+			
+			PLAY2D.Print("UDP socket initialized using port " .. self:GetPort(), 0, 200, 0, 255)
+			
+		else
+			
+			print("UDP socket initialized using port " .. self:GetPort())
+			
+		end
+		
+		return self
 		
 	end
 	
