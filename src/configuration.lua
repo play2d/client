@@ -29,7 +29,7 @@ function Configuration.ParseConfig(File)
 		
 		File:seek(File:tell() + #Line + 1)
 		
-		if Line:sub(1, 2) ~= "//" then
+		if Line:sub(1, 2) ~= "//" and #Line > 0 then
 
 			if PLAY2D.Console:Execute(Line) then
 				
@@ -89,7 +89,7 @@ function Configuration.save()
 		for CategoryName, ConfigurationString in pairs(Category) do
 			
 			File:write("// "..CategoryName.."\n")
-			File:write(ConfigurationString)
+			File:write(ConfigurationString.."\n\n")
 			
 		end
 		

@@ -2,10 +2,16 @@ local Path, PLAY2D = ...
 local Commands = {}
 
 local Command = {}
-local CommandMT = {__index = Command}
 
+Command.__index = Command
 Command.Category = ""
 Command.Value = 0
+
+function Command:__tostring()
+	
+	return "Command [" .. self.Name .. "] = " .. tostring(self.Value)
+	
+end
 
 function Command:Execute(Terminal)
 	
@@ -49,7 +55,7 @@ function Commands.Create(Name)
 	
 	Commands.List[Name] = self
 	
-	return setmetatable(self, CommandMT)
+	return setmetatable(self, Command)
 	
 end
 
@@ -71,7 +77,7 @@ function Commands.load()
 					
 					if Ok then
 						
-						local Ok, Error = pcall(ErrorOrFunction, Object)
+						local Ok, Error = pcall(ErrorOrFunction, Object, PLAY2D)
 						
 						if not Ok then
 							

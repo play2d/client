@@ -1,4 +1,8 @@
 local Path, PLAY2D = ...
+local utf8 = PLAY2D.UTF8
+
+local UTF8Any = utf8.charpattern
+local UTF8Char = utf8.charpattern:sub(1, -2)
 
 local Terminal = {}
 local TerminalMT = {__index = Terminal}
@@ -52,33 +56,33 @@ function Terminal:Parse(Command)
 	local Line
 	
 	while #Command > 0 do
-		local Character = Command:sub(1, 1)
-		Command = Command:sub(2)
+		local Character = Command:match(UTF8Any) or ""
+		Command = Command:sub(#Character + 1)
 		
 		if Character:match("%d") or ( Character == "-" and Command:sub(1, 1):match("%d") ) then
 			local Number = Character
 			
-			Character = Command:sub(1, 1)
-			Command = Command:sub(2)
+			Character = Command:match(UTF8Any) or ""
+			Command = Command:sub(#Character + 1)
 			
 			while Character:match("%d") do
 				Number = Number .. Character
 				
-				Character = Command:sub(1, 1)
-				Command = Command:sub(2)
+				Character = Command:match(UTF8Any) or ""
+				Command = Command:sub(#Character + 1)
 			end
 			
 			if Character == "." and Command:sub(1, 1):match("%d") then
 				Number = Number .. Character
 				
-				Character = Command:sub(1, 1)
-				Command = Command:sub(2)
+				Character = Command:match(UTF8Any) or ""
+				Command = Command:sub(#Character + 1)
 				
 				while Character:match("%d") do
 					Number = Number .. Character
 					
-					Character = Command:sub(1, 1)
-					Command = Command:sub(2)
+					Character = Command:match(UTF8Any) or ""
+					Command = Command:sub(#Character + 1)
 				end
 				
 			end
@@ -91,35 +95,36 @@ function Terminal:Parse(Command)
 			
 		end
 		
-		if Character:match("%a") then
+		if Character:match("%a") or Character:match(UTF8Char) then
 			
 			if Line then
 				
 				local String = Character
 				
-				Character = Command:sub(1, 1)
-				Command = Command:sub(2)
+				Character = Command:match(UTF8Any) or ""
+				Command = Command:sub(#Character + 1)
 				
-				while Character:match("%a") do
+				while Character:match("%a") or Character:match(UTF8Char) do
 					String = String .. Character
 					
-					Character = Command:sub(1, 1)
-					Command = Command:sub(2)
+					Character = Command:match(UTF8Any) or ""
+					Command = Command:sub(#Character + 1)
 				end
 				
 				table.insert(Arguments, String)
+				
 			else
 				
 				Line = Character
 				
-				Character = Command:sub(1, 1)
-				Command = Command:sub(2)
+				Character = Command:match(UTF8Any) or ""
+				Command = Command:sub(#Character + 1)
 				
-				while Character:match("%a") do
+				while Character:match("%a") or Character:match(UTF8Char) do
 					Line = Line .. Character
 					
-					Character = Command:sub(1, 1)
-					Command = Command:sub(2)
+					Character = Command:match(UTF8Any) or ""
+					Command = Command:sub(#Character + 1)
 				end
 				
 			end
@@ -130,28 +135,28 @@ function Terminal:Parse(Command)
 			local BreakCharacter = Character
 			local String = ""
 			
-			Character = Command:sub(1, 1)
-			Command = Command:sub(2)
+			Character = Command:match(UTF8Any) or ""
+			Command = Command:sub(#Character + 1)
 			
 			while #Command > 0 do
 				
 				if Character == BreakCharacter then
 					
-					Character = Command:sub(1, 1)
-					Command = Command:sub(2)
+					Character = Command:match(UTF8Any) or ""
+					Command = Command:sub(#Character + 1)
 					break
 				
 				elseif Character == "\\" then
 				
-					Character = Command:sub(1, 1)
-					Command = Command:sub(2)
+					Character = Command:match(UTF8Any) or ""
+					Command = Command:sub(#Character + 1)
 				
 				end
 				
 				String = String .. Character
 				
-				Character = Command:sub(1, 1)
-				Command = Command:sub(2)
+				Character = Command:match(UTF8Any) or ""
+				Command = Command:sub(#Character + 1)
 				
 			end
 			

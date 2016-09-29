@@ -14,6 +14,7 @@ function PLAY2D.Require(Name, ...)
 end
 
 PLAY2D.Socket = require "socket"
+PLAY2D.UTF8 = require "utf8"
 PLAY2D.FFI = require "ffi"
 PLAY2D.FFI.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]]
 PLAY2D.FFI.cdef[[ int PHYSFS_removeFromSearchPath(const char *newDir); ]]

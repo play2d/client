@@ -55,7 +55,7 @@ end
 
 function Game.Okay()
 	
-	Game.Command.Language:Set(Game.LanguageBox.Item[Game.LanguageBox.Selected]:GetText())
+	Game.Command.Language:Set(Game.LanguageBox.Item[Game.LanguageBox.Selected]:Get())
 	
 end
 
