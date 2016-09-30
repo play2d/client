@@ -98,11 +98,11 @@ function Server:Update()
 				local Protocol = self.Protocol[ID]
 				
 				if Protocol then
-				
-					local Connection = self.Connection[Event.peer:index()]
+					
+					local Client = self.Connection[Event.peer:index()]
 					local Packet = Connection.CreatePacket(Event.data:sub(2))
 					
-					Protocol(self, Connection, Packet)
+					Protocol(self, Client, Packet)
 					
 				end
 				

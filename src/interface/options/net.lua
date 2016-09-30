@@ -26,7 +26,7 @@ end
 function Net.Okay()
 	
 	PLAY2D.Master.Login.User = Options.UserField:GetText()
-	PLAY2D.Master.Login.Password = Options.UserField:GetText()
+	PLAY2D.Master.Login.Password = Options.PasswordField:GetText()
 	PLAY2D.Master.SaveLogin()
 	
 end
