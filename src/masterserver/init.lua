@@ -1,6 +1,9 @@
 local Path, PLAY2D = ...
-local json = PLAY2D.JSON
 local Master = {}
+local CONST = PLAY2D.Constants
+
+PLAY2D.Require(Path.."/data", Master)
+PLAY2D.Require(Path.."/proto_login", Master)
 
 Master.Login = {
 	
@@ -13,6 +16,8 @@ function Master.load()
 	
 	Master.Socket = PLAY2D.Connection.CreateServer(PLAY2D.Commands.List["masterport"]:GetInt())
 	Master.Connect()
+	
+	Master.Socket.Protocol[CONST.NET.MASTER.LOGIN] = Master.HandleLogin
 	
 	Master.load = nil
 	
@@ -47,6 +52,7 @@ function Master.Connect()
 		PLAY2D.Print("Connected to master server", 0, 200, 0, 255)
 		
 		-- Connected, log in
+		Master.LoginAttempt()
 		
 	end
 	
@@ -56,46 +62,8 @@ function Master.Connect()
 		
 		Master.Peer = nil
 		
-	end
-	
-end
-
-function Master.LoadLogin()
-	
-	local LoginFile = love.filesystem.newFileData("sys/login.data")
-	
-	if LoginFile then
-		
-		local LoginData = love.math.decompress(LoginFile, "zlib")
-		local Ok, Login = pcall(json.decode, LoginData)
-		
-		if Ok then
-			
-			Master.Login.User = type(Login.User) == "string" and Login.User or ""
-			Master.Login.Password = type(Login.Password) == "string" and Login.Password or ""
-			
-		end
-		
-	end
-	
-end
-
-function Master.SaveLogin()
-	
-	local LoginFile = love.filesystem.newFile("sys/login.data", "w")
-	
-	if LoginFile then
-		
-		local Login = json.encode(Master.Login)
-		local LoginData = love.math.compress(Login, "zlib")
-		
-		if LoginData then
-			
-			LoginFile:write(LoginData:getString())
-			
-		end
-		
-		LoginFile:close()
+		PLAY2D.Print("Retrying...")
+		Master.Connect()
 		
 	end
 	

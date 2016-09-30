@@ -33,6 +33,7 @@ if not PLAY2D.Mobile then
 	
 end
 
+PLAY2D.Constants = PLAY2D.Require(Path.."/constants")
 PLAY2D.Utility = PLAY2D.Require(Path.."/utility")
 PLAY2D.Connection = PLAY2D.Require(Path.."/connection")
 PLAY2D.Resources = PLAY2D.Require(Path.."/resources")

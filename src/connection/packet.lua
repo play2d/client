@@ -58,6 +58,55 @@ function Packet:Write(Data)
 	
 end
 
+function Packet:Write8Bits(Array)
+	
+	local Byte = 0
+	local Bit = 1
+	
+	for i = 1, 8 do
+		
+		if Array[i] then
+			
+			Byte = Byte + Bit
+			
+		end
+		
+		Bit = Bit * 2
+		
+	end
+	
+	return self:Write(string.char(Byte))
+	
+end
+
+function Packet:Read8Bits()
+	
+	local Array = {}
+	local Byte = self:Read(1)
+	local Bit = 128
+	
+	for i = 8, 1, -1 do
+		
+		if Byte >= Bit then
+			
+			Byte = Byte - Bit
+			
+			Array[i] = true
+			
+		else
+			
+			Array[i] = false
+			
+		end
+		
+		Bit = Bit * 0.5
+		
+	end
+	
+	return Array
+	
+end
+
 function Packet:WriteByte(n)
 	
 	return self:Write(string.char(n))

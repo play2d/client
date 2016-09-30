@@ -87,10 +87,10 @@ function Server:Update()
 				local Index = Event.peer:index()
 				local Client = self.Connection[Index]
 				
+				self.Connection[Index] = nil
+				
 				Client:OnDisconnect()
 				self:OnDisconnect(Client)
-				
-				self.Connection[Index] = nil
 				
 			elseif Event.type == "receive" then
 				

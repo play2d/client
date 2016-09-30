@@ -1,4 +1,6 @@
 local Path, PLAY2D, Interface = ...
+local gui = PLAY2D.gui
+
 local Servers = {}
 
 function Servers.load()
@@ -16,10 +18,10 @@ function Servers.load()
 		
 	end
 	
-	Servers.Window = PLAY2D.gui.create("Window", Interface.Language:Get("label_servers"), 140, 20, 640, 560, PLAY2D.Main)
+	Servers.Window = gui.create("Window", Interface.Language:Get("label_servers"), 140, 20, 640, 560, PLAY2D.Main)
 	Servers.Window.Hidden = true
 	
-	Servers.List = PLAY2D.gui.create("ListView", 10, 60, Servers.Window:GetWidth() - 20, Servers.Window:GetHeight() - 100, Servers.Window)
+	Servers.List = gui.create("ListView", 10, 60, Servers.Window:GetWidth() - 20, Servers.Window:GetHeight() - 100, Servers.Window)
 	
 	Servers.Table = {
 		
