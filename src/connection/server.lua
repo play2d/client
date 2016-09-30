@@ -69,8 +69,6 @@ function Server:Update()
 					
 				end
 				
-				self:OnConnected(Client)
-				
 				local Packets = Client.Queue
 				
 				Client.Queue = nil
@@ -81,11 +79,17 @@ function Server:Update()
 					
 				end
 				
+				Client:OnConnect()
+				self:OnConnect(Client)
+				
 			elseif Event.type == "disconnect" then
 				
 				local Index = Event.peer:index()
+				local Client = self.Connection[Index]
 				
-				self.Connection[Index]:OnDisconnect()
+				Client:OnDisconnect()
+				self:OnDisconnect(Client)
+				
 				self.Connection[Index] = nil
 				
 			elseif Event.type == "receive" then
@@ -112,7 +116,11 @@ function Server:Update()
 	
 end
 
-function Server:OnConnected(Client)
+function Server:OnConnect(Client)
+	
+end
+
+function Server:OnDisconnect(Client)
 	
 end
 

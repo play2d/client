@@ -32,6 +32,9 @@ servers_map = "Map"
 servers_players = "Players"
 servers_ping = "Ping"
 
+net_login_user = "User:"
+net_login_password = "Password:"
+
 label_chat = "Chat"
 label_console = "Console"
 label_friends = "Friends"

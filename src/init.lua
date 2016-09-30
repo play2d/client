@@ -16,6 +16,7 @@ end
 PLAY2D.Socket = require "socket"
 PLAY2D.UTF8 = require "utf8"
 PLAY2D.FFI = require "ffi"
+PLAY2D.JSON = require((...)..".json")
 PLAY2D.FFI.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]]
 PLAY2D.FFI.cdef[[ int PHYSFS_removeFromSearchPath(const char *newDir); ]]
 PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath); ]]
@@ -59,6 +60,9 @@ function PLAY2D.load()
 	
 	-- It's necessary to load the language translations first before loading the interface
 	PLAY2D.Language.load()
+	
+	-- Loading the login is priority for the interface
+	PLAY2D.Master.LoadLogin()
 
 	-- The interface requires the gui functions
 	PLAY2D.gui.load()

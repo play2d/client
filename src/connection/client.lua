@@ -22,25 +22,29 @@ function ClientMT:__tostring()
 	
 end
 
+function Client:OnConnect()
+	
+end
+
 function Client:OnDisconnect()
 	
 end
 
-function Client:Send(Packet, ...)
+function Client:Send(Type, Packet, ...)
 	
 	if self.Queue then
 		
-		table.insert(self.Queue, {Packet, ...})
+		table.insert(self.Queue, {Type, Packet, ...})
 		
 	else
 		
 		if type(Packet) == "table" then
 			
-			self.Peer:send(Packet.Data, ...)
+			self.Peer:send(string.char(Type) .. Packet.Data, ...)
 			
 		else
 			
-			self.Peer:send(Packet, ...)
+			self.Peer:send(string.char(Type) .. Packet, ...)
 			
 		end
 		
