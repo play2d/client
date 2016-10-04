@@ -16,10 +16,17 @@ Master.Login = {
 function Master.load()
 	
 	Master.Socket = PLAY2D.Connection.CreateServer(PLAY2D.Commands.List["masterport"]:GetInt())
-	Master.Connect()
 	
-	assert(love.filesystem.load(Path.."/proto_login.lua", Master.Socket))(PLAY2D, Master)
-	assert(love.filesystem.load(Path.."/proto_friends.lua", Master.Socket))(PLAY2D, Master)
+	if Master.Socket then
+	
+		Master.Connect()
+		
+		local Socket = Master.Socket
+		
+		assert(love.filesystem.load(Path.."/proto/login.lua", Master.Socket))(PLAY2D, Socket)
+		assert(love.filesystem.load(Path.."/proto/friends.lua", Master.Socket))(PLAY2D, Socket)
+		
+	end
 	
 	Master.load = nil
 	

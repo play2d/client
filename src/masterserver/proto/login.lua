@@ -1,8 +1,8 @@
-local PLAY2D, Master = ...
+local PLAY2D, Socket = ...
 local CONST = PLAY2D.Constants
 local Connection = PLAY2D.Connection
 
-Master.Socket.Protocol[CONST.NET.MASTER.LOGIN] = function (Host, Peer, Packet)
+Socket.Protocol[CONST.NET.MASTER.LOGIN] = function (Host, Peer, Packet)
 	
 	local Response = Packet:ReadByte()
 	

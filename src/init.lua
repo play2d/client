@@ -13,18 +13,49 @@ function PLAY2D.Require(Name, ...)
 	
 end
 
+local function requireAttempt(what)
+	
+	local Ok, Library = pcall(require, what)
+	
+	if Ok then
+		
+		return Library
+		
+	end
+	
+end
+
+PLAY2D.OS = love.system.getOS()
+PLAY2D.FFI = require "ffi"
+
+if PLAY2D.OS == "Windows" then
+	
+	package.cpath = package.cpath..";./bin_"..PLAY2D.FFI.arch.."/?.dll"
+	
+elseif PLAY2D.OS == "OS X" then
+	
+	package.cpath = package.cpath..";./bin_"..PLAY2D.FFI.arch.."/?.dylib"
+	
+else
+	
+	package.cpath = package.cpath..";./bin_"..PLAY2D.FFI.arch.."/?.so"
+	
+end
+
+PLAY2D.SSL = requireAttempt "ssl"
+PLAY2D.HTTPS = requireAttempt "ssl.https"
+PLAY2D.HTTP = require "socket.http"
+
 PLAY2D.Socket = require "socket"
 PLAY2D.UTF8 = require "utf8"
-PLAY2D.FFI = require "ffi"
 PLAY2D.JSON = require((...)..".json")
 PLAY2D.FFI.cdef[[ int PHYSFS_setWriteDir(const char *newDir); ]]
 PLAY2D.FFI.cdef[[ int PHYSFS_removeFromSearchPath(const char *newDir); ]]
 PLAY2D.FFI.cdef[[ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath); ]]
 PLAY2D.FFI.cdef[[ int PHYSFS_addToSearchPath (const char *newDir, int appendToPath); ]]
 
-PLAY2D.Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
-
-PLAY2D.C = PLAY2D.FFI.os == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
+PLAY2D.Mobile = PLAY2D.OS == "Android" or PLAY2D.OS == "iOS"
+PLAY2D.C = PLAY2D.OS == "Windows" and PLAY2D.FFI.load("love") or PLAY2D.FFI.C
 
 if not PLAY2D.Mobile then
 	
