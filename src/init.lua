@@ -112,6 +112,8 @@ function PLAY2D.load()
 		{"sound", "sfx/weapons/Five Seven/silenced.wav"}
 	)
 	
+	PLAY2D.Print("Operating System: " .. PLAY2D.OS.." "..PLAY2D.FFI.arch)
+	
 end
 
 function PLAY2D.update(Delta)
