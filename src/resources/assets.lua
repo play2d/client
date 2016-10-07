@@ -178,28 +178,28 @@ function Assets:AddSingle(Asset)
 end
 
 function Assets:Draw()
-	local LG = love.graphics
 	
-	local w, h = LG.getDimensions()
+	local w, h = love.graphics.getDimensions()
 	
 	local tq = self:GetTotalQueuedAssets()
 	local tl =  self:GetTotalLoadedAssets()
 	
 	local rad = (math.pi * 2 * ((tl - 1) / tq)) + (math.pi * 2 * (1 / tq) * (self.LoadingEffect:getProgress(1) or 1))
 
-	LG.setLineWidth(3)
-	LG.stencil(Assets.Function.DrawStencil, "replace", 1)
-	LG.setStencilTest("equal", 0)
-	LG.arc("line", math.floor(w * 0.5), math.floor(h * 0.5), 20, 0, rad)
-	LG.setStencilTest()	
+	love.graphics.setLineWidth(3)
+	love.graphics.stencil(Assets.Function.DrawStencil, "replace", 1)
+	love.graphics.setStencilTest("equal", 0)
+	love.graphics.arc("line", math.floor(w * 0.5), math.floor(h * 0.5), 20, 0, rad)
+	love.graphics.setStencilTest()	
 	
 	if self.Name then
 		
-		LG.setFont(self.Font)
-		
 		local Text = "Loading " .. self.Name .. "..."
 		
-		LG.print(Text, math.floor( (w - self.Font:getWidth(Text) ) / 2), (h - self.Font:getHeight(Text) ) / 2 + 50)
+		love.graphics.setFont(self.Font)
+		love.graphics.setColor(255, 255, 255, 255)
+		
+		love.graphics.print(Text, math.floor( (w - self.Font:getWidth(Text) ) / 2), (h - self.Font:getHeight(Text) ) / 2 + 50)
 		
 	end
 	

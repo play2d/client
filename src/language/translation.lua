@@ -4,7 +4,7 @@ local TranslationMT = {__index = Translation}
 
 function TranslationMT:__tostring()
 	
-	return self.String:gsub("$(%a+)", self.Arguments)
+	return self.String:gsub("$(%w+)", self.Arguments)
 	
 end
 

@@ -23,8 +23,8 @@ function Master.load()
 		
 		local Socket = Master.Socket
 		
-		assert(love.filesystem.load(Path.."/proto/login.lua", Master.Socket))(PLAY2D, Socket)
-		assert(love.filesystem.load(Path.."/proto/friends.lua", Master.Socket))(PLAY2D, Socket)
+		assert(love.filesystem.load(Path.."/proto/login.lua", Master.Socket))(PLAY2D, Socket, Master)
+		assert(love.filesystem.load(Path.."/proto/friends.lua", Master.Socket))(PLAY2D, Socket, Master)
 		
 	end
 	
@@ -56,12 +56,22 @@ function Master.Connect()
 	
 	Master.Peer = Master.Socket:Connect("localhost:45654")
 	
+	Master.Connecting = true
+	Master.Connected = false
+	
 	function Master.Peer:OnConnect()
 		
 		PLAY2D.Print("Connected to master server", 0, 200, 0, 255)
 		
+		Master.Connecting = false
+		Master.Connected = true
+		
+		Master.Logging = false
+		Master.Logged = false
+		
 		-- Connected, log in
 		Master.LoginAttempt()
+		
 		
 	end
 	
@@ -71,7 +81,14 @@ function Master.Connect()
 		
 		Master.Peer = nil
 		
+		Master.Connecting = false
+		Master.Connected = false
+		
+		Master.Logging = false
+		Master.Logged = false
+		
 		PLAY2D.Print("Retrying...")
+		
 		Master.Connect()
 		
 	end
@@ -79,6 +96,9 @@ function Master.Connect()
 end
 
 function Master.LoginAttempt()
+	
+	Master.Logging = true
+	Master.Logged = false
 	
 	local Packet = Connection.CreatePacket()
 	

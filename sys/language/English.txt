@@ -46,6 +46,13 @@ label_servers = "Find Servers"
 label_send = "Send"
 label_quit = "Quit"
 
+master_login_connect = "Connecting to master server"
+master_login_attempt = "Attempting to login"
+master_login_success = "Logged in as $USER"
+master_login_badname = "Wrong user name"
+master_login_badpass = "Wrong password"
+master_login_banned = "Banned"
+
 quit_confirm = "Are you sure you want to quit the game?"
 quit_yes = "Yes, quit game!"
 quit_no = "No"

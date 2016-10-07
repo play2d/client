@@ -8,6 +8,7 @@ Interface.Chat = PLAY2D.Require(Path.."/chat", Interface)
 Interface.Help = PLAY2D.Require(Path.."/help", Interface)
 Interface.Servers = PLAY2D.Require(Path.."/servers", Interface)
 Interface.Options = PLAY2D.Require(Path.."/options", Interface)
+Interface.Login = PLAY2D.Require(Path.."/login", Interface)
 Interface.Quit = PLAY2D.Require(Path.."/quit", Interface)
 
 function Interface.load()
@@ -21,6 +22,7 @@ function Interface.load()
 	Interface.Help.load()
 	Interface.Servers.load()
 	Interface.Options.load()
+	Interface.Login.load()
 	Interface.Quit.load()
 	
 	Interface.load = nil
