@@ -30,17 +30,19 @@ PLAY2D.FFI = require "ffi"
 
 if PLAY2D.OS == "Windows" then
 	
-	package.cpath = package.cpath..";./bin_"..PLAY2D.FFI.arch.."/?.dll"
+	package.cpath = package.cpath..";./bin/"..PLAY2D.FFI.arch.."/?.dll"
 	
 elseif PLAY2D.OS == "OS X" then
 	
-	package.cpath = package.cpath..";./bin_"..PLAY2D.FFI.arch.."/?.dylib"
+	package.cpath = package.cpath..";./bin/"..PLAY2D.FFI.arch.."/?.dylib"
 	
 else
 	
-	package.cpath = package.cpath..";./bin_"..PLAY2D.FFI.arch.."/?.so"
+	package.cpath = package.cpath..";./bin/"..PLAY2D.FFI.arch.."/?.so"
 	
 end
+
+package.path = package.path..";./bin/?.lua"
 
 PLAY2D.SSL = requireAttempt "ssl"
 PLAY2D.HTTPS = requireAttempt "ssl.https"
