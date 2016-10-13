@@ -22,7 +22,7 @@ function Login.load()
 			Out = Interface.Language:Get("master_login_connect")
 			
 			Color[1] = 255
-			Color[2] = 0
+			Color[2] = 255
 			Color[3] = 0
 		
 		elseif Master.Logging then
@@ -30,7 +30,7 @@ function Login.load()
 			Out = Interface.Language:Get("master_login_attempt")
 			
 			Color[1] = 255
-			Color[2] = 0
+			Color[2] = 255
 			Color[3] = 0
 			
 		elseif Master.Error then
